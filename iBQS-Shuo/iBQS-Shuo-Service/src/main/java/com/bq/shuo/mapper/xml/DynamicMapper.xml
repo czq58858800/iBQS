@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.DynamicMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_dynamic
+		<where>
+			AND enable_ = 1
+			<if test="cm.userIds != null and cm.userIds != ''">
+				AND user_id IN
+				<foreach collection="cm.userIds" item="item" index="index" open="(" close=")" separator=",">
+					#{cm.userIds[${index}]}
+				</foreach>
+			</if>
+			<if test="cm.type != null and cm.type != ''">
+				AND type_ = #{cm.type}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (content_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+
+	<select id="selectValIdById" resultType="java.lang.String">
+		SELECT id_ FROM bq_dynamic WHERE enable_ = 1 AND  val_id = #{valId} AND type_ = #{type}
+	</select>
+</mapper>

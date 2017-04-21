@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.EventMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_event
+		<where>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (
+					or title_ like CONCAT('%',#{cm.keyword},'%')
+					or request_uri like CONCAT('%',#{cm.keyword},'%')
+					or parameters_ like CONCAT('%',#{cm.keyword},'%')
+					or method_ like CONCAT('%',#{cm.keyword},'%')
+					or client_host like CONCAT('%',#{cm.keyword},'%')
+					or user_agent like CONCAT('%',#{cm.keyword},'%')
+					or status_ like CONCAT('%',#{cm.keyword},'%')
+					or create_by like CONCAT('%',#{cm.keyword},'%')
+					or update_by like CONCAT('%',#{cm.keyword},'%')
+				)
+			</if>
+		</where>
+	</select>
+</mapper>

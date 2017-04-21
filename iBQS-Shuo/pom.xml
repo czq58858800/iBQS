@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bq</groupId>
+    <artifactId>iBQS-Shuo</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
+    <url>http://www.biaoqing.com</url>
+    <parent>
+        <groupId>com.bq</groupId>
+        <artifactId>iBQS</artifactId>
+        <version>1.1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modules>
+        <module>iBQS-Shuo-Common</module>
+        <module>iBQS-Shuo-Facade</module>
+        <module>iBQS-Shuo-Service</module>
+        <module>iBQS-Shuo-Web</module>
+    </modules>
+
+</project>

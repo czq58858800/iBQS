@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.SearchHotMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_search_hot
+		<where>
+			and enable_ = 1
+			<if test="cm.text != null and cm.text != ''">
+				and text_ = #{cm.text}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (text_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY search_num DESC, update_time DESC
+	</select>
+</mapper>

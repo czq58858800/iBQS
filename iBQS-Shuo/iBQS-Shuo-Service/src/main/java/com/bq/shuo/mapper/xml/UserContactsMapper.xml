@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.UserContactsMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_user_contacts
+		<where>
+			<if test="cm.deviceId != null and cm.deviceId != ''">
+				and device_id = #{cm.deviceId}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				and user_id = #{cm.userId}
+			</if>
+			<if test="cm.phone != null and cm.phone != ''">
+				and phone_ = #{cm.phone}
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+</mapper>

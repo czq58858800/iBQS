@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.ReportMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_report
+		<where>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (
+					or user_id like CONCAT('%',#{cm.keyword},'%')
+					or val_id like CONCAT('%',#{cm.keyword},'%')
+					or sys_user_id like CONCAT('%',#{cm.keyword},'%')
+					or sub_content like CONCAT('%',#{cm.keyword},'%')
+					or reply_content like CONCAT('%',#{cm.keyword},'%')
+					or reply_time like CONCAT('%',#{cm.keyword},'%')
+					or type_ like CONCAT('%',#{cm.keyword},'%')
+					or status_ like CONCAT('%',#{cm.keyword},'%')
+				)
+			</if>
+		</where>
+	</select>
+</mapper>

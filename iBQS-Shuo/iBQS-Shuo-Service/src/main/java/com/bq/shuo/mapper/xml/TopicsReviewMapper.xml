@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.TopicsReviewMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_topics_review
+		<where>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (
+					or topic_id like CONCAT('%',#{cm.keyword},'%')
+					or cover_ like CONCAT('%',#{cm.keyword},'%')
+					or cover_type like CONCAT('%',#{cm.keyword},'%')
+					or cover_width like CONCAT('%',#{cm.keyword},'%')
+					or cover_height like CONCAT('%',#{cm.keyword},'%')
+					or name_ like CONCAT('%',#{cm.keyword},'%')
+					or owner_id like CONCAT('%',#{cm.keyword},'%')
+					or summary_ like CONCAT('%',#{cm.keyword},'%')
+					or audit_ like CONCAT('%',#{cm.keyword},'%')
+					or audit_user_id like CONCAT('%',#{cm.keyword},'%')
+				)
+			</if>
+		</where>
+	</select>
+</mapper>

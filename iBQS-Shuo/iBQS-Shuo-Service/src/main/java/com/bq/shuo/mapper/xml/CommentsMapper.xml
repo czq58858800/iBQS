@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.CommentsMapper">
+	<insert id="updateCounter">
+		<selectKey keyProperty="count" resultType="int" order="BEFORE">
+			select count(*) from bq_comments_counter where comments_id = #{commentsId}
+		</selectKey>
+		<if test="count > 0">
+			update bq_comments_counter set ${field} = #{number} where comments_id = #{commentsId}
+		</if>
+		<if test="count==0">
+			insert into bq_comments_counter (comments_id,${field}) values(#{commentsId},#{number})
+		</if>
+	</insert>
+
+
+    <select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_comments
+		<where>
+			and enable_
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.content != null and cm.content != ''">
+				and content_ = #{cm.content}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (content_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+    <select id="selectCountBySubjectId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_comments WHERE enable_ = 1 AND subject_id = #{subjectId}
+	</select>
+	<select id="selectCommentIdByPraiseCount" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_comments_praise WHERE comment_id = #{commentId}
+	</select>
+
+	<delete id="deleteByCurrUserId">
+		DELETE FROM bq_comments WHERE id_ = #{id} AND user_id = #{currUserId}
+	</delete>
+	<delete id="deleteCounter">
+		DELETE FROM bq_comments_counter WHERE comments_id = #{id}
+	</delete>
+
+	<insert id="insertCommentPraise">
+		INSERT INTO bq_comments_praise (comment_id, user_id, create_time) VALUES (#{commentId},#{userId}, NOW());
+	</insert>
+</mapper>

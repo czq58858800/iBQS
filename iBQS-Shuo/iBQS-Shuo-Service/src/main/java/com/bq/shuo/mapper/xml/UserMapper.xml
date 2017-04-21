@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.UserMapper">
+
+	<insert id="updateCounter">
+		<selectKey keyProperty="count" resultType="int" order="BEFORE">
+			select count(*) from bq_user_counter where user_id = #{userId}
+		</selectKey>
+		<if test="count > 0">
+			update bq_user_counter set ${field} = #{number} where user_id = #{userId}
+		</if>
+		<if test="count==0">
+			insert into bq_user_counter (user_id,${field}) values(#{userId},#{number})
+		</if>
+	</insert>
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_user
+		<where>
+			<if test="cm.account != null and cm.account != ''">
+				and account_ = #{cm.account}
+			</if>
+			<if test="cm.phone != null and cm.phone != ''">
+				and phone_ = #{cm.phone}
+			</if>
+			<if test="cm.password != null and cm.password != ''">
+				and password_ = #{cm.password}
+			</if>
+			<if test="cm.sex != null and cm.sex != ''">
+				and sex_ = #{cm.sex}
+			</if>
+			<if test="cm.name != null and cm.name != ''">
+				and name_ = #{cm.name}
+			</if>
+			<if test="cm.avatar != null and cm.avatar != ''">
+				and avatar_ = #{cm.avatar}
+			</if>
+			<if test="cm.userType != null and cm.userType != ''">
+				and user_type = #{cm.userType}
+			</if>
+			<if test="cm.token != null and cm.token != ''">
+				and token_ = #{cm.token}
+			</if>
+			<if test="cm.locked != null and cm.locked != ''">
+				and locked_ = #{cm.locked}
+			</if>
+			<if test="cm.enable != null and cm.enable != ''">
+				and enable_ = #{cm.enable}
+			</if>
+			<if test="cm.remark != null and cm.remark != ''">
+				and remark_ = #{cm.remark}
+			</if>
+			<if test="cm.createTime != null and cm.createTime != ''">
+				and create_time = #{cm.createTime}
+			</if>
+			<if test="cm.updateTime != null and cm.updateTime != ''">
+				and update_time = #{cm.updateTime}
+			</if>
+			<if test="cm.keyword != null">
+				and (account_ like CONCAT('%',#{cm.keyword},'%') or name_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+			<if test="cm.notNullLastDynamicTime != null and cm.notNullLastDynamicTime != ''">
+				and not isnull(last_dynamic_time)
+			</if>
+		</where>
+		ORDER BY last_dynamic_time DESC
+	</select>
+
+	<insert id="insertUserConfig">
+		INSERT INTO bq_user_config (user_id) VALUES (#{id});
+	</insert>
+
+	<select id="selectOne" resultType="java.lang.String">
+		SELECT id_ FROM bq_user WHERE enable_ = 1 AND (account_ like CONCAT('%',#{cm.keyword},'%') or name_ like CONCAT('%',#{cm.keyword},'%')) LIMIT 1
+	</select>
+</mapper>

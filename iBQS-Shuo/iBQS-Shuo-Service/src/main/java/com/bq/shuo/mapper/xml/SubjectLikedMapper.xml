@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.SubjectLikedMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_subject_liked
+		<where>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				and user_id = #{cm.userId}
+			</if>
+			<if test="cm.id != null and cm.id != ''">
+				and id_ = #{cm.id}
+			</if>
+		</where>
+		ORDER BY update_time DESC
+	</select>
+
+	<select id="selectLikedById" resultType="java.lang.String">
+		SELECT id_ FROM bq_subject_liked WHERE user_id = #{userId} AND subject_id = #{subjectId}
+	</select>
+	<select id="selectCountBySubjectId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_subject_liked WHERE enable_ = 1 AND subject_id = #{subjectId}
+	</select>
+	<select id="selectCountByUserId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_subject_liked A LEFT JOIN bq_subject B ON A.subject_id = B.id_ WHERE B.enable_ = 1 AND B.user_id = #{userId}
+	</select>
+	<select id="selectMyLikedCountByUserId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_subject_liked WHERE enable_ = 1 AND user_id = #{userId}
+	</select>
+</mapper>

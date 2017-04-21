@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.CommentsPraiseMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_comments_praise
+		<where>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (
+					or comment_id like CONCAT('%',#{cm.keyword},'%')
+					or user_id like CONCAT('%',#{cm.keyword},'%')
+				)
+			</if>
+		</where>
+	</select>
+    <select id="selectPraiseById" resultType="java.lang.String">
+
+		SELECT id_ FROM bq_comments_praise WHERE user_id = #{userId} AND comment_id = #{commentId}
+	</select>
+</mapper>

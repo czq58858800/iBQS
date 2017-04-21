@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.CategoryMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_category
+		<where>
+			and enable_ = 1
+			<if test="cm.isPrivate == null and cm.isPrivate == ''">
+				and is_private = 0
+			</if>
+			<if test="cm.stuffNum == null and cm.stuffNum == ''">
+				and stuff_num != 0
+			</if>
+			<if test="cm.orderHot != null and cm.orderHot == true">
+				and is_hot = 1
+			</if>
+			<if test="cm.audit != null and cm.audit != ''">
+				<choose>
+					<when test='cm.audit.toString() == "under" '>
+						and audit_ != 2
+					</when>
+					<otherwise>
+						and audit_ = #{cm.audit}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				and user_id = #{cm.userId}
+			</if>
+			<if test="cm.name != null and cm.name != ''">
+				and name_ = #{cm.name}
+			</if>
+			<if test="cm.summary != null and cm.summary != ''">
+				and summary_ = #{cm.summary}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (
+				tags_ like CONCAT('%',#{cm.keyword},'%')
+				or name_ like CONCAT('%',#{cm.keyword},'%')
+				or summary_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="cm.orderHot != null and cm.orderHot == true">
+				hot_time DESC
+			</when>
+			<otherwise>
+				create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectCategoryCounter" resultType="java.lang.Integer">
+		SELECT
+		<if test="field != null and field != ''">
+			<if test="field == 'view_num'">
+				IF(AVG(view_num) IS NULL,0,view_num) AS view_num
+			</if>
+			<if test="field == 'collection_num'">
+				IF(AVG(collection_num) IS NULL,0,collection_num) AS collection_num
+			</if>
+		</if>
+		FROM bq_category_counter WHERE category_id = #{categoryId}
+	</select>
+	<select id="selectIdByUserMap" resultType="java.lang.String">
+		SELECT
+		A.id_
+		FROM
+		bq_category A
+		LEFT JOIN bq_user B ON A.user_id = B.id_
+		AND B.id_ = A.user_id
+		WHERE
+		A.enable_ = 1
+		AND (
+		B.name_ LIKE CONCAT('%', #{cm.keyword}, '%')
+		OR A.name_ LIKE CONCAT('%', #{cm.keyword}, '%')
+		)
+		GROUP BY
+		A.user_id
+		ORDER BY
+		A.hot_ DESC,A.create_time DESC
+	</select>
+	<select id="selectCountByUserMap" resultType="java.lang.Integer">
+		SELECT
+		COUNT(1) AS TOTAL
+		FROM
+		(
+		SELECT
+		A.id_
+		FROM
+		bq_category A
+		LEFT JOIN bq_user B ON A.user_id = B.id_
+		AND B.id_ = A.user_id
+		WHERE
+		A.enable_ = 1
+		AND (
+		B.name_ LIKE CONCAT('%', #{cm.keyword}, '%')
+		OR A.name_ LIKE CONCAT('%', #{cm.keyword}, '%')
+		)
+		GROUP BY
+		A.user_id
+		) A
+	</select>
+</mapper>

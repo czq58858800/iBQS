@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.NotifyMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT id_ FROM bq_notify
+		<where>
+			enable_ = 1
+			<if test="cm.sendUserId != null and cm.sendUserId != ''">
+				and send_user_id = #{cm.sendUserId}
+			</if>
+			<if test="cm.receiveUserId != null and cm.receiveUserId != ''">
+				and receive_user_id = #{cm.receiveUserId}
+			</if>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.msgType != null and cm.msgType != ''">
+				and msg_type = #{cm.msgType}
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+
+	<update id="updateRead">
+		UPDATE bq_notify SET is_read = 1 WHERE msg_type = #{msgType} AND receive_user_id = #{userId}
+	</update>
+
+	<select id="getByUnreadNum" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_notify
+		<where>
+			enable_ = 1 AND is_read = 0
+			<if test="cm.sendUserId != null and cm.sendUserId != ''">
+				and send_user_id = #{cm.sendUserId}
+			</if>
+			<if test="cm.receiveUserId != null and cm.receiveUserId != ''">
+				and receive_user_id = #{cm.receiveUserId}
+			</if>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.msgType != null and cm.msgType != ''">
+				and msg_type = #{cm.msgType}
+			</if>
+		</where>
+	</select>
+</mapper>

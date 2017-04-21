@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.SubjectMapper">
+
+	<insert id="updateCounter">
+		<selectKey keyProperty="count" resultType="int" order="BEFORE">
+			select count(*) from bq_subject_counter where subject_id = #{subjectId}
+		</selectKey>
+		<if test="count > 0">
+			update bq_subject_counter set ${field} = #{number} where subject_id = #{subjectId}
+		</if>
+		<if test="count==0">
+			insert into bq_subject_counter (subject_id,${field}) values(#{subjectId},#{number})
+		</if>
+	</insert>
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		select id_ from bq_subject AS A
+		<if test="cm.topicOrderHot != null and cm.topicOrderHot == true">
+			INNER JOIN bq_subject_counter AS B ON B.subject_id = A.id_ AND B.subject_id = A.id_
+		</if>
+		<where>
+			AND A.enable_ = 1
+			<if test="cm.userId != null and cm.userId != ''">
+				and A.user_id = #{cm.userId}
+			</if>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and A.subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.content != null and cm.content != ''">
+				and A.content_ = #{cm.content}
+			</if>
+			<if test="cm.orderHot != null and cm.orderHot == true">
+				and A.is_hot = 1
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (A.content_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="cm.orderHot != null and cm.orderHot == true">
+				A.hot_time DESC
+			</when>
+			<when test="cm.topicOrderHot != null and cm.topicOrderHot == true">
+				B.liked_num DESC
+			</when>
+			<otherwise>
+				A.update_time DESC
+			</otherwise>
+		</choose>
+		<if test="cm.startLimit != null and cm.endLimit != null ">
+			LIMIT ${cm.startLimit},${cm.endLimit}
+		</if>
+	</select>
+    <select id="selectSubjectCounter" resultType="java.lang.Integer">
+		SELECT
+		<if test="field != null and field != ''">
+			<if test="field == 'view_num'">
+				IF(AVG(view_num) IS NULL,0,view_num) AS view_num
+			</if>
+			<if test="field == 'forward_num'">
+				IF(AVG(forward_num) IS NULL,0,forward_num) AS forward_num
+			</if>
+			<if test="field == 'comments_num'">
+				IF(AVG(comments_num) IS NULL,0,comments_num) AS comments_num
+			</if>
+			<if test="field == 'liked_num'">
+				IF(AVG(liked_num) IS NULL,0,liked_num) AS liked_num
+			</if>
+		</if>
+		FROM bq_subject_counter WHERE subject_id = #{subjectId}
+	</select>
+	<select id="selectCountByUserId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_subject WHERE enable_ = 1 AND user_id = #{userId};
+	</select>
+
+	<select id="selectRandIdByMap" resultType="java.lang.String">
+		SELECT
+		t1.id_
+		FROM
+		bq_subject AS t1
+		JOIN (
+		SELECT
+		ROUND(RAND() * ((SELECT MAX(id_) FROM bq_subject) - (SELECT MIN(id_) FROM bq_subject )) + (SELECT MIN(id_) FROM bq_subject)) AS id_) AS t2
+		WHERE
+		t1.id_ >= t2.id_
+		ORDER BY
+		t1.id_
+		<if test="cm.startLimit != null and cm.endLimit != null ">
+			LIMIT ${cm.startLimit},${cm.endLimit}
+		</if>
+	</select>
+	<select id="queryByNew" resultType="java.lang.String">
+		SELECT A.id_ FROM bq_subject A
+		<where>
+			and enable_ = 1
+			<if test="cm.userId != null and cm.userId != ''">
+				and A.user_id = #{cm.userId}
+			</if>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and A.subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.content != null and cm.content != ''">
+				and A.content_ = #{cm.content}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (A.content_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY create_time DESC
+		<if test="cm.startLimit != null and cm.endLimit != null ">
+			LIMIT ${cm.startLimit},${cm.endLimit}
+		</if>
+	</select>
+	<select id="selectRowByMap" resultType="java.lang.Integer">
+		SELECT
+		A.rowNo
+		FROM
+		(
+		SELECT
+		A.id_,
+		(@rowNum :=@rowNum + 1) AS rowNo
+		FROM
+		bq_subject A,
+		(SELECT(@rowNum := 0)) B
+		<where>
+			AND A.enable_ = 1
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and (A.content_ like CONCAT('%',#{cm.keyword},'%'))
+			</if>
+		</where>
+		ORDER BY
+		A.create_time DESC
+		) AS A
+		WHERE
+		A.id_ = #{cm.id}
+	</select>
+
+	<select id="selectByKeyword" resultType="java.lang.String">
+		SELECT A.id_ FROM bq_subject A
+		WHERE A.enable_ = 1 AND A.content_ like CONCAT('%',#{cm.keyword},'%')
+		ORDER BY A.create_time
+		<if test="cm.startLimit != null and cm.startLimit != '' and cm.endLimit != null and cm.endLimit != '' ">
+			LIMIT ${cm.startLimit},${cm.endLimit}
+		</if>
+	</select>
+    <select id="selectHashById" resultType="java.lang.String">
+		SELECT id_ FROM bq_subject WHERE enable_ = 1 AND cover_hash = #{hashCode} LIMIT 1
+	</select>
+</mapper>

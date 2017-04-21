@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bq.shuo.mapper.UserFollowingMapper">
+
+
+
+	<select id="selectIdPage" resultType="java.lang.String">
+		SELECT A.id_ FROM bq_user_following A LEFT JOIN bq_user B ON A.befollow_user_id = B.id_
+		<where>
+			<if test="cm.followUserId != null and cm.followUserId != ''">
+				and A.follow_user_id = #{cm.followUserId}
+			</if>
+			<if test="cm.befollowUserId != null and cm.befollowUserId != ''">
+				and A.befollow_user_id = #{cm.account}
+			</if>
+		</where>
+		ORDER BY B.last_dynamic_time DESC
+	</select>
+
+	<select id="selectByFollowUserId" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM bq_user_following WHERE follow_user_id = #{followUserId} AND befollow_user_id = #{befollowUserId}
+	</select>
+	<select id="selectFollowCountByUserId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_user_following WHERE follow_user_id = #{userId}
+	</select>
+	<select id="selectFansCountByUserId" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM bq_user_following WHERE befollow_user_id = #{userId}
+	</select>
+
+	<select id="selectUserIdByMap" resultType="java.lang.String">
+		SELECT
+		<if test="cm.followUserId != null and cm.followUserId != ''">
+			befollow_user_id
+		</if>
+		<if test="cm.befollowUserId != null and cm.befollowUserId != ''">
+			follow_user_id
+		</if>
+		FROM bq_user_following
+		<where>
+			<if test="cm.followUserId != null and cm.followUserId != ''">
+				and follow_user_id = #{cm.followUserId}
+			</if>
+			<if test="cm.befollowUserId != null and cm.befollowUserId != ''">
+				and befollow_user_id = #{cm.befollowUserId}
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+    <select id="selectByFollowId" resultType="java.lang.String">
+		SELECT id_ FROM bq_user_following WHERE follow_user_id = #{userId} AND befollow_user_id = #{beUserId}
+	</select>
+    <select id="selectByUserIdFollows" resultType="java.lang.String">
+		SELECT befollow_user_id FROM bq_user_following WHERE follow_user_id = #{userId}
+	</select>
+</mapper>
