@@ -155,14 +155,13 @@ public class Demo {
 	public void sendIOSUnicast() throws Exception {
 		IOSUnicast unicast = new IOSUnicast(appkey,appMasterSecret);
 		// TODO Set your device token
-		unicast.setDeviceToken( "d7f747627a89d75fc52b57cc2b7b82d1b83beae1017bf25e40711577a1669089");
-		unicast.setAlert("IOS 单播测试");
-		unicast.setBadge( 0);
+		unicast.setDeviceToken( "ba6ed60674b4251a83b4ad2348898448ce2eb49ceb71dfafa147d00d81cb01ec");
+		unicast.setAlert("Harvey-WX,在表情中评论了你。");
 		unicast.setSound( "default");
 		// TODO set 'production_mode' to 'true' if your app is under production mode
 		unicast.setTestMode();
 		// Set customized fields
-		unicast.setCustomizedField("test", "helloworld");
+//		unicast.setCustomizedField("test", "helloworld");
 		client.send(unicast);
 	}
 	
