@@ -1,2 +1,5 @@
 upload/imageData
 subject/add
+material/category/coll/updateSortNo
+user/contacts/upload
+user/weibo/invite

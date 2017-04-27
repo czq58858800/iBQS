@@ -19,4 +19,7 @@
 		</where>
 		ORDER BY create_time DESC
 	</select>
+    <select id="selectByPhone" resultType="java.lang.String">
+		SELECT  id_ FROM bq_user_contacts WHERE user_id = #{userId} AND phone_ = #{phone}
+	</select>
 </mapper>

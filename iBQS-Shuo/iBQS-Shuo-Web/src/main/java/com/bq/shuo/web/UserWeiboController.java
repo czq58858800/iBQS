@@ -1,15 +1,22 @@
 package com.bq.shuo.web;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.config.Resources;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
+import com.bq.core.support.mq.QueueSender;
+import com.bq.core.util.HttpUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
+import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.util.WeiboHelper;
 import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserThirdparty;
 import com.bq.shuo.model.UserWeibo;
+import com.bq.shuo.model.ext.WeiboInvite;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
 import io.swagger.annotations.Api;
@@ -43,7 +50,9 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
         return "userWeiboService";
     }
 
-/*
+    // 线程池
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+
     // 获取微博好友列表
     @ApiOperation(value = "获取微博好友列表")
     @GetMapping("/list")
@@ -57,13 +66,16 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
 
         Map<String, Object> params = WebUtil.getParameterMap(request);
 
+
+
         if (flag) {
-            userWeiboService.updateWeibo(getCurrUser());
+            updateWeibo(getCurrUser());
         }
 
         params.put("userId",getCurrUser());
 
-        Page pageInfo = userWeiboService.queryBeans(params);
+        Parameter parameter = new Parameter(getService(),"queryBeans").setMap(params);
+        Page pageInfo = provider.execute(parameter).getPage();
 
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
         for (Object obj:pageInfo.getRecords()) {
@@ -71,9 +83,11 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
             Map<String,Object> itemMap = InstanceUtil.newHashMap();
 
             if (StringUtils.equals(status,"1") || StringUtils.equals(status,"2")) {
-                UserThirdparty thirdparty = thirdPartyService.queryUserIdByThirdParty(record.getOpenId(),"SINA");
+                parameter = new Parameter("userThirdpartyService","queryUserIdByThirdParty").setObjects(new Object[] {record.getOpenId(),"SINA"});
+                UserThirdparty thirdparty = (UserThirdparty) provider.execute(parameter).getModel();
                 if (thirdparty !=null) {
-                    User user = userService.queryById(thirdparty.getUserId());
+                    parameter = new Parameter("userService","queryById").setId(thirdparty.getUserId());
+                    User user = (User) provider.execute(parameter).getModel();
                     resultList.add(UserHelper.formatResultMap(user));
                 } else {
                     return setModelMap(modelMap, HttpCode.NOT_DATA);
@@ -101,19 +115,23 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
                        @ApiParam(required = true, value = "数据:(['id','id',...,'id'])") @RequestParam(value = "data") String data) {
         JSONArray dataJson = JSONArray.parseArray(data);
 
+
+        Parameter parameter = null;
         List<UserWeibo> resultList = InstanceUtil.newArrayList();
         for (Object obj:dataJson) {
             String id = (String) obj;
-            UserWeibo weiboBean = userWeiboService.queryById(id);
+            parameter = new Parameter(getService(),"queryById").setId(id);
+            UserWeibo weiboBean = (UserWeibo) provider.execute(parameter).getModel();
             if (weiboBean != null && weiboBean.getIsInvite()) {
                 resultList.add(weiboBean);
             }
         }
 
-        WeiboInvite record = new WeiboInviteBean();
+        WeiboInvite record = new WeiboInvite();
         record.setInvites(resultList);
 
-        UserThirdparty userThirdparty = thirdPartyService.queryThirdPartyByUserId(getCurrUser(),"SINA");
+        parameter = new Parameter("userThirdpartyService","queryThirdPartyByUserId").setObjects(new Object[] {getCurrUser(),"SINA"});
+        UserThirdparty userThirdparty = (UserThirdparty) provider.execute(parameter).getModel();
         if (userThirdparty == null) {
             return setModelMap(modelMap,HttpCode.USER_NON_EXISTENT);
         }
@@ -128,13 +146,77 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
         return setSuccessModelMap(modelMap);
     }
 
+    public void updateWeibo(String userId) {
+        Parameter parameter = new Parameter("userThirdpartyService","queryThirdPartyByUserId").setObjects(new Object[] {userId,"SINA"});
+        UserThirdparty thirdparty = (UserThirdparty) provider.execute(parameter).getModel();
+        int nextCursor = 0;
+        int wbPageNum = 200;
+        String url = Resources.THIRDPARTY.getString("getFriendsURL_sina");
+        String params = "?access_token=" + thirdparty.getToken() + "&uid=" + thirdparty.getOpenId()+"&count="+wbPageNum+"&cursor="+nextCursor;
+        String res = HttpUtil.httpClientPost(url+params);
+        JSONObject json = JSONObject.parseObject(res);
+        if (!json.containsKey("error_code")) {
+            Map<String,Object> weiboParams = InstanceUtil.newHashMap();
+            nextCursor = json.getInteger("next_cursor");
+            boolean flag = true;
+            while (flag) {
+                JSONArray jsonArray = json.getJSONArray("users");
+                for (Object obj : jsonArray) {
+                    JSONObject o = (JSONObject) obj;
+                    weiboParams.clear();
+                    weiboParams.put("userId",userId);
+                    weiboParams.put("openId",o.getString("id"));
+                    parameter = new Parameter(getService(),"query").setMap(weiboParams);
+                    Page<UserWeibo> userWeiboPage = (Page<UserWeibo>) provider.execute(parameter).getPage();
+                    UserWeibo userWeibo = userWeiboPage != null && userWeiboPage.getRecords() != null && userWeiboPage.getRecords().size() > 0 ? userWeiboPage.getRecords().get(0) : null;
+                    if (userWeibo == null) {
+                        userWeibo = new UserWeibo();
+                        userWeibo.setUserId(userId);
+                        userWeibo.setAvatar(o.getString("profile_image_url"));
+                        userWeibo.setName(o.getString("name"));
+                        userWeibo.setOpenId(o.getString("id"));
+                        userWeibo.setSummary(o.getString("description"));
+                        userWeibo.setVerified(o.getBoolean("verified"));
+                        String gender = o.getString("gender");
+                        if (StringUtils.equals("m",gender)) {
+                            userWeibo.setGender("1");
+                        } else if (StringUtils.equals("f",gender)) {
+                            userWeibo.setGender("0");
+                        } else {
+                            userWeibo.setGender("1");
+                        }
+                        parameter = new Parameter(getService(),"update").setModel(userWeibo);
+                        provider.execute(parameter);
+                    }
+                }
+                if (nextCursor == 0) {
+                    flag = false;
+                    params = "?access_token=" + thirdparty.getToken() + "&uid=" + thirdparty.getOpenId() + "&count=" + wbPageNum + "&cursor=" + nextCursor;
+                    res = HttpUtil.httpClientPost(url + params);
+                    json = JSONObject.parseObject(res);
+                }
+            }
+        }
+    }
+
 
     private void sendWeiboInvite(final WeiboInvite record) {
         executorService.submit(new Runnable() {
             public void run() {
-                queueSender.send("iBQS.weiboInviteSender", record);
+                StringBuffer content = new StringBuffer();
+                for (UserWeibo invite:record.getInvites()) {
+                    invite.setIsInvite(false);
+                    Parameter parameter = new Parameter(getService(),"update").setModel(invite);
+                    provider.execute(parameter);
+                    content.append("@").append(invite.getName()).append(" ");
+                }
+                content.append("我最近在玩#表情说说#，最火的表情社区！一起来玩吧~下载地址:http://www.biaoqing.com");
+                try {
+                    WeiboHelper.sendWeibo(record.getToken(),content.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-    }*/
-
+    }
 }

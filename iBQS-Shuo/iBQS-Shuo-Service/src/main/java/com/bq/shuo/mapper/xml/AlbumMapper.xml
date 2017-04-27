@@ -7,6 +7,30 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		select id_ from bq_album
 		<where>
+			<if test="cm.subjectId != null and cm.subjectId != ''">
+				and subject_id = #{cm.subjectId}
+			</if>
+			<if test="cm.layerId != null and cm.layerId != ''">
+				and layer_id = #{cm.layerId}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				and user_id = #{cm.userId}
+			</if>
+			<if test="cm.image != null and cm.image != ''">
+				and image_ like CONCAT('%',#{cm.image},'%')
+			</if>
+			<if test="cm.imageType != null and cm.imageType != ''">
+				and image_type = #{cm.imageType}
+			</if>
+			<if test="cm.imageWidth != null and cm.imageWidth != ''">
+				and image_width = #{cm.imageWidth}
+			</if>
+			<if test="cm.imageHeight != null and cm.imageHeight != ''">
+				and image_height = #{cm.imageHeight}
+			</if>
+			<if test="cm.enable != null and cm.enable != ''">
+				and enable_ = #{cm.enable}
+			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
 				and (
 					or subject_id like CONCAT('%',#{cm.keyword},'%')

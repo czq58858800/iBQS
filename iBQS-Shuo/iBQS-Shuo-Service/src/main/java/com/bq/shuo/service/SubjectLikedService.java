@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SystemConfigUtil;
 import com.bq.shuo.mapper.SubjectLikedMapper;
+import com.bq.shuo.model.Album;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.SubjectLiked;
 import com.bq.shuo.core.base.BaseService;
@@ -35,13 +36,16 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
     private SubjectService subjectService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AlbumLikedService albumLikedService;
+    @Autowired
+    private AlbumService albumService;
 
     public Page<SubjectLiked> queryBeans(Map<String, Object> params) {
         Page<SubjectLiked> page = query(params);
         String currUserId = (String) params.get("currUserId");
         for (SubjectLiked record:page.getRecords()) {
             record.setSubject(subjectService.queryBeanById(record.getSubjectId(),currUserId));
-            record.setUser(userService.queryById(record.getUserId()));
         }
         return page;
     }
@@ -65,9 +69,9 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
                 // 主题喜欢数+1
                 subjectService.incrSubjectCounter(subjectId, CounterHelper.Subject.LIKED);
                 // 用户喜欢作品数+1
-                userService.incrUserCounter(subject.getUserId(),CounterHelper.Subject.WORKS_LIKE);
+                userService.incrUserCounter(subject.getUserId(),CounterHelper.User.WORKS_LIKE);
                 // 作者作品喜欢数+1
-                userService.incrUserCounter(userId,CounterHelper.Subject.MY_LIKE_WORKS);
+                userService.incrUserCounter(userId,CounterHelper.User.MY_LIKE_WORKS);
 
                 int likedCount = selectCountBySubjectId(subjectId);
 
@@ -76,6 +80,11 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
                     subject.setIsHot(true);
                     subject.setHotTime(new Date());
                     subjectService.update(subject);
+                }
+
+                if (subject.getAlbumNum() == 1) {
+                    Album album = albumService.querySubjectIdByList(subjectId,userId).get(0);
+                    albumLikedService.updateLiked(album.getId(),userId);
                 }
                 return true;
             }
@@ -87,17 +96,22 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
     public synchronized boolean updateCancelLiked(String subjectId, String userId) {
         String followId = selectLikedById(subjectId,userId);
         if (StringUtils.isNotBlank(followId)) {
+            delete(followId);
             Subject subject = subjectService.queryById(subjectId);
-            if (subject!=null) {
-                delete(followId);
+            if (subject!=null && subject.getEnable()) {
                 // 主题喜欢数-1
                 subjectService.decrSubjectCounter(subjectId,CounterHelper.Subject.LIKED);
                 // 用户喜欢作品数-1
-                userService.decrUserCounter(subject.getUserId(),CounterHelper.Subject.WORKS_LIKE);
+                userService.decrUserCounter(subject.getUserId(),CounterHelper.User.WORKS_LIKE);
                 // 作者作品喜欢数-1
-                userService.decrUserCounter(userId,CounterHelper.Subject.MY_LIKE_WORKS);
-                return true;
+                userService.decrUserCounter(userId,CounterHelper.User.MY_LIKE_WORKS);
+
+                if (subject.getAlbumNum() == 1) {
+                    Album album = albumService.querySubjectIdByList(subjectId,userId).get(0);
+                    albumLikedService.updateCancelLiked(album.getId(),userId);
+                }
             }
+            return true;
         }
         return false;
     }

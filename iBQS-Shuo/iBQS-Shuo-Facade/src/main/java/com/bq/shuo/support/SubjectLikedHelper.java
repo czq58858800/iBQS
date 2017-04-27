@@ -32,7 +32,6 @@ public final class SubjectLikedHelper {
         resultMap.put("subjectId",record.getSubjectId());
         resultMap.put("likedTime",record.getCreateTime().getTime());
         resultMap.put("subject",SubjectHelper.formatResultMap(record.getSubject()));
-        resultMap.put("user",UserHelper.formatBriefResultMap(record.getUser()));
         return resultMap;
     }
 }

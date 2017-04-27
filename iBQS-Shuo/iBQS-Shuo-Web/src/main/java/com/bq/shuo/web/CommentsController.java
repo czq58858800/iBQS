@@ -3,11 +3,11 @@ package com.bq.shuo.web;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
-import com.bq.core.util.Request2ModelUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
-import com.bq.shuo.model.Push;
+import com.bq.shuo.core.util.Push;
+import com.bq.shuo.core.util.PushType;
 import com.bq.shuo.support.CommentsHelper;
 import com.bq.shuo.model.Comments;
 import com.bq.shuo.model.Subject;
@@ -48,6 +48,7 @@ public class CommentsController extends AbstractController<IShuoProvider> {
         Assert.notNull(subjectId, "SUBJECT_ID");
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
+        params.put("enable",true);
         Parameter queryBeansParam = new Parameter(getService(),"queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(CommentsHelper.formatResultList(page.getRecords()));
@@ -95,6 +96,8 @@ public class CommentsController extends AbstractController<IShuoProvider> {
 
 //        userService.sendPushQueue(new PushQueue(getCurrUser(),subject.getUserId(),subjectId,content,"1"));
 
+        // 评论推送
+        new Push(PushType.COMMENTS,getCurrUser(),subject.getUserId(),subjectId,content);
 
         return setSuccessModelMap(modelMap);
     }
@@ -116,7 +119,7 @@ public class CommentsController extends AbstractController<IShuoProvider> {
             // 当前登录用户ID与创建主题的用户ID不一致
             return setModelMap(modelMap,HttpCode.UNAUTHORIZED);
         }
-        provider.execute(new Parameter(getService(),"delete").setId(id));
+        provider.execute(new Parameter(getService(),"delete").setObjects(new Object[] {id,getCurrUser()}));
         return setSuccessModelMap(modelMap);
     }
 

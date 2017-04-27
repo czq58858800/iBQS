@@ -1,10 +1,11 @@
 package com.bq.shuo.model;
 
-import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.Date;
 
 
 /**

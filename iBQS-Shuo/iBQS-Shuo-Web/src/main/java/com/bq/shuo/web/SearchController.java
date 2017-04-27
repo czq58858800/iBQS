@@ -66,6 +66,8 @@ public class SearchController extends AbstractController<IShuoProvider> {
             }
 
             params.put("pageSize",4);
+            params.put("audit","2");
+            params.put("enable",true);
             Parameter queryTopicsBeansParam = new Parameter("topicsService","queryBeans").setMap(params);
             Page topicsPage = provider.execute(queryTopicsBeansParam).getPage();
 
@@ -128,6 +130,8 @@ public class SearchController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
         Assert.notNull(keyword, "KEYWORD");
         Map<String, Object> params = WebUtil.getParameterMap(request);
+        params.put("audit","2");
+        params.put("enable",true);
         Parameter queryBeansParam = new Parameter("topicsService","queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(TopicHelper.formatResultList(page.getRecords()));
@@ -183,6 +187,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
 
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
+        params.put("audit",2);
         params.put("orderType",2);
         if (StringUtils.equals("SYN",t.trim().toUpperCase())) {
             Parameter queryCategoryBeansParam = new Parameter("categoryService","queryBeans").setMap(params);

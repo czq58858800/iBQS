@@ -193,6 +193,9 @@ public class UserService extends BaseService<User> {
 
             try {
                 Integer number = selectUserCounter(userId, field)+cal;
+                if (number < 0) {
+                    number = selectUserCounter(userId,field);
+                }
                 logger.info("用户（User）"+field+":" + number);
                 CacheUtil.getCache().hset(key,field,String.valueOf(number));
                 userMapper.updateCounter(userId,field,number);
@@ -228,5 +231,15 @@ public class UserService extends BaseService<User> {
             return page.getRecords().get(0);
         }
         return new User();
+    }
+
+    public User selectByPhone(String phone) {
+        Map<String,Object> params = InstanceUtil.newHashMap();
+        params.put("phone",phone);
+        Page<User> page = queryBeans(params);
+        if (page != null && page.getRecords() != null && page.getRecords().size() > 0) {
+            return page.getRecords().get(0);
+        }
+        return null;
     }
 }

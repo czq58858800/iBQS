@@ -53,6 +53,8 @@ public class TopicController extends AbstractController<IShuoProvider> {
                        @ApiParam(required = true, value = "类型(NEW:最新;HOT:最热;RCMD:推荐)") @RequestParam(value = "orderType") String orderType) {
         Map<String,Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
+        params.put("enable",true);
+        params.put("audit","2");
         Parameter queryBeansParam = new Parameter(getService(),"queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(TopicHelper.formatResultList(page.getRecords()));
@@ -109,7 +111,7 @@ public class TopicController extends AbstractController<IShuoProvider> {
             }
         }
         record.setOwnerId(getCurrUser());
-        record.setAudit("0");
+        record.setAudit("1");
         record.setViewNum(0);
         record.setIsHot(false);
         provider.execute(new Parameter("topicsService","update").setModel(record));

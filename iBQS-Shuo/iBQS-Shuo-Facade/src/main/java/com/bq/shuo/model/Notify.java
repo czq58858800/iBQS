@@ -29,7 +29,7 @@ public class Notify extends BaseModel {
 	@TableField("is_read")
 	private Boolean isRead;
 	@TableField("is_push")
-	private Integer isPush;
+	private Boolean isPush;
     /**
      * 消息类型：（1:评论；2:@；3：转发；4：喜欢）
      */
@@ -42,6 +42,18 @@ public class Notify extends BaseModel {
 
 	@TableField(exist = false)
 	private User sendUser;
+
+	public Notify(){}
+
+	public Notify(String sendUserId, String receiveUserId, String subjectId, String content, String msgType) {
+		this.sendUserId = sendUserId;
+		this.receiveUserId = receiveUserId;
+		this.subjectId = subjectId;
+		this.content = content;
+		this.msgType = msgType;
+		this.isPush = false;
+		this.isRead = false;
+	}
 
 
 	public String getContent() {
@@ -84,11 +96,11 @@ public class Notify extends BaseModel {
 		this.isRead = isRead;
 	}
 
-	public Integer getIsPush() {
+	public Boolean getIsPush() {
 		return isPush;
 	}
 
-	public void setIsPush(Integer isPush) {
+	public void setIsPush(Boolean isPush) {
 		this.isPush = isPush;
 	}
 

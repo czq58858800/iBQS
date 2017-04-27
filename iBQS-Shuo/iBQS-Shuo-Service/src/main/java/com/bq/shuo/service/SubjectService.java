@@ -55,8 +55,6 @@ public class SubjectService extends BaseService<Subject> {
     @Autowired
     private DynamicService dynamicService;
 
-
-
     public Page<Subject> queryByHot(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
         page.setRecords(getSubjectListInfo(page.getRecords(),params));
@@ -135,8 +133,14 @@ public class SubjectService extends BaseService<Subject> {
             try {
                 Integer number = selectSubjectCounter(subjectId, field) + cal;
 
+                if (number < 0) {
+                    number = selectSubjectCounter(subjectId,field);
+                }
+
                 logger.info("表情（Subject） key:"+key+" field:"+field+" " + number);
+
                 CacheUtil.getCache().hset(key,field,String.valueOf(number));
+
                 subjectMapper.updateCounter(subjectId,field,number);
             } finally {
                 CacheUtil.unlock(lockKey);
@@ -157,19 +161,9 @@ public class SubjectService extends BaseService<Subject> {
                 record.setAlbums(albumService.querySubjectIdByList(record.getId(),currUserId));
             }
 
-
-            record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
-
-            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
-
-            record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
-
-            record = getUserStatus(record,currUserId);
-
-
             User user = userService.queryById(record.getUserId());
             record.setUser(user);
-//            getSubjectDetail(record,currUserId);
+            getSubjectDetail(record,currUserId);
         }
         return  records;
     }
@@ -232,7 +226,10 @@ public class SubjectService extends BaseService<Subject> {
 
     public Subject queryBeanById(String id, String currUserId) {
         Subject record = queryById(id);
-        return getSubjectDetail(record,currUserId);
+        if (record != null && record.getEnable()) {
+            return getSubjectDetail(record, currUserId);
+        }
+        return null;
     }
 
     public List<Subject> queryByRecommentNew(Map<String, Object> params) {
@@ -283,5 +280,13 @@ public class SubjectService extends BaseService<Subject> {
     public String selectHashById(String hashCode) {
         String id = subjectMapper.selectHashById(hashCode);
         return id;
+    }
+
+    @Override
+    public Subject update(Subject record) {
+        if (StringUtils.isBlank(record.getId())) {
+            userService.incrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
+        }
+        return super.update(record);
     }
 }

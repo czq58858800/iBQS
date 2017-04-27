@@ -82,7 +82,7 @@ public class CategoryReview extends BaseModel {
 		this.tags=tags;
 		this.summary=summary;
 		this.userId=userId;
-		this.audit="0";
+		this.audit="1";
 	}
 
 

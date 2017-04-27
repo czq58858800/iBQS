@@ -100,9 +100,9 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
     public boolean updateCancelLiked(String subjectId, String userId) {
         String followId = selectByCollId(subjectId,userId);
         if (StringUtils.isNotBlank(followId)) {
+            delete(followId);
             Category record = categoryService.queryById(subjectId);
-            if (record!=null) {
-                delete(followId);
+            if (record!=null && record.getEnable()) {
                 // 主题喜欢数-1
                 categoryService.decrCategoryCounter(subjectId,CounterHelper.Category.COLLECTION);
                 // 作者作品喜欢数-1

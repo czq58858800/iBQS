@@ -35,7 +35,7 @@ public final class MaterialHelper {
         resultMap.put("name",record.getName());
         resultMap.put("summary",record.getSummary());
         resultMap.put("tags",record.getTags());
-        resultMap.put("stuffNum",record.getSortNum());
+        resultMap.put("stuffNum",record.getStuffNum());
         resultMap.put("viewNum",record.getViewNum());
         resultMap.put("createTime",record.getCreateTime().getTime());
         resultMap.put("isColl",record.isColl());

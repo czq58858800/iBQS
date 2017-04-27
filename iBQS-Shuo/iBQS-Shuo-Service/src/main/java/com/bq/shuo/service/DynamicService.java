@@ -49,11 +49,7 @@ public class DynamicService extends BaseService<Dynamic> {
     public void deleteByValId(String valId,String type) {
         String id = dynamicMapper.selectValIdById(valId,type);
         if(StringUtils.isNotBlank(id)) {
-            Dynamic record = queryById(id);
-            if (record != null && record.getEnable()) {
-                record.setEnable(false);
-                update(record);
-            }
+            delete(id);
         }
 
     }

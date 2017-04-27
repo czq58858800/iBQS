@@ -43,6 +43,7 @@ public final class TopicHelper {
             resultMap.put("viewNum",record.getViewNum());
             resultMap.put("cover",record.getCover());
             resultMap.put("createTime",record.getCreateTime().getTime());
+            resultMap.put("audit",record.getAudit());
             if (record.getOwner() != null) {
                 Map<String,Object> userMap = InstanceUtil.newHashMap();
                 userMap.put("uid",record.getOwner().getId());

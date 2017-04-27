@@ -60,8 +60,10 @@ public class ForwardService extends BaseService<Forward> {
 
     public Forward queryBeanById(String id, String currUserId) {
         Forward record = queryById(id);
-        record.setSubject(subjectService.queryBeanById(record.getSubjectId(),currUserId));
-        record.setUser(userService.queryById(record.getUserId()));
+        if (record != null) {
+            record.setSubject(subjectService.queryBeanById(record.getSubjectId(), currUserId));
+            record.setUser(userService.queryById(record.getUserId()));
+        }
         return record;
     }
 
@@ -81,5 +83,20 @@ public class ForwardService extends BaseService<Forward> {
         userService.incrUserCounter(record.getUserId(), CounterHelper.User.FORWARD);
         subjectService.incrSubjectCounter(record.getSubjectId(),CounterHelper.Subject.FORWARD);
         return record;
+    }
+
+    @Override
+    public void delete(String id) {
+        Forward record = queryById(id);
+        if (record != null) {
+            //Redis转发数计数器
+            subjectService.decrSubjectCounter(record.getSubjectId(), CounterHelper.Subject.FORWARD);
+            //Redis用户转发数
+            userService.decrUserCounter(record.getUserId(), CounterHelper.User.FORWARD);
+            dynamicService.deleteByValId(id,"2");
+            super.delete(id);
+
+        }
+
     }
 }

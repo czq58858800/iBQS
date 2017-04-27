@@ -137,19 +137,12 @@
 			<artifactId>qiniu-java-sdk</artifactId>
 			<version>7.2.2</version>
 		</dependency>
+        <dependency>
+            <groupId>com.bq</groupId>
+            <artifactId>umeng-push</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 
-		<!-- 融云 -->
-		<dependency>
-			<groupId>com.bq</groupId>
-			<artifactId>rongcloud</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
-	</dependencies>
+    </dependencies>
 </project>

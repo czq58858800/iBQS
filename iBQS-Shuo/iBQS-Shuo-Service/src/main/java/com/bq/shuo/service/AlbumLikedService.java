@@ -71,32 +71,45 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         return false;
     }
 
-    public synchronized boolean updateLiked(Album record, User currUser) {
-        String albumLikedId = selectByLikedId(record.getId(),currUser.getId());
+    public synchronized boolean updateLiked(String albumId, String currUserId) {
+        String albumLikedId = selectByLikedId(albumId,currUserId);
         if (StringUtils.isBlank(albumLikedId)) {
-            AlbumLiked albumLiked = new AlbumLiked(record.getId(),currUser.getId());
+            Album record = albumService.queryById(albumId);
+            if (record != null) {
+                AlbumLiked albumLiked = new AlbumLiked(albumId, currUserId);
 
-            update(albumLiked);
+                update(albumLiked);
 
-            // 喜欢专辑计数器
-            record.setLikedNum(record.getLikedNum()+1);
-            albumService.update(record);
+                // 喜欢专辑计数器
+                record.setLikedNum(record.getLikedNum() + 1);
+                albumService.update(record);
 
-            // 并喜欢主题
-            subjectLikedService.updateLiked(record.getSubjectId(),currUser.getId());
-            return true;
+                // 并喜欢主题
+                subjectLikedService.updateLiked(record.getSubjectId(), currUserId);
+                return true;
+            }
         }
         return false;
     }
 
-    public synchronized boolean updateCancelLiked(Album record, User currUser) {
-        String albumLikedId = selectByLikedId(record.getId(),currUser.getId());
+    public synchronized boolean updateCancelLiked(String albumId, String currUserId) {
+        String albumLikedId = selectByLikedId(albumId,currUserId);
         if (StringUtils.isNotBlank(albumLikedId)) {
-            delete(albumLikedId);
-            // 减去-喜欢专辑计数器
-            record.setLikedNum(record.getLikedNum()-1);
-            albumService.update(record);
-            return true;
+            Album record = albumService.queryById(albumId);
+            if (record != null) {
+                delete(albumLikedId);
+                // 减去-喜欢专辑计数器
+                record.setLikedNum(record.getLikedNum() - 1);
+                albumService.update(record);
+
+
+                Subject subject = subjectService.queryById(record.getSubjectId());
+                if (subject.getAlbumNum() == 1) {
+                    subjectLikedService.updateCancelLiked(record.getSubjectId(),currUserId);
+                }
+
+                return true;
+            }
         }
         return false;
     }

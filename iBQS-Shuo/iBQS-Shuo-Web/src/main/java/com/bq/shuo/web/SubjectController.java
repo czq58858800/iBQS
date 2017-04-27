@@ -11,13 +11,14 @@ import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.util.Push;
+import com.bq.shuo.core.util.PushType;
 import com.bq.shuo.core.util.QiniuUtil;
 import com.bq.shuo.model.*;
+import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.SubjectHelper;
 import com.bq.shuo.support.SubjectLikedHelper;
 import com.bq.shuo.support.TopicHelper;
-import com.bq.shuo.provider.IShuoProvider;
-import com.bq.shuo.support.UserHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -136,7 +137,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
                          @ApiParam(required = true, value = "主题ID")@RequestParam(value = "id") String id) {
         Parameter parameter = new Parameter(getService(),"queryBeanById").setObjects(new Object[] {id,getCurrUser()});
         Subject record = (Subject) provider.execute(parameter).getModel();
-        if (record != null && StringUtils.isNotBlank(record.getId())) {
+        if (record != null && StringUtils.isNotBlank(record.getId()) && record.getEnable()) {
             return setSuccessModelMap(modelMap, SubjectHelper.formatResultMap(record));
         }
         return setModelMap(modelMap, HttpCode.NOT_DATA);
@@ -190,12 +191,10 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             Parameter parameter = new Parameter("subjectLikedService","updateLiked").setObjects(new Object[]{id,getCurrUser()});
             boolean isLiked = (boolean) provider.execute(parameter).getObject();
             if (!isLiked) {
-                parameter = new Parameter("userService","queryById").setId(getCurrUser());
-                User currUser = (User) provider.execute(parameter).getModel();
                 parameter = new Parameter("subjectService","queryBeanById").setObjects(new Object[]{id,getCurrUser()});
                 Subject subject = (Subject) provider.execute(parameter).getModel();
-                // 点赞推送
-                new Push(subject.getUser().getLoginDevice(),subject.getUser().getToken(),currUser.getName()+"，喜欢了你的主题");
+                // 评论推送
+                new Push(PushType.LIKED,getCurrUser(),subject.getUserId());
                 return setModelMap(modelMap,HttpCode.HAS_LIKED);
             }
         } else if (StringUtils.equals(liked,"C")){
@@ -206,6 +205,37 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             }
         } else {
             return setModelMap(modelMap,HttpCode.UNKNOWN_TYPE);
+        }
+        return setSuccessModelMap(modelMap);
+    }
+
+    /**
+     * 喜欢主题
+     * @param request
+     * @param modelMap
+     * @param id 用户ID，喜欢：Y:喜欢;C:取消喜欢
+     * @return
+     */
+    @ApiOperation(value = "删除喜欢主题")
+    @PostMapping(value = "/delLiked")
+    public Object delLiked(HttpServletRequest request, ModelMap modelMap,
+                        @ApiParam(required = true, value = "喜欢ID")@RequestParam(value = "id") String id) {
+        Parameter parameter = new Parameter("subjectLikedService","queryById").setId(id);
+        SubjectLiked record = (SubjectLiked) provider.execute(parameter).getModel();
+
+        if (record != null) {
+
+            String subjectId = record.getSubjectId();
+            parameter = new Parameter("subjectService","queryById").setId(subjectId);
+            Subject subject = (Subject) provider.execute(parameter).getModel();
+
+            if (subject.getEnable()) {
+                parameter = new Parameter("subjectLikedService", "updateCancelLiked").setObjects(new Object[]{subjectId, getCurrUser()});
+                provider.execute(parameter);
+            }
+
+            parameter = new Parameter("subjectLikedService","delete").setId(id);
+            provider.execute(parameter);
         }
         return setSuccessModelMap(modelMap);
     }
@@ -272,23 +302,6 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         parameter = new Parameter("subjectService","update").setModel(subject);
         subject = (Subject) provider.execute(parameter).getModel();
 
-
-        parameter = new Parameter("userService","queryById").setId(getCurrUser());
-        User currUser = (User) provider.execute(parameter).getModel();
-
-        Map<String,Object> params = InstanceUtil.newHashMap();
-        for (String userName : UserHelper.findAtUser(content)){
-            params.clear();
-            params.put("name",userName);
-            parameter = new Parameter("userService","query").setMap(params);
-            Page<User> pageInfo = (Page<User>) provider.execute(parameter).getPage();
-            if (!pageInfo.getRecords().isEmpty()) {
-                User user = pageInfo.getRecords().get(0);
-                // @推送
-                new Push(user.getLoginDevice(),user.getToken(),currUser.getName()+"，表情中提到了你。");
-            }
-        }
-
         JSONArray imagesArr = JSONArray.parseArray(images);
         subject = upload(imagesArr,subject);
 
@@ -303,6 +316,9 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
         parameter = new Parameter("dynamicService","update").setModel(dynamic);
         provider.execute(parameter);
+
+        // 发布推送
+        new Push(PushType.SUBJECT,getCurrUser(),subject.getUserId(),subjectId,content);
 
         return setSuccessModelMap(modelMap);
     }
@@ -328,12 +344,14 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
             if (isLayer) {
                 Layer layer = new Layer();
+                layer.setEnable(true);
                 layer.setLayer(imageObj.getString("layerInfo"));
                 layer.setUserId(getCurrUser());
                 Parameter parameter = new Parameter("layerService","update").setModel(layer);
-                provider.execute(parameter);
+                layer = (Layer) provider.execute(parameter).getModel();
                 album.setLayerId(layer.getId());
             }
+
             Parameter parameter = new Parameter("albumService","update").setModel(album);
             provider.execute(parameter);
         }

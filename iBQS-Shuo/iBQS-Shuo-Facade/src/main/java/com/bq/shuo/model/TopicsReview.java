@@ -65,7 +65,8 @@ public class TopicsReview extends BaseModel {
 		this.coverWidth = coverWidth;
 		this.coverHeight = coverHeight;
 		this.summary = summary;
-		this.audit = "0";
+		this.audit = "1";
+		this.setEnable(true);
 	}
 
 

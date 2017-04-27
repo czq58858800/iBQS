@@ -7,8 +7,12 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		SELECT id_ FROM bq_topics
 		<where>
-			AND audit_ = '2'
-			AND enable_ = 1
+			<if test="cm.enable != null">
+				AND enable_ = #{cm.enable}
+			</if>
+			<if test="cm.audit != null  and cm.audit != ''">
+				AND audit_ = #{cm.audit}
+			</if>
 			<if test="cm.orderType != null and cm.orderType.equals('HOT')">
 				and is_hot = 1
 			</if>

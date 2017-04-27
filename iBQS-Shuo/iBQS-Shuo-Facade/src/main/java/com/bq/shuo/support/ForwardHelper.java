@@ -25,23 +25,25 @@ public final class ForwardHelper {
 
     public static Map<String,Object> formatResultMap(Forward record) {
         Map<String,Object> resultMap = InstanceUtil.newHashMap();
-        resultMap.put("uid", record.getId());
-        resultMap.put("dynType",2);
-        resultMap.put("content",record.getContent());
-        resultMap.put("publishTime",record.getCreateTime().getTime());
-        if (record.getUser() != null) {
-            Map<String,Object> userMap = InstanceUtil.newHashMap();
-            User user = record.getUser();
-            userMap.put("uid",user.getId());
-            userMap.put("name",user.getName());
-            userMap.put("avatar",user.getAvatar());
-            userMap.put("sex",user.getSex());
-            userMap.put("summary",user.getSummary());
-            userMap.put("type",user.getUserType());
-            userMap.put("lastDynamicTime",user.getLastDynamicTime() != null ? user.getLastDynamicTime().getTime() : user.getLastDynamicTime());
-            resultMap.put("user", userMap);
+        if (record != null) {
+            resultMap.put("uid", record.getId());
+            resultMap.put("dynType", 2);
+            resultMap.put("content", record.getContent());
+            resultMap.put("publishTime", record.getCreateTime().getTime());
+            if (record.getUser() != null) {
+                Map<String, Object> userMap = InstanceUtil.newHashMap();
+                User user = record.getUser();
+                userMap.put("uid", user.getId());
+                userMap.put("name", user.getName());
+                userMap.put("avatar", user.getAvatar());
+                userMap.put("sex", user.getSex());
+                userMap.put("summary", user.getSummary());
+                userMap.put("type", user.getUserType());
+                userMap.put("lastDynamicTime", user.getLastDynamicTime() != null ? user.getLastDynamicTime().getTime() : user.getLastDynamicTime());
+                resultMap.put("user", userMap);
+            }
+            resultMap.put("forward", SubjectHelper.formatResultMap(record.getSubject()));
         }
-        resultMap.put("forward",SubjectHelper.formatResultMap(record.getSubject()));
         return resultMap;
     }
 }

@@ -1,8 +1,14 @@
 package com.bq.shuo.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.util.InstanceUtil;
+import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserWeibo;
 import com.bq.shuo.core.base.BaseService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,5 +20,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserWeiboService extends BaseService<UserWeibo> {
-	
+
+    public Page<UserWeibo> queryBeans(Map<String, Object> params) {
+        Page<String> idPage = this.getPage(params);
+        idPage.setRecords(mapper.selectIdPage(idPage, params));
+        Page<UserWeibo> page = getPage(idPage);
+        return page;
+    }
 }

@@ -6,6 +6,8 @@ import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.Request2ModelUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.util.Push;
+import com.bq.shuo.core.util.PushType;
 import com.bq.shuo.model.*;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
@@ -71,30 +73,8 @@ public class ForwardController extends AbstractController<IShuoProvider> {
         parameter = new Parameter("dynamicService","update").setModel(dynamic);
         provider.execute(parameter);
 
-        parameter = new Parameter("userService","queryById").setId(getCurrUser());
-        User currUser = (User) provider.execute(parameter).getModel();
-
-        parameter = new Parameter("userService","queryById").setId(subject.getUserId());
-        User subUser = (User) provider.execute(parameter).getModel();
-
-        String loginDevice = subUser.getLoginDevice();
-        String pushDeviceToken = subUser.getPushDeviceToken();
-
         // 转发推送
-        new Push(loginDevice,pushDeviceToken,currUser.getName()+"，转发你的主题");
-
-        Map<String,Object> params = InstanceUtil.newHashMap();
-        for (String userName : UserHelper.findAtUser(content)){
-            params.clear();
-            params.put("name",userName);
-            parameter = new Parameter("userService","query").setMap(params);
-            Page<User> pageInfo = (Page<User>) provider.execute(parameter).getPage();
-            if (!pageInfo.getRecords().isEmpty()) {
-                User user = pageInfo.getRecords().get(0);
-                // @推送
-                new Push(user.getLoginDevice(),user.getToken(),currUser.getName()+"，转发中提到了你。");
-            }
-        }
+        new Push(PushType.FORWARD,getCurrUser(),subject.getUserId(),subjectId,content);
 
         return setSuccessModelMap(modelMap);
     }

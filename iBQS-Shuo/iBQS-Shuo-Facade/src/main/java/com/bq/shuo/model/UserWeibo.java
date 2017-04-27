@@ -22,7 +22,7 @@ public class UserWeibo extends BaseModel {
      * 微博用户UID
      */
 	@TableField("open_id")
-	private Long openId;
+	private String openId;
     /**
      * 用户昵称
      */
@@ -39,7 +39,7 @@ public class UserWeibo extends BaseModel {
      * 	是否是微博认证用户，即加V用户，true：是，false：否
      */
 	@TableField("verified_")
-	private Integer verified;
+	private Boolean verified;
     /**
      * 性别，0：女、1：男、2：未知
      */
@@ -49,19 +49,19 @@ public class UserWeibo extends BaseModel {
      * 用户ID:所属用户的微博好友
      */
 	@TableField("user_id")
-	private Long userId;
+	private String userId;
     /**
      * true:允许邀请；false：不允许邀请
      */
 	@TableField("is_invite")
-	private Integer isInvite;
+	private Boolean isInvite;
 
 
-	public Long getOpenId() {
+	public String getOpenId() {
 		return openId;
 	}
 
-	public void setOpenId(Long openId) {
+	public void setOpenId(String openId) {
 		this.openId = openId;
 	}
 
@@ -89,11 +89,11 @@ public class UserWeibo extends BaseModel {
 		this.avatar = avatar;
 	}
 
-	public Integer getVerified() {
+	public Boolean getVerified() {
 		return verified;
 	}
 
-	public void setVerified(Integer verified) {
+	public void setVerified(Boolean verified) {
 		this.verified = verified;
 	}
 
@@ -105,19 +105,19 @@ public class UserWeibo extends BaseModel {
 		this.gender = gender;
 	}
 
-	public Long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	public Integer getIsInvite() {
+	public Boolean getIsInvite() {
 		return isInvite;
 	}
 
-	public void setIsInvite(Integer isInvite) {
+	public void setIsInvite(Boolean isInvite) {
 		this.isInvite = isInvite;
 	}
 

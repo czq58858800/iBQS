@@ -1,16 +1,22 @@
 package com.bq.shuo.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.config.Resources;
 import com.bq.core.exception.LoginException;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.support.login.LoginHelper;
+import com.bq.core.util.CacheUtil;
 import com.bq.core.util.EncryptUtils;
 import com.bq.core.util.InstanceUtil;
+import com.bq.core.util.WebUtil;
 import com.bq.model.Login;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.helper.CounterHelper;
+import com.bq.shuo.core.util.SendSms;
 import com.bq.shuo.support.UserHelper;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
@@ -22,9 +28,12 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.Random;
 
 import static org.apache.shiro.web.filter.mgt.DefaultFilter.user;
 
@@ -75,22 +84,70 @@ public class LoginController extends AbstractController<IShuoProvider> {
                              @RequestHeader(value = "Login-lat",required = false) Double LoginLat,
                              @RequestHeader(value = "Login-lng",required = false) Double LoginLng,
                              @ApiParam(required = true, value = "Token") @RequestParam(value = "token") String token) {
-        SecurityUtils.getSubject().logout();
-        Map<String, Object> params = InstanceUtil.newHashMap();
-        params.put("token", token);
-        Parameter parameter = new Parameter(getService(),"query").setMap(params);
-        Page<User> userPage = (Page<User>) provider.execute(parameter).getPage();
-        if (userPage != null && userPage.getRecords().size() > 0) {
-            User user = userPage.getRecords().get(0);
-            // 用户名密码登录
-            if (LoginHelper.login(user.getAccount())) {
-                String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
-                User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
-                updateUser(record,token,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
-                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
+        if (StringUtils.isBlank(getCurrUser())) {
+            Map<String, Object> params = InstanceUtil.newHashMap();
+            params.put("token", token);
+            Parameter parameter = new Parameter(getService(),"query").setMap(params);
+            Page<User> userPage = (Page<User>) provider.execute(parameter).getPage();
+            if (userPage != null && userPage.getRecords().size() > 0) {
+                User user = userPage.getRecords().get(0);
+                // 用户名密码登录
+                if (LoginHelper.login(user.getAccount())) {
+                    String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
+                    User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
+                    updateUser(record,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+                    return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
+                }
+            }
+        } else {
+            User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
+            return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(record.getToken(), record.getId(), record.getName(),record.getAvatar()));
+        }
+
+        throw new LoginException(Resources.getMessage("TOKEN_INVALID"));
+    }
+
+    // 发送SMS验证码
+    @ApiOperation(value = "发送SMS验证码")
+    @GetMapping("/sendSMS")
+    public Object sendSMS(ModelMap modelMap,@ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account) throws UnsupportedEncodingException {
+        // 账号不允许为空
+        Assert.notNull(account,"USER_ID_IS_NULL");
+
+        String lockKey = new StringBuilder(Constants.JR_SMS_CAPTCHA).append("LOCK:").append(account).toString();
+
+        while (!CacheUtil.getLock(lockKey)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                logger.error("", e);
             }
         }
-        throw new LoginException(Resources.getMessage("TOKEN_INVALID"));
+
+        try {
+            int captcha;
+            Random ne=new Random();//实例化一个random的对象ne
+            captcha=ne.nextInt(9999-1000+1)+1000;//为变量赋随机值1000-9999
+
+            JSONObject res = new JSONObject();
+            res.put("account",account);
+            res.put("captcha",captcha);
+            res.put("timestamp", System.currentTimeMillis());
+
+            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
+
+            if (!sendStatus) {
+                return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
+            }
+
+            // 序列化验证码信息到Redis
+            CacheUtil.getCache().set(Constants.JR_SMS_CAPTCHA+account,res);
+            logger.debug(res.toString());
+        } finally {
+            CacheUtil.unlock(lockKey);
+        }
+
+        return setSuccessModelMap(modelMap);
     }
 
     // 校验帐号是否存在

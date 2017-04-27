@@ -8,6 +8,7 @@ import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Album;
 import com.bq.shuo.model.AlbumLiked;
+import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
@@ -54,23 +55,52 @@ public class AlbumController extends AbstractController<IShuoProvider> {
         Assert.notNull(liked, "LIKED");
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
-        Parameter queryByIdParam = new Parameter(getService(), "queryById").setId(albumId);
-        Album album = (Album) provider.execute(queryByIdParam).getModel();
 
-        Parameter queryUserById = new Parameter("userService", "queryById").setId(getCurrUser());
-        User currUser = (User) provider.execute(queryUserById).getModel();
         if (StringUtils.equals(liked.toUpperCase().trim(),"Y")) {
-            Parameter updateLikedParam = new Parameter("albumLikedService","updateLiked").setObjects(new Object[]{album,currUser});
+            Parameter updateLikedParam = new Parameter("albumLikedService","updateLiked").setObjects(new Object[]{albumId,getCurrUser()});
             if (!(Boolean) provider.execute(updateLikedParam).getObject()) {
                 return setModelMap(modelMap, HttpCode.HAS_LIKED);
             }
         } else if (StringUtils.equals(liked.toUpperCase().trim(),"C")){
-            Parameter updateLikedParam = new Parameter("albumLikedService","updateCancelLiked").setObjects(new Object[]{album,currUser});
+            Parameter updateLikedParam = new Parameter("albumLikedService","updateCancelLiked").setObjects(new Object[]{albumId,getCurrUser()});
             if (!(Boolean) provider.execute(updateLikedParam).getObject()) {
                 return setModelMap(modelMap,HttpCode.NOT_LIKED);
             }
         } else {
             return setModelMap(modelMap,HttpCode.UNKNOWN_TYPE);
+        }
+        return setSuccessModelMap(modelMap);
+    }
+
+    /**
+     * 删除喜欢专辑表情
+     * @param request
+     * @param modelMap
+     * @return
+     */
+    @ApiOperation(value = "删除喜欢专辑表情")
+    @PostMapping(value = "/delLiked")
+    public Object delLiked(HttpServletRequest request, ModelMap modelMap,
+                        @ApiParam(value = "专辑喜欢ID")@RequestParam(value = "id") String id) {
+        Assert.notNull(id, "ALBUM_ID");
+        Parameter parameter = new Parameter("albumLikedService","queryById").setId(id);
+        AlbumLiked record = (AlbumLiked) provider.execute(parameter).getModel();
+
+        if (record != null) {
+
+            parameter = new Parameter("albumService","queryById").setId(record.getAlbumId());
+            Album album = (Album) provider.execute(parameter).getModel();
+
+            parameter = new Parameter("subjectService","queryById").setId(album.getSubjectId());
+            Subject subject = (Subject) provider.execute(parameter).getModel();
+
+            if (subject.getEnable()) {
+                parameter = new Parameter("albumLikedService","updateCancelLiked").setObjects(new Object[]{id,getCurrUser()});
+                provider.execute(parameter);
+            }
+
+            parameter = new Parameter("albumLikedService","delete").setId(id);
+            provider.execute(parameter);
         }
         return setSuccessModelMap(modelMap);
     }

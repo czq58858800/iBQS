@@ -2,6 +2,7 @@ package com.bq.shuo.mapper;
 
 import com.bq.shuo.model.UserContacts;
 import com.bq.shuo.core.base.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.bq.shuo.core.base.BaseMapper;
  */
 public interface UserContactsMapper extends BaseMapper<UserContacts> {
 
+
+    String selectByPhone(@Param("userId") String userId, @Param("phone")String phone);
 }

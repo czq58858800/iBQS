@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 @RestController
 @Api(value = "用户通讯录接口", description = "用户通讯录接口")
-@RequestMapping(value = "user/contacts", method = RequestMethod.POST)
+@RequestMapping(value = "user/contacts")
 public class UserContactsController extends AbstractController<IShuoProvider> {
     @Override
     public String getService() {
@@ -49,13 +49,13 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
         String regex = "0?(13|14|15|18)[0-9]{9}";
         Pattern pattern = Pattern.compile(regex);
         for (Object obj:jsonData) {
-            JSONObject o = JSONObject.parseObject((String) obj);
+            JSONObject o = (JSONObject) obj;
             String phone = (String) o.get("phone");
             String name = (String) o.get("name");
             phone = phone.replace("-","");
             Matcher matcher = pattern.matcher(phone);//匹配类
             while(matcher.find()){
-                UserContacts record = (UserContacts) provider.execute(new Parameter("userContactsService","queryByPhone").setObjects(new Object[] {getCurrUser(),matcher.group()})).getModel();
+                UserContacts record = (UserContacts) provider.execute(new Parameter("userContactsService","selectByPhone").setObjects(new Object[] {getCurrUser(),matcher.group()})).getModel();
                 if (record == null) {
                     record = new UserContacts();
                     record.setDeviceId(deviceId);

@@ -2,7 +2,9 @@ package com.bq.shuo.web;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.config.Resources;
+import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
@@ -291,7 +293,7 @@ public class UserController extends AbstractController<IShuoProvider> {
             return setSuccessModelMap(modelMap);
         } else {
 
-            thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryUserIdByThirdParty").setObjects(new Object[] {openId,type})).getModel();
+            thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {openId,type})).getModel();
             if (thirdpartyUser == null) {
                 thirdpartyUser = new UserThirdparty();
                 thirdpartyUser.setOpenId(openId);
@@ -357,10 +359,10 @@ public class UserController extends AbstractController<IShuoProvider> {
             return setModelMap(modelMap, HttpCode.REG_HAS_PHONE);
         }
         // 获取短信验证码
-        JSONObject smsCaptcha = (JSONObject) CacheUtil.getCache().get(("SMS_CAPTCHA:" + phone));
+        JSONObject smsCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_SMS_CAPTCHA + phone));
 
         // 判断短信验证码是否失效
-//        Assert.containsKey(smsCaptcha, "captcha", "SMS_CAPTCHA_FAIL");
+        Assert.containsKey(smsCaptcha, "captcha", "SMS_CAPTCHA_FAIL");
 
         int captcha = smsCaptcha.getInteger("captcha");
         // 判断验证码是否一致
