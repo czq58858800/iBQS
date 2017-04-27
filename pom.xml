@@ -62,6 +62,11 @@
 		<jsqlparser.version>0.9.5</jsqlparser.version>
 		<springfox.version>2.6.1</springfox.version>
 		<thumbnailator.version>0.4.8</thumbnailator.version>
+
+		<!--阿里云 SDK -->
+		<aliyun.core>3.0.8</aliyun.core>
+		<aliyun.sms>3.0.0-rc1</aliyun.sms>
+		<aliyun.oss>2.2.1</aliyun.oss>
 	</properties>
 
 	<repositories>
