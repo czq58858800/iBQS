@@ -19,11 +19,6 @@ public final class CounterHelper {
         public static final String  FORWARD = "forward_num";
         /**评论数*/
         public static final String  COMMENTS = "comments_num";
-        /**作品喜欢数*/
-        public static final String  WORKS_LIKE = "works_like_num";
-        /**我喜欢的作品数*/
-        public static final String  MY_LIKE_WORKS = "my_like_works_num";
-
     }
 
 

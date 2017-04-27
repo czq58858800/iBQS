@@ -1,12 +1,13 @@
-package com.bq.shuo.core.push;
+package push;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.bq.core.util.PropertiesUtil;
-import push.AndroidNotification;
-import push.PushClient;
-import push.android.*;
-import push.ios.*;
+import push.android.AndroidBroadcast;
+import push.android.AndroidCustomizedcast;
+import push.android.AndroidFilecast;
+import push.android.AndroidUnicast;
+import push.ios.IOSBroadcast;
+import push.ios.IOSCustomizedcast;
+import push.ios.IOSFilecast;
+import push.ios.IOSUnicast;
 
 /**
  * PushUtil
@@ -21,14 +22,9 @@ public class PushUtil {
     private String timestamp = null;
     private PushClient client = new PushClient();
 
-    public PushUtil() {
-        try {
-            appkey = PropertiesUtil.getString("push.appkey");
-            appMasterSecret = PropertiesUtil.getString("push.appMasterSecret");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    public PushUtil(String appkey,String appMasterSecret) {
+        this.appkey = appkey;
+        this.appMasterSecret = appMasterSecret;
     }
 
     /**
@@ -222,6 +218,23 @@ public class PushUtil {
         }
     }
 
+    public void sendIOSUnicast(String deviceToken,String alert,String type,String identify) {
+        try {
+            IOSUnicast unicast = new IOSUnicast(appkey,appMasterSecret);
+            // TODO Set your device token
+            unicast.setDeviceToken(deviceToken);
+            unicast.setAlert(alert);
+            unicast.setSound( "default");
+            // TODO set 'production_mode' to 'true' if your app is under production mode
+            unicast.setTestMode();
+            unicast.setCustomizedField("type", type);
+            unicast.setCustomizedField("identify", identify);
+            client.send(unicast);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void sendIOSCustomizedcast() {
         try {
@@ -256,6 +269,12 @@ public class PushUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        // TODO set your appkey and master secret here
+        PushUtil demo = new PushUtil("582be60445297d42ad000e71", "dbd5ojrzw01chiouaezolsnpkff5ufva");
+//        demo.sendIOSUnicast("ba6ed60674b4251a83b4ad2348898448ce2eb49ceb71dfafa147d00d81cb01ec","Harvey-WX，评论了你的表情。ce");
     }
 
 }

@@ -23,17 +23,5 @@
             <artifactId>shiro-core</artifactId>
             <version>1.3.2</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.bq</groupId>
-            <artifactId>umeng-push</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 </project>
