@@ -353,13 +353,157 @@ var app = angular.module('app')
                             });
                         }]
                       }
+                })
+                .state('main.shuo', {
+                    url: '/shuo',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.topic', {
+                    url: '/topic',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.topic.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/shuo/topic/topic.html',
+                    controller: 'topicController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/topic/topicController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.topic.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/shuo/topic/update.html',
+                    controller: 'topicUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/topic/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.topic.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/shuo/topic/update.html',
+                    controller: 'topicUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/topic/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 话题
+                .state('main.shuo.subject', {
+                    url: '/subject',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.subject.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/shuo/subject/subject.html',
+                    controller: 'subjectController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/subject/subjectController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.subject.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/shuo/subject/update.html',
+                    controller: 'subjectUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/subject/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 表情
+                .state('main.shuo.subject.update.comments', {
+                    url: '/comments',
+                    views:{
+                        "commentsList": {
+                            templateUrl:'src/app/shuo/subject/comments/comments.html',
+                            controller: 'commentsController',
+                            resolve: {
+                                deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                                    return uiLoad.load('src/app/shuo/subject/comments/commentsController.js').then(function() {
+                                        return $ocLazyLoad.load('toaster');
+                                    });
+                                }]
+                            }
+                        }
+                    }
+                })
+                .state('main.shuo.subject.update.album', {
+                    url: '/album',
+                    views:{
+                        "albumList": {
+                            templateUrl:'src/app/shuo/subject/album/album.html',
+                            controller: 'albumController',
+                            resolve: {
+                                deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                                    return uiLoad.load('src/app/shuo/subject/album/albumController.js').then(function() {
+                                        return $ocLazyLoad.load('toaster');
+                                    });
+                                }]
+                            }
+                        }
+                    }
+                })
+                .state('main.shuo.category', {
+                    url: '/category',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.material', {
+                    url: '/material',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.material.hot', {
+                    url: '/hot',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.font', {
+                    url: '/font',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.user', {
+                    url: '/user',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.adv', {
+                    url: '/adv',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.session', {
+                    url: '/session',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.feedback', {
+                    url: '/feedback',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.report', {
+                    url: '/report',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.system.config', {
+                    url: '/system/config',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 });
     }])
     .controller("navCtrl",function($rootScope,$state) {
     	$.ajax({
 			url : '/user/read/promission',
 			success : function(result) {
-				if (result.httpCode == 200) {
+				if (result.code == 200) {
 					$rootScope.userInfo = result.user;
 					$rootScope.menuList = result.menus;
 					$rootScope.$apply();

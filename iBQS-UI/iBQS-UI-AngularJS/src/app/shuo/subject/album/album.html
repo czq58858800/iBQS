@@ -1,0 +1,19 @@
+<!-- 加载提醒 -->
+<div ng-show="loading" class="text-center m-t-md text-lg"><i class="fa fa-spin fa-spinner"></i> 数据加载中...</div>
+
+<div>
+    <span><a ui-sref="main.shuo.subject.update.user({subjectId: record.id})" class="btn btn-sm btn-default"> 喜欢</a></span>
+    <span><a ui-sref="main.shuo.subject.update.comments({subjectId: record.id})" class="btn btn-sm btn-default"> 评论</a></span>
+    <span><a ui-sref="main.shuo.subject.update.album({subjectId: record.id})" class="btn btn-sm btn-default active"> 专辑</a></span>
+</div>
+
+<!-- 数据表格 -->
+<div class="table-responsive">
+    <ul>
+        <li ng-repeat="item in pageInfo.data.records">
+            <img width="30%" src="{{item.image}}" />
+            <button type="button" ng-show="item.usable==1"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
+                <i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>
+        </li>
+    </ul>
+</div><!-- /.table-responsive -->

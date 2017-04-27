@@ -6101,3 +6101,16 @@ html {
 
 
 
+/**
+其他
+ */
+.menu-left{
+    width:19%;
+    height:500px;
+    float: left;
+    margin-right: 1%;
+    padding-top: 10px;
+    border:1px solid #dee5e7;
+    background-color: #f6f8f8;
+    /*background-color: #00a1cb;*/
+}
