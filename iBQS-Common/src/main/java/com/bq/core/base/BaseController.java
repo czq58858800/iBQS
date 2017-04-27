@@ -86,7 +86,7 @@ public abstract class BaseController {
 				modelMap.put("data", data);
 			}
 		}
-		modelMap.put("httpCode", code.value());
+		modelMap.put("code", code.value());
 		modelMap.put("msg", code.msg());
 		modelMap.put("timestamp", System.currentTimeMillis());
 		return ResponseEntity.ok(modelMap);
@@ -132,10 +132,10 @@ public abstract class BaseController {
 		} else if (ex instanceof IllegalArgumentException) {
 			new IllegalParameterException(ex.getMessage()).handler(modelMap);
 		} else if (ex instanceof UnauthorizedException) {
-			modelMap.put("httpCode", HttpCode.FORBIDDEN.value());
+			modelMap.put("code", HttpCode.FORBIDDEN.value());
 			modelMap.put("msg", StringUtils.defaultIfBlank(ex.getMessage(), HttpCode.FORBIDDEN.msg()));
 		} else {
-			modelMap.put("httpCode", HttpCode.INTERNAL_SERVER_ERROR.value());
+			modelMap.put("code", HttpCode.INTERNAL_SERVER_ERROR.value());
 			String msg = StringUtils.defaultIfBlank(ex.getMessage(), HttpCode.INTERNAL_SERVER_ERROR.msg());
 			modelMap.put("msg", msg.length() > 100 ? "系统走神了,请稍候再试." : msg);
 		}

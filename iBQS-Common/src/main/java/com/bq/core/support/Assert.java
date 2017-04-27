@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bq.core.util.IDCardUtil;
 import com.bq.core.config.Resources;
 import org.apache.commons.lang3.StringUtils;
@@ -245,4 +246,13 @@ public abstract class Assert {
 			throw new IllegalArgumentException(getMessage(key + "_ILLEGAL"));
 		}
 	}
+
+    public static void containsKey(JSONObject object, String key, String keys, Object... args) {
+		if (object == null) {
+			throw new IllegalArgumentException(getMessage(keys + "_IS_NULL", args));
+		}
+		if (!object.containsKey(key)) {
+			throw new IllegalArgumentException(getMessage(keys + "_IS_NULL", args));
+		}
+    }
 }

@@ -62,4 +62,7 @@ public interface Constants {
          */
         public static final String UN_STATS = "N";
     }
+
+    // 验证吗缓存
+    public static String JR_SMS_CAPTCHA = "SMS_CAPTCHA:";
 }
