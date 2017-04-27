@@ -15,10 +15,58 @@
     </parent>
 
     <modules>
+        <module>../umeng-push</module>
+        <module>../rongcloud</module>
         <module>iBQS-Shuo-Common</module>
         <module>iBQS-Shuo-Facade</module>
         <module>iBQS-Shuo-Service</module>
         <module>iBQS-Shuo-Web</module>
     </modules>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bq</groupId>
+            <artifactId>umeng-push</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 融云 -->
+        <dependency>
+            <groupId>com.bq</groupId>
+            <artifactId>rongcloud</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--aliyu sdk -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>${aliyun.core}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-sms</artifactId>
+            <version>${aliyun.sms}</version>
+        </dependency>
+    </dependencies>
 
 </project>

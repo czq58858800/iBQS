@@ -15,6 +15,7 @@
 	<modules>
 		<module>../iBQS-Common</module>
 		<module>../umeng-push</module>
+		<module>../rongcloud</module>
 		<module>iBQS-Shuo-Common</module>
 		<module>iBQS-Shuo-Facade</module>
 		<module>iBQS-Shuo-Service</module>
