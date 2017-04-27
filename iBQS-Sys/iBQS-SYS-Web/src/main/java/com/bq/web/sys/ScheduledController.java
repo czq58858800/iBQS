@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.List;
 import java.util.Map;

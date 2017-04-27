@@ -14,6 +14,10 @@
 	</parent>
 	<modules>
 		<module>../iBQS-Common</module>
+		<module>../rongcloud</module>
+		<module>../umeng-push</module>
+		<module>../iBQS-Shuo/iBQS-Shuo-Common</module>
+		<module>../iBQS-Shuo/iBQS-Shuo-Facade</module>
 		<module>iBQS-SYS-Facade</module>
 		<module>iBQS-SYS-Web</module>
 	</modules>

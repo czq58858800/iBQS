@@ -1,9 +1,9 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.Map;
 
 import com.bq.core.base.AbstractController;
-import com.bq.model.SysDept;
+import com.bq.model.SysRole;
 import com.bq.provider.ISysProvider;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
@@ -18,44 +18,44 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * 部门管理控制类
+ * 角色管理
  * 
  * @author Harvey.Wei
- * @version 2016年5月20日 下午3:13:31
+ * @version 2016年5月20日 下午3:15:43
  */
 @RestController
-@Api(value = "部门管理", description = "部门管理")
-@RequestMapping(value = "dept")
-public class SysDeptController extends AbstractController<ISysProvider> {
+@Api(value = "角色管理", description = "角色管理")
+@RequestMapping(value = "role")
+public class SysRoleController extends AbstractController<ISysProvider> {
 	public String getService() {
-		return "sysDeptService";
+		return "sysRoleService";
 	}
 
-	@ApiOperation(value = "查询部门")
-	@RequiresPermissions("sys.base.dept.read")
+	@ApiOperation(value = "查询角色")
+	@RequiresPermissions("sys.base.role.read")
 	@PutMapping(value = "/read/list")
 	public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
 		return super.query(modelMap, param);
 	}
 
-	@ApiOperation(value = "部门详情")
-	@RequiresPermissions("sys.base.dept.read")
+	@ApiOperation(value = "角色详情")
+	@RequiresPermissions("sys.base.role.read")
 	@PutMapping(value = "/read/detail")
-	public Object get(ModelMap modelMap, @RequestBody SysDept param) {
+	public Object get(ModelMap modelMap, @RequestBody SysRole param) {
 		return super.get(modelMap, param);
 	}
 
 	@PostMapping
-	@ApiOperation(value = "修改部门")
-	@RequiresPermissions("sys.base.dept.update")
-	public Object update(ModelMap modelMap, @RequestBody SysDept param) {
+	@ApiOperation(value = "修改角色")
+	@RequiresPermissions("sys.base.role.update")
+	public Object update(ModelMap modelMap, @RequestBody SysRole param) {
 		return super.update(modelMap, param);
 	}
 
 	@DeleteMapping
-	@ApiOperation(value = "删除部门")
-	@RequiresPermissions("sys.base.dept.delete")
-	public Object delete(ModelMap modelMap, @RequestBody SysDept param) {
+	@ApiOperation(value = "删除角色")
+	@RequiresPermissions("sys.base.role.delete")
+	public Object delete(ModelMap modelMap, @RequestBody SysRole param) {
 		return super.delete(modelMap, param);
 	}
 }

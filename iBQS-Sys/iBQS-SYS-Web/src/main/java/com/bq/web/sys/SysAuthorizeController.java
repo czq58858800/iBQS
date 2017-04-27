@@ -1,4 +1,4 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.Date;
 import java.util.List;

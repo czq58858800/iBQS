@@ -1,9 +1,9 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.Map;
 
-import com.bq.model.SysUnit;
 import com.bq.provider.ISysProvider;
+import com.bq.model.SysDic;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.bq.core.base.AbstractController;
 import org.springframework.ui.ModelMap;
@@ -18,44 +18,46 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * 单位管理控制类
+ * 字典管理
  * 
  * @author Harvey.Wei
- * @version 2016年5月20日 下午3:13:31
+ * @version 2016年5月20日 下午3:14:34
  */
 @RestController
-@Api(value = "单位管理", description = "单位管理")
-@RequestMapping(value = "unit")
-public class SysUnitController extends AbstractController<ISysProvider> {
+@Api(value = "字典管理", description = "字典管理")
+@RequestMapping(value = "/dic")
+public class SysDicController extends AbstractController<ISysProvider> {
+
 	public String getService() {
-		return "sysUnitService";
+		return "sysDicService";
 	}
 
-	@ApiOperation(value = "查询单位")
-	@RequiresPermissions("sys.base.unit.read")
+	@ApiOperation(value = "查询字典项")
+	@RequiresPermissions("sys.base.dic.read")
 	@PutMapping(value = "/read/list")
 	public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
+		param.put("orderBy", "sort_no");
 		return super.query(modelMap, param);
 	}
 
-	@ApiOperation(value = "单位详情")
-	@RequiresPermissions("sys.base.unit.read")
+	@ApiOperation(value = "字典项详情")
+	@RequiresPermissions("sys.base.dic.read")
 	@PutMapping(value = "/read/detail")
-	public Object get(ModelMap modelMap, @RequestBody SysUnit param) {
+	public Object get(ModelMap modelMap, @RequestBody SysDic param) {
 		return super.get(modelMap, param);
 	}
 
 	@PostMapping
-	@ApiOperation(value = "修改单位")
-	@RequiresPermissions("sys.base.unit.update")
-	public Object update(ModelMap modelMap, @RequestBody SysUnit param) {
+	@ApiOperation(value = "修改字典项")
+	@RequiresPermissions("sys.base.dic.update")
+	public Object update(ModelMap modelMap, @RequestBody SysDic param) {
 		return super.update(modelMap, param);
 	}
 
 	@DeleteMapping
-	@ApiOperation(value = "删除单位")
-	@RequiresPermissions("sys.base.unit.delete")
-	public Object delete(ModelMap modelMap, @RequestBody SysUnit param) {
+	@ApiOperation(value = "删除字典项")
+	@RequiresPermissions("sys.base.dic.delete")
+	public Object delete(ModelMap modelMap, @RequestBody SysDic param) {
 		return super.delete(modelMap, param);
 	}
 }

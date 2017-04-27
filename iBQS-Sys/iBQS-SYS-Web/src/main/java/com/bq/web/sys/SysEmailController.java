@@ -1,11 +1,11 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.Map;
 
+import com.bq.model.SysEmail;
 import com.bq.provider.ISysProvider;
-import com.bq.model.SysDic;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.bq.core.base.AbstractController;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,46 +18,45 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * 字典管理
+ * 邮件管理控制类
  * 
  * @author Harvey.Wei
- * @version 2016年5月20日 下午3:14:34
+ * @version 2016年5月20日 下午3:13:31
  */
 @RestController
-@Api(value = "字典管理", description = "字典管理")
-@RequestMapping(value = "/dic")
-public class SysDicController extends AbstractController<ISysProvider> {
+@Api(value = "邮件管理", description = "邮件管理")
+@RequestMapping(value = "email")
+public class SysEmailController extends AbstractController<ISysProvider> {
 
 	public String getService() {
-		return "sysDicService";
+		return "sysEmailService";
 	}
 
-	@ApiOperation(value = "查询字典项")
-	@RequiresPermissions("sys.base.dic.read")
+	@ApiOperation(value = "查询邮件")
+	@RequiresPermissions("sys.email.list.read")
 	@PutMapping(value = "/read/list")
 	public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
-		param.put("orderBy", "sort_no");
 		return super.query(modelMap, param);
 	}
 
-	@ApiOperation(value = "字典项详情")
-	@RequiresPermissions("sys.base.dic.read")
+	@ApiOperation(value = "邮件详情")
+	@RequiresPermissions("sys.email.list.read")
 	@PutMapping(value = "/read/detail")
-	public Object get(ModelMap modelMap, @RequestBody SysDic param) {
+	public Object get(ModelMap modelMap, @RequestBody SysEmail param) {
 		return super.get(modelMap, param);
 	}
 
 	@PostMapping
-	@ApiOperation(value = "修改字典项")
-	@RequiresPermissions("sys.base.dic.update")
-	public Object update(ModelMap modelMap, @RequestBody SysDic param) {
+	@ApiOperation(value = "修改邮件")
+	@RequiresPermissions("sys.email.list.update")
+	public Object update(ModelMap modelMap, @RequestBody SysEmail param) {
 		return super.update(modelMap, param);
 	}
 
 	@DeleteMapping
-	@ApiOperation(value = "删除字典项")
-	@RequiresPermissions("sys.base.dic.delete")
-	public Object delete(ModelMap modelMap, @RequestBody SysDic param) {
+	@ApiOperation(value = "删除邮件")
+	@RequiresPermissions("sys.email.list.delete")
+	public Object delete(ModelMap modelMap, @RequestBody SysEmail param) {
 		return super.delete(modelMap, param);
 	}
 }

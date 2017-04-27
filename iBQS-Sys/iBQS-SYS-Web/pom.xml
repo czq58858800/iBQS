@@ -14,13 +14,35 @@
 	</parent>
 
 	<properties>
-		<server.port>8088</server.port>
+		<server.port>1121</server.port>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.bq</groupId>
 			<artifactId>iBQS-Common</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.bq</groupId>
+			<artifactId>iBQS-Shuo-Common</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.bq</groupId>
+			<artifactId>iBQS-Shuo-Facade</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

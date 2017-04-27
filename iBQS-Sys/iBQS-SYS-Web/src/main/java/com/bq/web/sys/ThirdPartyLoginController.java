@@ -1,4 +1,4 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.io.IOException;
 import java.util.Map;

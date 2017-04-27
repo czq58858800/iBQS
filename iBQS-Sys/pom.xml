@@ -16,6 +16,8 @@
 
     <modules>
         <module>../iBQS-Common</module>
+        <module>../umeng-push</module>
+        <module>../rongcloud</module>
         <module>iBQS-SYS-Facade</module>
         <module>iBQS-SYS-Service</module>
         <module>iBQS-SYS-Web</module>

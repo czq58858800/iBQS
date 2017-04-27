@@ -1,10 +1,10 @@
-package com.bq.web;
+package com.bq.web.sys;
 
 import java.util.Map;
 
-import com.bq.model.SysEmail;
-import com.bq.provider.ISysProvider;
 import com.bq.core.base.AbstractController;
+import com.bq.model.SysDept;
+import com.bq.provider.ISysProvider;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,45 +18,44 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * 邮件管理控制类
+ * 部门管理控制类
  * 
  * @author Harvey.Wei
  * @version 2016年5月20日 下午3:13:31
  */
 @RestController
-@Api(value = "邮件管理", description = "邮件管理")
-@RequestMapping(value = "email")
-public class SysEmailController extends AbstractController<ISysProvider> {
-
+@Api(value = "部门管理", description = "部门管理")
+@RequestMapping(value = "dept")
+public class SysDeptController extends AbstractController<ISysProvider> {
 	public String getService() {
-		return "sysEmailService";
+		return "sysDeptService";
 	}
 
-	@ApiOperation(value = "查询邮件")
-	@RequiresPermissions("sys.email.list.read")
+	@ApiOperation(value = "查询部门")
+	@RequiresPermissions("sys.base.dept.read")
 	@PutMapping(value = "/read/list")
 	public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
 		return super.query(modelMap, param);
 	}
 
-	@ApiOperation(value = "邮件详情")
-	@RequiresPermissions("sys.email.list.read")
+	@ApiOperation(value = "部门详情")
+	@RequiresPermissions("sys.base.dept.read")
 	@PutMapping(value = "/read/detail")
-	public Object get(ModelMap modelMap, @RequestBody SysEmail param) {
+	public Object get(ModelMap modelMap, @RequestBody SysDept param) {
 		return super.get(modelMap, param);
 	}
 
 	@PostMapping
-	@ApiOperation(value = "修改邮件")
-	@RequiresPermissions("sys.email.list.update")
-	public Object update(ModelMap modelMap, @RequestBody SysEmail param) {
+	@ApiOperation(value = "修改部门")
+	@RequiresPermissions("sys.base.dept.update")
+	public Object update(ModelMap modelMap, @RequestBody SysDept param) {
 		return super.update(modelMap, param);
 	}
 
 	@DeleteMapping
-	@ApiOperation(value = "删除邮件")
-	@RequiresPermissions("sys.email.list.delete")
-	public Object delete(ModelMap modelMap, @RequestBody SysEmail param) {
+	@ApiOperation(value = "删除部门")
+	@RequiresPermissions("sys.base.dept.delete")
+	public Object delete(ModelMap modelMap, @RequestBody SysDept param) {
 		return super.delete(modelMap, param);
 	}
 }
