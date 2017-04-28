@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.mapper.UserContactsMapper;
 import com.bq.shuo.model.User;
@@ -8,6 +9,7 @@ import com.bq.shuo.model.UserContacts;
 import com.bq.shuo.core.base.BaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"userContacts")
 public class UserContactsService extends BaseService<UserContacts> {
 
     @Autowired
@@ -34,9 +37,17 @@ public class UserContactsService extends BaseService<UserContacts> {
     @Autowired
     private UserContactsMapper userContactsMapper;
 
-    @CachePut(value = "userContactsPhone")
-    public UserContacts selectByPhone(String userId, String phone) {
-        String id = userContactsMapper.selectByPhone(userId,phone);
+    @Override
+    public UserContacts update(UserContacts record) {
+        User user = userService.selectByPhone(record.getPhone());
+        if (user != null) {
+            record.setContactUserId(user.getId());
+        }
+        return super.update(record);
+    }
+
+    public UserContacts selectByPhone(String deviceId, String userId, String phone) {
+        String id = userContactsMapper.selectByPhone(deviceId,userId,phone);
         UserContacts record = null;
         if (StringUtils.isNotBlank(id)) {
             record = queryById(id);
@@ -51,6 +62,13 @@ public class UserContactsService extends BaseService<UserContacts> {
         return page;
     }
 
+    public Page<UserContacts> queryFollow(Map<String,Object> params) {
+        Page<String> idPage = this.getPage(params);
+        idPage.setRecords(userContactsMapper.selectIdPageByFollow(idPage, params));
+        Page<UserContacts> page = getPage(idPage);
+        return page;
+    }
+
     @Override
     public Page<UserContacts> getPage(Page<String> ids) {
         if (ids != null) {
@@ -60,12 +78,14 @@ public class UserContactsService extends BaseService<UserContacts> {
 
             for (String id : ids.getRecords()) {
                 UserContacts record = this.queryById(id);
-                User user = userService.selectByPhone(record.getPhone());
-                if (user != null) {
-                    boolean isFollow = userFollowingService.selectByIsFollow(record.getUserId(),user.getId());
-                    record.setStatus(isFollow ? "1":"2");
-                } else {
-                    record.setStatus("3");
+                if (StringUtils.isNotBlank(record.getContactUserId())) {
+                    User user = userService.queryById(record.getContactUserId());
+                    if (user != null) {
+                        boolean isFollow = userFollowingService.selectByIsFollow(record.getUserId(), user.getId());
+                        user.setFollow(isFollow);
+                    }
+                    record.setUser(user);
+
                 }
                 records.add(record);
             }

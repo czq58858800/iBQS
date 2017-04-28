@@ -3,6 +3,7 @@ package com.bq.shuo.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.shuo.mapper.AlbumLikedMapper;
 import com.bq.shuo.model.*;
 import com.bq.shuo.core.base.BaseService;
@@ -22,7 +23,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "albumLiked")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"albumLiked")
 public class AlbumLikedService extends BaseService<AlbumLiked> {
 
     @Autowired

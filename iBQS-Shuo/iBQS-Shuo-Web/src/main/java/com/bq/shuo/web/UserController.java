@@ -117,10 +117,7 @@ public class UserController extends AbstractController<IShuoProvider> {
                     thirdpartyMap.put("name",thirdparty.getName());
                     thirdpartyMap.put("provider",thirdparty.getProvider());
                     thirdpartyMap.put("verified", thirdparty.getVerified());
-                    if (thirdparty.getVerified()) {
-                        thirdpartyMap.put("verifiedReason", thirdparty.getVerifiedReason());
-                    }
-
+                    thirdpartyMap.put("verifiedReason", thirdparty.getVerifiedReason());
                     thirdpartyMapList.add(thirdpartyMap);
                 }
                 resultMap.put("thirdParty",thirdpartyMapList);

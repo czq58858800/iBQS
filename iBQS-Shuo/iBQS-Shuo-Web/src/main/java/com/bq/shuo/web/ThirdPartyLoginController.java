@@ -177,6 +177,7 @@ public class ThirdPartyLoginController extends AbstractController<IShuoProvider>
 			user = (User) provider.execute(parameter).getModel();
 			if (!StringUtils.equals(user.getUserType(),thirdUser.getVerified() ? "2" : "1") && !StringUtils.equals("3",user.getUserType())) {
 				user.setUserType("2");
+				user.setVerifiedReason(thirdUser.getVerifiedReason());
 				parameter = new Parameter("userService","update").setModel(user);
 				provider.execute(parameter).getModel();
 			}

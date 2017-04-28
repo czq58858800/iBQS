@@ -26,7 +26,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "subject")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"subject")
 public class SubjectService extends BaseService<Subject> {
     @Autowired
     private UserService userService;
@@ -161,9 +161,16 @@ public class SubjectService extends BaseService<Subject> {
                 record.setAlbums(albumService.querySubjectIdByList(record.getId(),currUserId));
             }
 
-            User user = userService.queryById(record.getUserId());
-            record.setUser(user);
-            getSubjectDetail(record,currUserId);
+
+            record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
+
+            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
+
+            record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
+
+            getUserStatus(record,currUserId);
+
+//            getSubjectDetail(record,currUserId);
         }
         return  records;
     }

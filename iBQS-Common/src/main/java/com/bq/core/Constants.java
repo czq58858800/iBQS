@@ -36,6 +36,8 @@ public interface Constants {
     public static final String MALICIOUS_REQUEST_TIMES = "MALICIOUS_REQUEST_TIMES";
     /** 缓存命名空间 */
     public static final String CACHE_NAMESPACE = "iBQS:";
+    /** 缓存命名空间 */
+    public static final String CACHE_SHUO_NAMESPACE = "SHUO:";
     /** 在线用户数量 */
     public static final String ALLUSER_NUMBER = "SYSTEM:" + CACHE_NAMESPACE + "ALLUSER_NUMBER";
     /** TOKEN */

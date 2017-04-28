@@ -74,6 +74,7 @@ public final class UserHelper {
             resultMap.put("avatar",user.getAvatar());
             resultMap.put("sex",user.getSex());
             resultMap.put("type",user.getUserType());
+            resultMap.put("verifiedReason",user.getVerifiedReason());
             resultMap.put("summary",user.getSummary());
             resultMap.put("address",user.getAddress());
             resultMap.put("birthday",user.getBirthday());

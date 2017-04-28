@@ -52,7 +52,7 @@ public class BlacklistController extends AbstractController<IShuoProvider> {
     @PostMapping(value = "/add")
     public Object add(HttpServletRequest request, ModelMap modelMap,
                          @ApiParam(required = true, value = "加入黑名单用户ID") @RequestParam(value = "userId") String userId) {
-        Parameter selectIsBlacklistByUserIdParam = new Parameter(getService(),"selectIsBlackListByUserId").setObjects(new Object[] {getCurrUser(),userId});
+        Parameter selectIsBlacklistByUserIdParam = new Parameter(getService(),"selectIsBlacklistByUserId").setObjects(new Object[] {getCurrUser(),userId});
         boolean isBlacklist = (boolean) provider.execute(selectIsBlacklistByUserIdParam).getObject();
         if (isBlacklist) {
             return setModelMap(modelMap, HttpCode.ALREADY_IN_BLACKLIST);
@@ -71,7 +71,7 @@ public class BlacklistController extends AbstractController<IShuoProvider> {
     @PostMapping(value = "/remove")
     public Object remove(HttpServletRequest request, ModelMap modelMap,
                          @ApiParam(required = true, value = "移出黑名单用户ID") @RequestParam(value = "userId") String userId) {
-        Parameter selectIsBlacklistByUserIdParam = new Parameter(getService(),"selectIsBlackListByUserId").setObjects(new Object[] {getCurrUser(),userId});
+        Parameter selectIsBlacklistByUserIdParam = new Parameter(getService(),"selectIsBlacklistByUserId").setObjects(new Object[] {getCurrUser(),userId});
         boolean isBlacklist = (boolean) provider.execute(selectIsBlacklistByUserIdParam).getObject();
         if (!isBlacklist) {
             return setModelMap(modelMap, HttpCode.NO_BLACKLIST);

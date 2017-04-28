@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.shuo.mapper.DynamicMapper;
 import com.bq.shuo.model.Dynamic;
 import com.bq.shuo.core.base.BaseService;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "dynamic")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"dynamic")
 public class DynamicService extends BaseService<Dynamic> {
 
     @Autowired

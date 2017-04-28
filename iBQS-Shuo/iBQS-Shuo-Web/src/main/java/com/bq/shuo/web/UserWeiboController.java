@@ -83,7 +83,7 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
             Map<String,Object> itemMap = InstanceUtil.newHashMap();
 
             if (StringUtils.equals(status,"1") || StringUtils.equals(status,"2")) {
-                parameter = new Parameter("userThirdpartyService","queryUserIdByThirdParty").setObjects(new Object[] {record.getOpenId(),"SINA"});
+                parameter = new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {record.getOpenId(),"SINA"});
                 UserThirdparty thirdparty = (UserThirdparty) provider.execute(parameter).getModel();
                 if (thirdparty !=null) {
                     parameter = new Parameter("userService","queryById").setId(thirdparty.getUserId());
@@ -122,7 +122,7 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
             String id = (String) obj;
             parameter = new Parameter(getService(),"queryById").setId(id);
             UserWeibo weiboBean = (UserWeibo) provider.execute(parameter).getModel();
-            if (weiboBean != null && weiboBean.getIsInvite()) {
+            if (weiboBean != null && !weiboBean.getIsInvite()) {
                 resultList.add(weiboBean);
             }
         }

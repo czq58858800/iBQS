@@ -3,6 +3,7 @@ package com.bq.shuo.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.UserFollowingMapper;
 import com.bq.shuo.model.User;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "userFollowing")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"userFollowing")
 public class UserFollowingService extends BaseService<UserFollowing> {
 
     @Autowired

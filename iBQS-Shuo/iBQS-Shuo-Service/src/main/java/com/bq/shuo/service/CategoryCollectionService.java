@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SystemConfigUtil;
@@ -28,7 +29,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "categoryCollection")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"categoryCollection")
 public class CategoryCollectionService extends BaseService<CategoryCollection> {
     @Autowired
     private CategoryCollectionMapper categoryCollectionMapper;

@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.shuo.model.CategoryReview;
 import com.bq.shuo.core.base.BaseService;
 import org.springframework.cache.annotation.CacheConfig;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "categoryReview")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"categoryReview")
 public class CategoryReviewService extends BaseService<CategoryReview> {
 	
 }

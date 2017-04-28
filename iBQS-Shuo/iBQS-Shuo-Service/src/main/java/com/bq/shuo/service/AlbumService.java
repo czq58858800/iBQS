@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.mapper.AlbumMapper;
 import com.bq.shuo.model.Album;
@@ -21,7 +22,7 @@ import java.util.List;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "album")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"album")
 public class AlbumService extends BaseService<Album> {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.mapper.UserConfigMapper;
 import com.bq.shuo.model.UserConfig;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "userConfig")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"userConfig")
 public class UserConfigService extends BaseService<UserConfig>  {
     @Autowired
     private UserConfigMapper userConfigMapper;

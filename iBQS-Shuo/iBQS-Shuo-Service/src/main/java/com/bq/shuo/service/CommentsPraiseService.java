@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.mapper.CommentsPraiseMapper;
 import com.bq.shuo.model.CommentsPraise;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "commentsPraise")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"commentsPraise")
 public class CommentsPraiseService extends BaseService<CommentsPraise> {
 
     @Autowired

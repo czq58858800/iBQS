@@ -3,6 +3,7 @@ package com.bq.shuo.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SystemConfigUtil;
 import com.bq.shuo.mapper.SubjectLikedMapper;
@@ -12,6 +13,7 @@ import com.bq.shuo.model.SubjectLiked;
 import com.bq.shuo.core.base.BaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,6 +29,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"subjectLiked")
 public class SubjectLikedService extends BaseService<SubjectLiked> {
 
     @Autowired

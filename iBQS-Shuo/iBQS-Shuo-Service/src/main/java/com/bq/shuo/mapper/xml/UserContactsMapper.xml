@@ -7,6 +7,12 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		SELECT id_ FROM bq_user_contacts
 		<where>
+			<if test="cm.contactUserIdNotIsNull != null and cm.contactUserIdNotIsNull == true">
+				and not isnull(contact_user_id)
+			</if>
+			<if test="cm.contactUserIdNotIsNull != null and cm.contactUserIdNotIsNull == false">
+				and isnull(contact_user_id)
+			</if>
 			<if test="cm.deviceId != null and cm.deviceId != ''">
 				and device_id = #{cm.deviceId}
 			</if>
@@ -17,9 +23,25 @@
 				and phone_ = #{cm.phone}
 			</if>
 		</where>
-		ORDER BY create_time DESC
+		ORDER BY name_ ASC,create_time DESC
+	</select>
+
+	<select id="selectIdPageByFollow" resultType="java.lang.String">
+		SELECT A.id_ FROM bq_user_contacts A
+			LEFT JOIN bq_user B ON A.contact_user_id = B.id_
+			LEFT JOIN bq_user_following C ON C.follow_user_id = A.user_id AND C.befollow_user_id = A.contact_user_id
+		<where>
+			NOT ISNULL(A.contact_user_id)
+			<if test="cm.userId != null and cm.userId != ''">
+				AND user_id = #{cm.userId}
+			</if>
+			<if test="cm.follow != null and cm.follow == false">
+				AND C.id_ IS NULL
+			</if>
+		</where>
+		ORDER BY A.name_ ASC,A.create_time DESC
 	</select>
     <select id="selectByPhone" resultType="java.lang.String">
-		SELECT  id_ FROM bq_user_contacts WHERE user_id = #{userId} AND phone_ = #{phone}
+		SELECT  id_ FROM bq_user_contacts WHERE device_id = #{deviceId} AND user_id = #{userId} AND phone_ = #{phone}
 	</select>
 </mapper>

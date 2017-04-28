@@ -270,4 +270,21 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         return setSuccessModelMap(modelMap);
     }
 
+    /**
+     * 引用贴纸
+     * @param request
+     * @param modelMap
+     * @param id 贴纸ID
+     * @return
+     */
+    @ApiOperation(value = "引用贴纸")
+    @PostMapping(value = "/cites")
+    public Object cites(HttpServletRequest request, ModelMap modelMap,
+                        @ApiParam(required = true, value = "贴纸ID")@RequestParam(value = "id") String id) {
+        Assert.notNull(id, "ID");
+        Parameter parameter = new Parameter(getService(),"updateCites").setId(id);
+        provider.execute(parameter).setId(id);
+        return setSuccessModelMap(modelMap);
+    }
+
 }

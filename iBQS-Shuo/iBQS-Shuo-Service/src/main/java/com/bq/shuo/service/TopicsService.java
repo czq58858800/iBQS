@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.mapper.TopicsMapper;
 import com.bq.shuo.model.Subject;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "topics")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"topics")
 public class TopicsService extends BaseService<Topics> {
 
     @Autowired

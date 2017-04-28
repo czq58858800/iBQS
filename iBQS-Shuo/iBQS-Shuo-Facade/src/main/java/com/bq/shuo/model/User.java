@@ -71,6 +71,8 @@ public class User extends BaseModel {
      */
 	@TableField("user_type")
 	private String userType;
+	@TableField("verified_reason")
+	private String verifiedReason;
 	@TableField("token_")
 	private String token;
 	@TableField("login_device")
@@ -276,6 +278,14 @@ public class User extends BaseModel {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	public String getVerifiedReason() {
+		return verifiedReason;
+	}
+
+	public void setVerifiedReason(String verifiedReason) {
+		this.verifiedReason = verifiedReason;
 	}
 
 	public String getToken() {

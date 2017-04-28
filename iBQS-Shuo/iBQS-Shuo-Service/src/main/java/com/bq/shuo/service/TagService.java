@@ -20,9 +20,10 @@ import java.util.List;
  * @since 2017-04-13
  */
 @Service
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"systemConfig")
 public class TagService extends BaseService<Tag> {
 
-    @CacheResult(cacheName ="tag:"+"queryByAll")
+    @CacheResult(cacheName = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"tag:"+"queryByAll")
     public List<Tag> queryByAll() {
         List<String> records = ((TagMapper) mapper).selectIdPage(Collections.<String, Object>emptyMap());
         return getList(records);

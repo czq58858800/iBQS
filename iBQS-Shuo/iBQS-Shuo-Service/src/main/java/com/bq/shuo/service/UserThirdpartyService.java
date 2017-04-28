@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.support.login.ThirdPartyUser;
 import com.bq.shuo.mapper.UserThirdpartyMapper;
@@ -24,7 +25,7 @@ import java.util.List;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "userThirdparty")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"userThirdparty")
 public class UserThirdpartyService extends BaseService<UserThirdparty> {
 
 

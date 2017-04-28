@@ -2,6 +2,7 @@ package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.ForwardMapper;
 import com.bq.shuo.model.Forward;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "forward")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"forward")
 public class ForwardService extends BaseService<Forward> {
 
     @Autowired

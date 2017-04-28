@@ -9,6 +9,7 @@ import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Category;
+import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserContacts;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
@@ -55,7 +56,8 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
             phone = phone.replace("-","");
             Matcher matcher = pattern.matcher(phone);//匹配类
             while(matcher.find()){
-                UserContacts record = (UserContacts) provider.execute(new Parameter("userContactsService","selectByPhone").setObjects(new Object[] {getCurrUser(),matcher.group()})).getModel();
+                String mobilePhone = matcher.group();
+                UserContacts record = (UserContacts) provider.execute(new Parameter("userContactsService","selectByPhone").setObjects(new Object[] {deviceId,getCurrUser(),mobilePhone})).getModel();
                 if (record == null) {
                     record = new UserContacts();
                     record.setDeviceId(deviceId);
@@ -84,40 +86,32 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
 
         params.put("userId",getCurrUser());
 
-        Parameter queryBeansParam = new Parameter("userContactsService","queryBeans").setMap(params);
-        Page page = provider.execute(queryBeansParam).getPage();
-
+        Parameter parameter = null;
+        if (StringUtils.equals(status,"1")) {
+            params.put("follow",true);
+            parameter = new Parameter("userContactsService","queryFollow").setMap(params);
+        } else if (StringUtils.equals(status,"2")){
+            params.put("follow",false);
+            parameter = new Parameter("userContactsService","queryFollow").setMap(params);
+        }else {
+            params.put("contactUserIdNotIsNull",false);
+            parameter = new Parameter("userContactsService","queryBeans").setMap(params);
+        }
+        Page page = provider.execute(parameter).getPage();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
         for (Object obj:page.getRecords()) {
             UserContacts record = (UserContacts) obj;
             Map<String,Object> itemMap = InstanceUtil.newHashMap();
-
-
-            if (StringUtils.equals(status,"1") && StringUtils.equals(status,record.getStatus())) {
-                itemMap.put("phone",record.getPhone());
-                itemMap.put("name",record.getName());
-                itemMap.put("uid",record.getId());
+            itemMap.put("phone",record.getPhone());
+            itemMap.put("name",record.getName());
+            itemMap.put("uid",record.getId());
+            if (StringUtils.isNotBlank(record.getContactUserId())) {
                 itemMap.put("user", UserHelper.formatResultMap(record.getUser()));
-                resultList.add(itemMap);
-            } else if (StringUtils.equals(status,"2") && StringUtils.equals(status,record.getStatus())) {
-                itemMap.put("uid",record.getId());
-                itemMap.put("name",record.getName());
-                itemMap.put("phone",record.getPhone());
-                itemMap.put("user", UserHelper.formatResultMap(record.getUser()));
-                resultList.add(itemMap);
-            } else if (StringUtils.equals(status,"3") && StringUtils.equals(status,record.getStatus())){
-                itemMap.put("phone",record.getPhone());
-                itemMap.put("name",record.getName());
-                itemMap.put("uid",record.getId());
-                resultList.add(itemMap);
             }
+            resultList.add(itemMap);
         }
         page.setRecords(resultList);
-        if (resultList != null && resultList.size() > 0) {
-            return setSuccessModelMap(modelMap,page);
-        } else {
-            return setModelMap(modelMap, HttpCode.NOT_DATA);
-        }
+        return setSuccessModelMap(modelMap,page);
     }
 
 

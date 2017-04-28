@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "systemConfig")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"systemConfig")
 public class SystemConfigService extends BaseService<SystemConfig> {
 
     @Autowired

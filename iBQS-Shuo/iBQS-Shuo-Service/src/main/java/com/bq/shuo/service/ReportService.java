@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.config.Resources;
 import com.bq.shuo.model.Comments;
 import com.bq.shuo.model.Report;
@@ -9,6 +10,7 @@ import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"report")
 public class ReportService extends BaseService<Report> {
 
     @Autowired

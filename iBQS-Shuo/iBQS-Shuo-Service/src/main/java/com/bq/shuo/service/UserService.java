@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "user")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"user")
 public class UserService extends BaseService<User> {
 
     @Autowired

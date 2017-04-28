@@ -66,19 +66,25 @@ public class Push {
                 parameter = new Parameter("userService","queryById").setId(recevieUserId);
                 User recevieUser = (User) provider.execute(parameter).getModel();
 
-                // 内容@推送
-                /*if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {
-                    if (StringUtils.equals(type,PushType.COMMENTS)) {
-                        push(sendUser.getName()+",评论了你的表情。",recevieUser,PushType.COMMENTS,subjectId);
-                    } else if (StringUtils.equals(type,PushType.FORWARD)) {
-                        push(sendUser.getName()+",转发了你的表情。",recevieUser,PushType.FORWARD,recevieUser.getId());
-                    } else if (StringUtils.equals(type,PushType.LIKED)) {
-                        push(sendUser.getName()+",喜欢了你的表情。",recevieUser,PushType.LIKED,subjectId);
-                    }
-                }*/
+                String pushContent = null;
 
-                parameter = new Parameter("notifyService","update").setModel(new Notify(sendUserId,recevieUserId,subjectId,content,type));
-                provider.execute(parameter);
+                // 内容@推送
+                if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {
+                    if (StringUtils.equals(type,PushType.COMMENTS)) {
+                        pushContent = sendUser.getName()+",评论了你的主题。";
+                        push(pushContent,recevieUser,PushType.COMMENTS,subjectId);
+                    } else if (StringUtils.equals(type,PushType.FORWARD)) {
+                        pushContent = sendUser.getName()+",转发了你的主题。";
+                        push(pushContent,recevieUser,PushType.FORWARD,recevieUser.getId());
+                    } else if (StringUtils.equals(type,PushType.LIKED)) {
+                        pushContent = sendUser.getName()+",赞了你的主题。";
+                        push(pushContent,recevieUser,PushType.LIKED,subjectId);
+                    }
+                    Notify notify = new Notify(sendUserId,recevieUserId,subjectId,pushContent,type);
+                    parameter = new Parameter("notifyService","update").setModel(notify);
+                    provider.execute(parameter);
+                }
+
 
                 if (StringUtils.isNotBlank(content)) {
                     List<String> atUsers = findAtUser(content);
@@ -92,14 +98,14 @@ public class Push {
                             //推送@好友
                             if (user != null && sendUserId != user.getId()) {
                                 if (StringUtils.equals(type,PushType.COMMENTS)) {
-//                                    push(sendUser.getName()+",评论中提到了你。",user,PushType.COMMENTS,subjectId);
+                                    push(sendUser.getName()+",评论中提到了你。",user,PushType.COMMENTS,subjectId);
                                 } else if (StringUtils.equals(type,PushType.FORWARD)) {
                                     push(sendUser.getName()+",转发中提到了你。",user,PushType.FORWARD,recevieUser.getId());
                                 } else if (StringUtils.equals(type,PushType.SUBJECT)) {
                                     push(sendUser.getName()+",主题中提到了你。",user,PushType.SUBJECT,subjectId);
                                 }
-
-                                parameter = new Parameter("notifyService","update").setModel(new Notify(sendUserId,user.getId(),subjectId,content,type));
+                                Notify notify = new Notify(sendUserId,user.getId(),subjectId,content,type);
+                                parameter = new Parameter("notifyService","update").setModel(notify);
                                 provider.execute(parameter);
                             }
                         }

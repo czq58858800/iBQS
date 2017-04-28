@@ -26,7 +26,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "category")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"category")
 public class CategoryService extends BaseService<Category> {
 
     @Autowired

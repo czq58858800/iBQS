@@ -36,8 +36,15 @@ public class UserContacts extends BaseModel {
 	@TableField("phone_")
 	private String phone;
 
+	/**
+	 * 联系人用户ID
+	 */
+	@TableField("contact_user_id")
+	private String contactUserId;
+
 	@TableField(exist = false)
 	private User user;
+
 	@TableField(exist = false)
 	private String status;
 
@@ -72,6 +79,14 @@ public class UserContacts extends BaseModel {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getContactUserId() {
+		return contactUserId;
+	}
+
+	public void setContactUserId(String contactUserId) {
+		this.contactUserId = contactUserId;
 	}
 
 	public User getUser() {

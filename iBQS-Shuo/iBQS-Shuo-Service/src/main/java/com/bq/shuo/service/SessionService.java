@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.PropertiesUtil;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "session")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"session")
 public class SessionService extends BaseService<Session> {
 
     @CachePut
@@ -56,7 +57,7 @@ public class SessionService extends BaseService<Session> {
 
     //
     public void cleanExpiredSessions() {
-        String key = "spring:session:" + PropertiesUtil.getString("session.redis.namespace") + ":sessions:expires:";
+        String key = "spring:session:" + PropertiesUtil.getString("session.redis.namespace.shuo") + ":sessions:expires:";
         Map<String, Object> columnMap = InstanceUtil.newHashMap();
         List<Session> sessions = queryList(columnMap);
         for (Session Session : sessions) {

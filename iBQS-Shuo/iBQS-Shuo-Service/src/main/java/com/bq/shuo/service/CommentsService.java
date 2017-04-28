@@ -1,6 +1,7 @@
 package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.CommentsMapper;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "comments")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"comments")
 public class CommentsService extends BaseService<Comments> {
     @Autowired
     private CommentsMapper commentsMapper;

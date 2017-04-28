@@ -17,6 +17,7 @@ public class SystemConfigUtil {
     public static final String SUBJECT_LIKED_HOT_NUM = "SUBJECT_LIKED_HOT_NUM";
     public static final String ALBUM_LIKED_HOT_NUM = "ALBUM_LIKED_HOT_NUM";
     public static final String CATEGORY_COLLECTION_HOT_NUM = "CATEGORY_COLLECTION_HOT_NUM";
+    public static final String STICKER_CITES_NUM = "STICKER_CITES_NUM";
 
     public static Integer getIntValue(String field) {
 

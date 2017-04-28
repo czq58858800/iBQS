@@ -1,5 +1,6 @@
 package com.bq.shuo.service;
 
+import com.bq.core.Constants;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.model.Adv;
 import org.springframework.cache.annotation.CacheConfig;
@@ -14,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = "adv")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"adv")
 public class AdvService extends BaseService<Adv> {
 }
