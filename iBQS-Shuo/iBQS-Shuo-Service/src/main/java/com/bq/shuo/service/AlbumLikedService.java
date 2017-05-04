@@ -101,6 +101,9 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
                 delete(albumLikedId);
                 // 减去-喜欢专辑计数器
                 record.setLikedNum(record.getLikedNum() - 1);
+                if (record.getLikedNum() < 0) {
+                    record.setLikedNum(0);
+                }
                 albumService.update(record);
 
 

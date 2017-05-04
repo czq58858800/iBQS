@@ -11,8 +11,8 @@ import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.util.Push;
-import com.bq.shuo.core.util.PushType;
 import com.bq.shuo.core.util.QiniuUtil;
 import com.bq.shuo.model.*;
 import com.bq.shuo.provider.IShuoProvider;
@@ -190,11 +190,12 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         if (StringUtils.equals(liked,"Y"))  {
             Parameter parameter = new Parameter("subjectLikedService","updateLiked").setObjects(new Object[]{id,getCurrUser()});
             boolean isLiked = (boolean) provider.execute(parameter).getObject();
-            if (!isLiked) {
+            if (isLiked) {
                 parameter = new Parameter("subjectService","queryBeanById").setObjects(new Object[]{id,getCurrUser()});
                 Subject subject = (Subject) provider.execute(parameter).getModel();
-                // 评论推送
-                new Push(PushType.LIKED,getCurrUser(),subject.getUserId());
+                // 喜欢主题推送
+                new Push(PushType.LIKED,getCurrUser(),subject.getUserId(),id);
+            } else {
                 return setModelMap(modelMap,HttpCode.HAS_LIKED);
             }
         } else if (StringUtils.equals(liked,"C")){
@@ -318,7 +319,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         provider.execute(parameter);
 
         // 发布推送
-        new Push(PushType.SUBJECT,getCurrUser(),subject.getUserId(),subjectId,content);
+        new Push(PushType.AT,getCurrUser(),subject.getUserId(),subjectId,content);
 
         return setSuccessModelMap(modelMap);
     }
@@ -345,7 +346,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             if (isLayer) {
                 Layer layer = new Layer();
                 layer.setEnable(true);
-                layer.setLayer(imageObj.getString("layerInfo"));
+                layer.setLayer(JSONObject.toJSONString(imageObj.getString("layerInfo")));
                 layer.setUserId(getCurrUser());
                 Parameter parameter = new Parameter("layerService","update").setModel(layer);
                 layer = (Layer) provider.execute(parameter).getModel();

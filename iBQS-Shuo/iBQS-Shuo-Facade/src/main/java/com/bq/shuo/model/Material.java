@@ -41,17 +41,6 @@ public class Material extends BaseModel {
      */
 	@TableField("citations_")
 	private Integer citations;
-    /**
-     * 审核状态(-1：审核失败；1：审核中；2：审核通过）
-     */
-	@TableField("audit_")
-	private String audit;
-    /**
-     * 审核用户ID
-     */
-	@TableField("audit_user_id")
-	private String auditUserId;
-
 
 	public String getUserId() {
 		return userId;
@@ -107,22 +96,6 @@ public class Material extends BaseModel {
 
 	public void setCitations(Integer citations) {
 		this.citations = citations;
-	}
-
-	public String getAudit() {
-		return audit;
-	}
-
-	public void setAudit(String audit) {
-		this.audit = audit;
-	}
-
-	public String getAuditUserId() {
-		return auditUserId;
-	}
-
-	public void setAuditUserId(String auditUserId) {
-		this.auditUserId = auditUserId;
 	}
 
 }

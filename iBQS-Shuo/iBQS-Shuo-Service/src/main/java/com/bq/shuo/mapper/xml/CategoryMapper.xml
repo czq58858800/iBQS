@@ -7,11 +7,10 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		SELECT id_ FROM bq_category
 		<where>
-			and enable_ = 1
-			<if test="cm.isPrivate == null and cm.isPrivate == ''">
-				and is_private = 0
+			<if test="cm.enable != null and cm.enable != ''">
+				and enable_ = #{cm.enable}
 			</if>
-			<if test="cm.stuffNum == null and cm.stuffNum == ''">
+			<if test="cm.stuffNum == null">
 				and stuff_num != 0
 			</if>
 			<if test="cm.orderHot != null and cm.orderHot == true">

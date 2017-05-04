@@ -238,9 +238,9 @@ public final class SecurityUtil {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(encryptDes("SHJR"));
-		System.out.println(decryptDes("INzvw/3Qc4q="));
-		System.out.println(encryptMd5("SHJR"));
+		System.out.println("encryptDes:"+encryptDes("SHJR"));
+		System.out.println("decryptDes:"+decryptDes("INzvw/3Qc4q="));
+		System.out.println("encryptMd5:"+encryptMd5("SHJR"));
 		System.out.println(encryptSHA("1"));
 		Map<String, Object> key = RSACoder.initKey();
 		String privateKey = encryptBASE64(RSACoder.getPrivateKey(key));

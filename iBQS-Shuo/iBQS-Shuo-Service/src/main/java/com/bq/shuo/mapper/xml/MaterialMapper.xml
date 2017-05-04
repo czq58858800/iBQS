@@ -7,18 +7,11 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		SELECT id_ FROM bq_material
 		<where>
+			<if test="cm.enable != null and cm.enable != ''">
+				and enable_ = #{cm.enable}
+			</if>
 			<if test="cm.categoryId != null and cm.categoryId != ''">
 				and category_id = #{cm.categoryId}
-			</if>
-			<if test="cm.audit != null and cm.audit != ''">
-				<choose>
-					<when test='cm.audit.toString() == "under".toString() '>
-						and audit_ != 2
-					</when>
-					<otherwise>
-						and audit_ = #{cm.audit}
-					</otherwise>
-				</choose>
 			</if>
 		</where>
 		ORDER BY create_time DESC

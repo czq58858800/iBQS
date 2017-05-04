@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * <p>
  * 素材表  服务实现类
@@ -58,6 +60,7 @@ public class MaterialService extends BaseService<Material> {
 
                     int maxCount = SystemConfigUtil.getIntValue(SystemConfigUtil.STICKER_CITES_NUM);
                     if (category.getCitations() == maxCount) {
+                        category.setHotTime(new Date());
                         category.setIsHot(true);
                     }
                     categoryService.update(category);

@@ -1,5 +1,7 @@
 package com.bq.shuo.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.shuo.mapper.NotifyMapper;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,11 +51,18 @@ public class NotifyService extends BaseService<Notify> {
         return pageInfo;
     }
 
-    public int getByUnreadNum(Map<String, Object> params) {
-        return notifyMapper.getByUnreadNum(params);
+    @Override
+    public void delete(String id) {
+        super.delete(id);
     }
 
-    public void updateRead(String userId,String msgType) {
-        notifyMapper.updateRead(userId,msgType);
+    public void delete(Notify record) {
+        Wrapper<Notify> wrapper = new EntityWrapper(record);
+        List<Notify> notifyList = notifyMapper.selectList(wrapper);
+        if (notifyList != null && notifyList.size() > 0) {
+            for (Notify notify:notifyList) {
+                delete(notify.getId());
+            }
+        }
     }
 }

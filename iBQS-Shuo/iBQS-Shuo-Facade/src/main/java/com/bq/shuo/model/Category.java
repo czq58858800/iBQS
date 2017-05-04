@@ -3,7 +3,7 @@ package com.bq.shuo.model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -82,17 +82,6 @@ public class Category extends BaseModel {
      */
 	@TableField("sort_num")
 	private Integer sortNum;
-    /**
-     * 审核状态(-1：审核失败；0：上传素材中；1：审核中；2：审核通过）
-     */
-	@TableField("audit_")
-	private String audit;
-    /**
-     * 审核用户ID
-     */
-	@TableField("audit_user_id")
-	private Long auditUserId;
-
 
 	/**
 	 * 热门权重
@@ -232,22 +221,6 @@ public class Category extends BaseModel {
 
 	public void setSortNum(Integer sortNum) {
 		this.sortNum = sortNum;
-	}
-
-	public String getAudit() {
-		return audit;
-	}
-
-	public void setAudit(String audit) {
-		this.audit = audit;
-	}
-
-	public Long getAuditUserId() {
-		return auditUserId;
-	}
-
-	public void setAuditUserId(Long auditUserId) {
-		this.auditUserId = auditUserId;
 	}
 
 	public Boolean getIsHot() {

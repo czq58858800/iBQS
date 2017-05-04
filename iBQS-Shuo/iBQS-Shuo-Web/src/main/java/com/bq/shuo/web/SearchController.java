@@ -92,6 +92,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
 
         params.put("currUserId",getCurrUser());
+        params.put("orderbySearch",true);
         Parameter queryBeansParam = new Parameter("userService","queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
 //        appSearchService.update(keyword);
@@ -114,8 +115,8 @@ public class SearchController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("myWorks",1);
         params.put("currUserId",getCurrUser());
-        Parameter queryBeansParam = new Parameter("subjectService","selectByKeyword").setMap(params);
-        Page page = provider.execute(queryBeansParam).getPage();
+        Parameter parameter = new Parameter("subjectService","selectByKeyword").setMap(params);
+        Page page = provider.execute(parameter).getPage();
         page.setRecords(SubjectHelper.formatResultList(page.getRecords()));
 //        appSearchService.update(keyword);
         return  setSuccessModelMap(modelMap,page);

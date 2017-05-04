@@ -73,9 +73,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
         Assert.notNull(keyword, "KEYWORD");
         Map<String, Object> params = WebUtil.getParameterMap(request);
-        if (!params.containsKey("audit")) {
-            params.put("audit",2);
-        }
+        params.put("enable",true);
         if (StringUtils.equals(keyword.trim(),"热门") || StringUtils.equals(keyword.trim().toLowerCase(),"hot")) {
             params.put("orderHot",true);
             params.remove("keyword");
@@ -99,7 +97,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
         Assert.notNull(categoryId, "CATEGORY_ID");
         Map<String, Object> params = WebUtil.getParameterMap(request);
-        params.put("audit",2);
+        params.put("enable",true);
 
         Parameter queryParam = new Parameter("materialService","query").setMap(params);
         Page page = provider.execute(queryParam).getPage();
@@ -113,7 +111,6 @@ public class MaterialController extends AbstractController<IShuoProvider> {
             resultMap.put("type",record.getImageType());
             resultMap.put("width",record.getImageWidth());
             resultMap.put("height",record.getImageHeight());
-            resultMap.put("audit",record.getAudit());
             resultList.add(resultMap);
         }
         page.setRecords(resultList);
@@ -141,9 +138,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(tags, "TAGS");
         Assert.notNull(summary, "SUMMARY");
         Category record = new Category(id,cover,name,tags,summary);
-        CategoryReview categoryReview = new CategoryReview(id,cover,name,tags,summary,getCurrUser());
         if (StringUtils.isBlank(id)) {
-            record.setAudit("0");
             record.setStuffNum(0);
             record.setIsHot(false);
             record.setCitations(0);
@@ -153,15 +148,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
             record.setSortNum(sortNum);
 
             provider.execute(new Parameter("categoryService","update").setModel(record));
-            categoryReview.setCategoryId(record.getId());
-        } else {
-            Category category = (Category) provider.execute(new Parameter("categoryService","queryById").setId(id)).getModel();
-            if (category.getStuffNum() != 0) {
-                categoryReview.setAudit("1");
-            }
         }
-
-        provider.execute(new Parameter("categoryReviewService","update").setModel(categoryReview));
 
         return setSuccessModelMap(modelMap);
     }
@@ -284,6 +271,52 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(id, "ID");
         Parameter parameter = new Parameter(getService(),"updateCites").setId(id);
         provider.execute(parameter).setId(id);
+        return setSuccessModelMap(modelMap);
+    }
+
+    /**
+     * 刪除贴纸
+     * @param request
+     * @param modelMap
+     * @param id 贴纸ID
+     * @return
+     */
+    @ApiOperation(value = "刪除贴纸")
+    @PostMapping(value = "/delete")
+    public Object delete(HttpServletRequest request, ModelMap modelMap,
+                        @ApiParam(required = true, value = "贴纸ID")@RequestParam(value = "id") String id) {
+        Assert.notNull(id, "ID");
+        Parameter parameter = new Parameter(getService(),"queryById").setId(id);
+        Material record = (Material) provider.execute(parameter).setId(id).getModel();
+        if (!StringUtils.equals(record.getUserId(),getCurrUser())) {
+            // 当前登录用户ID与创建主题的用户ID不一致
+            return setModelMap(modelMap,HttpCode.UNAUTHORIZED);
+        }
+        record.setEnable(false);
+        provider.execute(new Parameter(getService(),"update").setModel(record));
+        return setSuccessModelMap(modelMap);
+    }
+
+    /**
+     * 刪除贴纸分類
+     * @param request
+     * @param modelMap
+     * @param id 贴纸ID
+     * @return
+     */
+    @ApiOperation(value = "刪除贴纸分類")
+    @PostMapping(value = "/category/delete")
+    public Object categoryDelete(HttpServletRequest request, ModelMap modelMap,
+                         @ApiParam(required = true, value = "贴纸分類ID")@RequestParam(value = "id") String id) {
+        Assert.notNull(id, "ID");
+        Parameter parameter = new Parameter("categoryService","queryById").setId(id);
+        Category record = (Category) provider.execute(parameter).setId(id).getModel();
+        if (!StringUtils.equals(record.getUserId(),getCurrUser())) {
+            // 当前登录用户ID与创建主题的用户ID不一致
+            return setModelMap(modelMap,HttpCode.UNAUTHORIZED);
+        }
+        record.setEnable(false);
+        provider.execute(new Parameter("categoryService","update").setModel(record));
         return setSuccessModelMap(modelMap);
     }
 

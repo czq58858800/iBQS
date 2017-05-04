@@ -26,10 +26,12 @@ public class Notify extends BaseModel {
 	private String receiveUserId;
 	@TableField("subject_id")
 	private String subjectId;
-	@TableField("is_read")
-	private Boolean isRead;
+	@TableField("comments_id")
+	private String commentsId;
 	@TableField("is_push")
 	private Boolean isPush;
+
+
     /**
      * 消息类型：（1:评论；2:@；3：转发；4：喜欢）
      */
@@ -45,14 +47,27 @@ public class Notify extends BaseModel {
 
 	public Notify(){}
 
-	public Notify(String sendUserId, String receiveUserId, String subjectId, String content, String msgType) {
+	public Notify(String sendUserId, String receiveUserId, String subjectId,String commentsId, String content, String msgType) {
 		this.sendUserId = sendUserId;
 		this.receiveUserId = receiveUserId;
 		this.subjectId = subjectId;
+		this.commentsId = commentsId;
 		this.content = content;
 		this.msgType = msgType;
 		this.isPush = false;
-		this.isRead = false;
+	}
+
+    public Notify(String sendUserId, String receiveUserId, String subjectId, String msgType) {
+		this.sendUserId = sendUserId;
+		this.receiveUserId = receiveUserId;
+		this.subjectId = subjectId;
+		this.msgType = msgType;
+    }
+
+	public Notify(String sendUserId, String subjectId, String commentsId) {
+		this.sendUserId = sendUserId;
+		this.subjectId = subjectId;
+		this.commentsId = commentsId;
 	}
 
 
@@ -88,12 +103,12 @@ public class Notify extends BaseModel {
 		this.subjectId = subjectId;
 	}
 
-	public Boolean getIsRead() {
-		return isRead;
+	public String getCommentsId() {
+		return commentsId;
 	}
 
-	public void setIsRead(Boolean isRead) {
-		this.isRead = isRead;
+	public void setCommentsId(String commentsId) {
+		this.commentsId = commentsId;
 	}
 
 	public Boolean getIsPush() {

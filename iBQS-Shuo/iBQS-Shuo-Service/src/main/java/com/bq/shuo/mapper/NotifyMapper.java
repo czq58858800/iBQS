@@ -16,7 +16,6 @@ import java.util.Map;
  */
 public interface NotifyMapper extends BaseMapper<Notify> {
 
-    int getByUnreadNum(@Param("cm") Map<String, Object> params);
 
     void updateRead(@Param("userId")String userId,@Param("msgType")String msgType);
 

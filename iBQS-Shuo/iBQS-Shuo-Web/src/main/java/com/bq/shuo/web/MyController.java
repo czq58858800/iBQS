@@ -127,15 +127,11 @@ public class MyController extends AbstractController<IShuoProvider> {
     @GetMapping("/material/category/list")
     public Object categoryList(HttpServletRequest request, ModelMap modelMap,
                                @ApiParam(required = true, value = "页码") @RequestParam(value = "pageNum") Integer pageNum,
-                               @ApiParam(required = false, value = "审核状态(-1：审核失败；1：审核中；2：审核通过）") @RequestParam(value = "audit",required = false) String audit,
                                @ApiParam(required = false, value = "用户ID") @RequestParam(value = "userId",required = false) String userId) {
         Assert.notNull(pageNum, "PAGE_NUM");
 
         Map<String, Object> params = WebUtil.getParameterMap(request);
-
-        if (StringUtils.isNotBlank(userId)) {
-            params.put("audit","2");
-        }
+        params.put("stuffNum",true);
         if (StringUtils.isBlank(userId)) {
             if (StringUtils.isBlank(getCurrUser())) return setModelMap(modelMap, HttpCode.UNAUTHORIZED);
             params.put("userId",getCurrUser());

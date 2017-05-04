@@ -7,6 +7,7 @@ import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.SubjectMapper;
 import com.bq.shuo.model.Album;
+import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,9 @@ public class SubjectService extends BaseService<Subject> {
 
     @Autowired
     private DynamicService dynamicService;
+
+    @Autowired
+    private NotifyService notifyService;
 
     public Page<Subject> queryByHot(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
@@ -281,6 +285,10 @@ public class SubjectService extends BaseService<Subject> {
             userService.setUserCounter(record.getUserId(),CounterHelper.User.WORKS_LIKE,-likedNum);
             // 减去用户作品数量
             userService.decrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
+
+            Notify notify = new Notify();
+            notify.setSubjectId(id);
+            notifyService.delete(notify);
         }
     }
 

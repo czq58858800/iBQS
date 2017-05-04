@@ -1,5 +1,6 @@
 package com.bq.shuo.support;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.User;
@@ -33,7 +34,6 @@ public final class NotifyHelper {
             resultMap.put("msgType", record.getMsgType());
             resultMap.put("receiveUserId", record.getReceiveUserId());
             resultMap.put("createTime",record.getCreateTime().getTime());
-            resultMap.put("isRead",record.getIsRead());
             if (record.getSendUser() != null) {
                 Map<String,Object> userMap = InstanceUtil.newHashMap();
                 User sendUser = record.getSendUser();
@@ -45,6 +45,17 @@ public final class NotifyHelper {
                 resultMap.put("sendUser",userMap);
             }
         }
+        return resultMap;
+    }
+
+
+    public static Object formatResultPage(Page page) {
+        Map<String,Object> resultMap = InstanceUtil.newHashMap();
+        resultMap.put("total",page.getTotal());
+        resultMap.put("pages",page.getPages());
+        resultMap.put("current",page.getCurrent());
+        resultMap.put("size",page.getSize());
+        resultMap.put("records",formatResultList(page.getRecords()));
         return resultMap;
     }
 }

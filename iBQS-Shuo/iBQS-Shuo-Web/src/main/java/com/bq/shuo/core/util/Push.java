@@ -1,17 +1,17 @@
 package com.bq.shuo.core.util;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
+import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
-import com.bq.shuo.core.base.BaseProvider;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.ContextLoader;
 import push.PushUtil;
 
@@ -36,8 +36,10 @@ public class Push {
     private String sendUserId;
     private String recevieUserId;
     private String subjectId;
+    private String commentsId;
     private String content;
     private String type;    // 1:评论主题 2:发布主题 3:转发主题 4:主题点赞
+
 
     public Push(String type, String sendUserId, String recevieUserId) {
         this.type = type;
@@ -46,11 +48,30 @@ public class Push {
         sendMsg();
     }
 
+
+    public Push(String type, String sendUserId, String recevieUserId,String subjectId) {
+        this.type = type;
+        this.sendUserId = sendUserId;
+        this.recevieUserId = recevieUserId;
+        this.subjectId = subjectId;
+        sendMsg();
+    }
+
     public Push(String type, String sendUserId, String recevieUserId, String subjectId, String content) {
         this.type = type;
         this.sendUserId = sendUserId;
         this.recevieUserId = recevieUserId;
         this.subjectId = subjectId;
+        this.content = content;
+        sendMsg();
+    }
+
+    public Push(String type, String sendUserId, String recevieUserId, String subjectId, String commentsId, String content) {
+        this.type = type;
+        this.sendUserId = sendUserId;
+        this.recevieUserId = recevieUserId;
+        this.subjectId = subjectId;
+        this.commentsId = commentsId;
         this.content = content;
         sendMsg();
     }
@@ -69,22 +90,37 @@ public class Push {
                 String pushContent = null;
 
                 // 内容@推送
-                if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {
-                    if (StringUtils.equals(type,PushType.COMMENTS)) {
+                /*if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {
+                    if (StringUtils.equals(type, PushType.COMMENTS)) {
                         pushContent = sendUser.getName()+",评论了你的主题。";
-                        push(pushContent,recevieUser,PushType.COMMENTS,subjectId);
-                    } else if (StringUtils.equals(type,PushType.FORWARD)) {
+                        push(pushContent,recevieUser, PushType.COMMENTS,subjectId);
+                    } else if (StringUtils.equals(type, PushType.FORWARD)) {
                         pushContent = sendUser.getName()+",转发了你的主题。";
-                        push(pushContent,recevieUser,PushType.FORWARD,recevieUser.getId());
-                    } else if (StringUtils.equals(type,PushType.LIKED)) {
+                        push(pushContent,recevieUser, PushType.FORWARD,recevieUser.getId());
+                    } else if (StringUtils.equals(type, PushType.LIKED)) {
                         pushContent = sendUser.getName()+",赞了你的主题。";
-                        push(pushContent,recevieUser,PushType.LIKED,subjectId);
+                        push(pushContent,recevieUser, PushType.LIKED,subjectId);
                     }
-                    Notify notify = new Notify(sendUserId,recevieUserId,subjectId,pushContent,type);
+                    Notify notify = new Notify(sendUserId,recevieUserId,subjectId,commentsId,StringUtils.isNotBlank(content) ? content : pushContent,type);
                     parameter = new Parameter("notifyService","update").setModel(notify);
                     provider.execute(parameter);
-                }
+                }*/
 
+
+                if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {
+
+                    if (StringUtils.equals(type, PushType.COMMENTS)) {
+                        setUserRemindNumber(recevieUserId, PushType.NOTIFY_COMMENTS_NUM, +1);
+                    } else if (StringUtils.equals(type, PushType.FORWARD)) {
+                        setUserRemindNumber(recevieUserId, PushType.NOTIFY_FORWARD_NUM, +1);
+                    } else if (StringUtils.equals(type, PushType.LIKED)) {
+                        setUserRemindNumber(recevieUserId, PushType.NOTIFY_LIKED_NUM, +1);
+                    }
+
+                    Notify notify = new Notify(sendUserId, recevieUserId, subjectId, commentsId, StringUtils.isNotBlank(content) ? content : pushContent, type);
+                    parameter = new Parameter("notifyService", "update").setModel(notify);
+                    provider.execute(parameter);
+                }
 
                 if (StringUtils.isNotBlank(content)) {
                     List<String> atUsers = findAtUser(content);
@@ -97,14 +133,15 @@ public class Push {
                             User user = pageInfo.getRecords().get(0);
                             //推送@好友
                             if (user != null && sendUserId != user.getId()) {
-                                if (StringUtils.equals(type,PushType.COMMENTS)) {
-                                    push(sendUser.getName()+",评论中提到了你。",user,PushType.COMMENTS,subjectId);
-                                } else if (StringUtils.equals(type,PushType.FORWARD)) {
-                                    push(sendUser.getName()+",转发中提到了你。",user,PushType.FORWARD,recevieUser.getId());
-                                } else if (StringUtils.equals(type,PushType.SUBJECT)) {
-                                    push(sendUser.getName()+",主题中提到了你。",user,PushType.SUBJECT,subjectId);
+                                if (StringUtils.equals(type, PushType.COMMENTS)) {
+                                    push(sendUser.getName()+",评论中提到了你。",user, PushType.COMMENTS,subjectId);
+                                } else if (StringUtils.equals(type, PushType.FORWARD)) {
+                                    push(sendUser.getName()+",转发中提到了你。",user, PushType.FORWARD,recevieUser.getId());
+                                } else if (StringUtils.equals(type, PushType.AT)) {
+                                    push(sendUser.getName()+",主题中提到了你。",user, PushType.AT,subjectId);
                                 }
-                                Notify notify = new Notify(sendUserId,user.getId(),subjectId,content,type);
+                                setUserRemindNumber(user.getId(),PushType.NOTIFY_AT_NUM,+1);
+                                Notify notify = new Notify(sendUserId,user.getId(),subjectId,commentsId,content,"2");
                                 parameter = new Parameter("notifyService","update").setModel(notify);
                                 provider.execute(parameter);
                             }
@@ -183,5 +220,33 @@ public class Push {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+
+    private void setUserRemindNumber(String userId,String field,int n) {
+        String lockKey = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"remind:LOCK:"+userId;
+        String key = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"remind:"+userId;
+        while (!CacheUtil.getLock(lockKey)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                logger.error("", e);
+            }
+        }
+        try {
+            Integer number = getUserRemindNumber(key,field) + n;
+            CacheUtil.getCache().hset(key,field, String.valueOf(number));
+        } finally {
+            CacheUtil.unlock(lockKey);
+        }
+    }
+
+    // 获取用户通知数
+    public static Integer getUserRemindNumber(final String key,final String field) {
+        String v = (String) CacheUtil.getCache().hget(key,field);
+        if (StringUtils.isNotBlank(v)) {
+            return Integer.parseInt(v);
+        }
+        return 0;
     }
 }

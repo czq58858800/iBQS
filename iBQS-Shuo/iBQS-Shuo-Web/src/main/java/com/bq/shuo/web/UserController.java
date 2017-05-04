@@ -12,6 +12,7 @@ import com.bq.core.util.SerializeUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.support.login.ThirdPartyLoginHelper;
 import com.bq.shuo.core.support.login.ThirdPartyUser;
 import com.bq.shuo.model.*;
@@ -474,5 +475,27 @@ public class UserController extends AbstractController<IShuoProvider> {
         provider.execute(new Parameter("userConfigService","update").setModel(record));
         return setSuccessModelMap(modelMap,"修改成功！");
     }
+
+
+    // 消息通知
+    @ApiOperation(value = "消息通知")
+    @GetMapping("/remind")
+    public Object remind(HttpServletRequest request, ModelMap modelMap) {
+        String key = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"remind:"+getCurrUser();
+        String comment = (String) CacheUtil.getCache().hget(key, PushType.NOTIFY_COMMENTS_NUM);
+        String forward = (String) CacheUtil.getCache().hget(key, PushType.NOTIFY_FORWARD_NUM);
+        String liked = (String) CacheUtil.getCache().hget(key, PushType.NOTIFY_LIKED_NUM);
+        String AT = (String) CacheUtil.getCache().hget(key, PushType.NOTIFY_AT_NUM);
+
+        Map<String,Object> resultMap = InstanceUtil.newHashMap();
+        resultMap.put("comment",StringUtils.isNotBlank(comment) ? Integer.parseInt(comment) : 0);
+        resultMap.put("forward",StringUtils.isNotBlank(forward) ? Integer.parseInt(forward) : 0);
+        resultMap.put("liked",StringUtils.isNotBlank(liked) ? Integer.parseInt(liked) : 0);
+        resultMap.put("at",StringUtils.isNotBlank(AT) ? Integer.parseInt(AT) : 0);
+
+        return setSuccessModelMap(modelMap,resultMap);
+    }
+
+
 
 }

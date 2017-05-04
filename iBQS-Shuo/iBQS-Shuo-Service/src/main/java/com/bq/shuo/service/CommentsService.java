@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.helper.CounterHelper;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.mapper.CommentsMapper;
 import com.bq.shuo.mapper.CommentsPraiseMapper;
 import com.bq.shuo.model.Comments;
 import com.bq.shuo.core.base.BaseService;
+import com.bq.shuo.model.Notify;
+import io.rong.methods.Push;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -39,6 +42,9 @@ public class CommentsService extends BaseService<Comments> {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private NotifyService notifyService;
 
     public Page<Comments> queryBeans(Map<String, Object> params) {
         Page<Comments> pageInfo = query(params);
@@ -81,6 +87,11 @@ public class CommentsService extends BaseService<Comments> {
             commentsMapper.deleteCounter(id);
             commentsMapper.deleteByCurrUserId(currUserId,id);
             CacheUtil.getCache().del(getCacheKey(id));
+
+            Notify notify = new Notify(currUserId,record.getSubjectId(),record.getId());
+            notifyService.delete(notify);
+            notify.setMsgType(PushType.AT);
+            notifyService.delete(notify);
         }
     }
 

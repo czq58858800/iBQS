@@ -53,7 +53,6 @@ public final class CategoryHelper {
         resultMap.put("summary",record.getSummary());
         resultMap.put("tags",record.getTags());
         resultMap.put("isColl",record.isColl());
-        resultMap.put("audit",record.getAudit());
 
         resultMap.put("tags",record.getTags());
         if (record.getAuthor() != null) {

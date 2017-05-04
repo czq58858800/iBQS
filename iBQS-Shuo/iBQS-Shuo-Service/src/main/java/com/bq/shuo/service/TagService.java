@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"systemConfig")
+@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"tag")
 public class TagService extends BaseService<Tag> {
 
     @CacheResult(cacheName = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"tag:"+"queryByAll")

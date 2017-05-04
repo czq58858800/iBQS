@@ -1,12 +1,15 @@
 package com.bq.shuo.web;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.Constants;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
+import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.NotifyHelper;
@@ -41,12 +44,19 @@ public class NotifyController extends AbstractController<IShuoProvider> {
         params.put("receiveUserId",getCurrUser());
         Parameter queryBeansParam = new Parameter("notifyService","queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
-        page.setRecords(NotifyHelper.formatResultList(page.getRecords()));
 
-        int unreadNum = (int) provider.execute(new Parameter("notifyService","getByUnreadNum").setMap(params)).getObject();
-        modelMap.put("unreadNum",unreadNum);
+        String key = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"remind:"+getCurrUser();
+        if (StringUtils.equals("1",msgType)) {
+            CacheUtil.getCache().hdel(key,PushType.NOTIFY_COMMENTS_NUM);
+        } else if (StringUtils.equals("2",msgType)) {
+            CacheUtil.getCache().hdel(key,PushType.NOTIFY_AT_NUM);
+        } else if (StringUtils.equals("3",msgType)) {
+            CacheUtil.getCache().hdel(key,PushType.NOTIFY_FORWARD_NUM);
+        } else if (StringUtils.equals("4",msgType)) {
+            CacheUtil.getCache().hdel(key,PushType.NOTIFY_LIKED_NUM);
+        }
 
-        return  setSuccessModelMap(modelMap,page);
+        return  setSuccessModelMap(modelMap,NotifyHelper.formatResultPage(page));
     }
 
     @ApiOperation(value = "删除")
@@ -58,27 +68,8 @@ public class NotifyController extends AbstractController<IShuoProvider> {
         if (record == null || !StringUtils.equals(record.getReceiveUserId(),getCurrUser())) {
             return setModelMap(modelMap, HttpCode.UNAUTHORIZED,"无法删除别人的消息");
         }
-        provider.execute(new Parameter(getService(),"delete").setId(id));
+        provider.execute(new Parameter("notifyService","delete").setId(id));
         return  setSuccessModelMap(modelMap);
-    }
-
-    @ApiOperation(value = "已读")
-    @PostMapping(value = "read")
-    public Object read(ModelMap modelMap,
-                       @ApiParam(required = true,value = "通知ID") @RequestParam(value = "id") String id) {
-        Assert.notNull(id, "ID");
-        Notify record = (Notify) provider.execute(new Parameter("notifyService","queryById").setId(id)).getModel();
-        record.setIsRead(true);
-        provider.execute(new Parameter(getService(),"update").setModel(record));
-        return setSuccessModelMap(modelMap);
-    }
-
-    @ApiOperation(value = "标记所有为已读")
-    @PostMapping(value = "allRead")
-    public Object allRead(ModelMap modelMap,
-              @ApiParam(required = false, value = "消息类型：（1:评论；2:@；3：转发；4：喜欢）") @RequestParam(value = "t",required = false) String t) {
-        provider.execute(new Parameter(getService(),"updateRead").setObjects(new Object[] {getCurrUser(),t}));
-        return setSuccessModelMap(modelMap);
     }
 
 }

@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.shuo.core.helper.CounterHelper;
+import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.util.SystemConfigUtil;
 import com.bq.shuo.mapper.SubjectLikedMapper;
 import com.bq.shuo.model.Album;
+import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.SubjectLiked;
 import com.bq.shuo.core.base.BaseService;
@@ -43,6 +45,9 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
     private AlbumLikedService albumLikedService;
     @Autowired
     private AlbumService albumService;
+
+    @Autowired
+    private NotifyService notifyService;
 
     public Page<SubjectLiked> queryBeans(Map<String, Object> params) {
         Page<SubjectLiked> page = query(params);
@@ -113,6 +118,10 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
                     Album album = albumService.querySubjectIdByList(subjectId,userId).get(0);
                     albumLikedService.updateCancelLiked(album.getId(),userId);
                 }
+
+                // 删除通知
+                Notify notify = new Notify(userId,subject.getUserId(),subjectId,PushType.LIKED);
+                notifyService.delete(notify);
             }
             return true;
         }

@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.NamedThreadLocal;
@@ -56,6 +58,23 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 			throws Exception {
 		// 开始时间（该数据只有当前请求的线程可见）
 		startTimeThreadLocal.set(System.currentTimeMillis());
+
+		System.out.println(request.getContextPath());
+		Subject currentUser = SecurityUtils.getSubject();
+		//判断用户是通过记住我功能自动登录,此时session失效
+		if(!currentUser.isAuthenticated() && currentUser.isRemembered()){
+			try {
+			}catch (Exception e){
+				//自动登录失败,跳转到登录页面
+				response.sendRedirect(request.getContextPath()+"/unauthorized");
+				return false;
+			}
+			if(!currentUser.isAuthenticated()){
+				//自动登录失败,跳转到登录页面
+				response.sendRedirect(request.getContextPath()+"/unauthorized");
+				return false;
+			}
+		}
 		return super.preHandle(request, response, handler);
 	}
 

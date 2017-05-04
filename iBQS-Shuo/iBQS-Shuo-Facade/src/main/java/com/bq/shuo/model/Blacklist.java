@@ -29,6 +29,9 @@ public class Blacklist extends BaseModel {
 	@TableField("blacklist_user_id")
 	private String blacklistUserId;
 
+	public Blacklist() {
+
+	}
 	public Blacklist (String userId,String blacklistUserId) {
 		this.userId = userId;
 		this.blacklistUserId = blacklistUserId;

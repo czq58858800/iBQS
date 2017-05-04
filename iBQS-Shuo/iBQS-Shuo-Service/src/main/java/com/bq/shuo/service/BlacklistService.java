@@ -47,7 +47,7 @@ public class BlacklistService extends BaseService<Blacklist> {
     public void delete(String id) {
         RongCloud rongCloud = RongCloud.getInstance(appKey, appSecret);
         try {
-            Blacklist record = queryById(id);
+            Blacklist record = super.queryById(id);
             if (record != null) {
                 CodeSuccessReslut userRemoveBlacklistResult = rongCloud.user.removeBlacklist(record.getUserId(), record.getBlacklistUserId());
                 logger.debug("refresh:  {}",userRemoveBlacklistResult.toString());
