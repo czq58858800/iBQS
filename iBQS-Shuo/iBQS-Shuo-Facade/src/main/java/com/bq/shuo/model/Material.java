@@ -18,6 +18,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Material extends BaseModel {
 
+	@TableField("name_")
+	private String name;
+
 	@TableField("user_id")
 	private String userId;
     /**
@@ -41,6 +44,17 @@ public class Material extends BaseModel {
      */
 	@TableField("citations_")
 	private Integer citations;
+
+	@TableField("is_cover")
+	private Boolean isCover;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getUserId() {
 		return userId;
@@ -98,4 +112,11 @@ public class Material extends BaseModel {
 		this.citations = citations;
 	}
 
+	public Boolean getIsCover() {
+		return isCover == null ? false : isCover;
+	}
+
+	public void setIsCover(Boolean isCover) {
+		this.isCover = isCover;
+	}
 }

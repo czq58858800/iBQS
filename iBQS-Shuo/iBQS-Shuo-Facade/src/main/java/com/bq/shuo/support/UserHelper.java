@@ -100,11 +100,11 @@ public final class UserHelper {
             resultMap.put("name", record.getName());
             resultMap.put("avatar", record.getAvatar());
             resultMap.put("sex", record.getSex());
-            resultMap.put("fansNum",record.getFansNum());
-            resultMap.put("followNum",record.getFollowNum());
             resultMap.put("type", record.getUserType());
             resultMap.put("summary", record.getSummary());
-            resultMap.put("isFollow", record.isFollow());
+            resultMap.put("isFollow",record.isFollow());
+            resultMap.put("followNum",record.getFollowNum());
+            resultMap.put("fansNum",record.getFansNum());
             return resultMap;
         }
         return InstanceUtil.newHashMap();

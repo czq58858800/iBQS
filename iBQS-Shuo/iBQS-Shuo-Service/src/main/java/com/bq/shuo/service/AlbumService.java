@@ -56,5 +56,4 @@ public class AlbumService extends BaseService<Album> {
         return list;
     }
 
-
 }

@@ -66,8 +66,30 @@ angular.module('app')
                 });
             }
 
-            $scope.toComments = function (topicjectId) {
-                $state.go('main.shuo.topic.update', {topicjectId: topicjectId});
+            $scope.updateHot = function (id,isHot) {
+                $scope.loading = true;
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType:'application/json;charset=UTF-8',
+                    url : '/shuo/topic/updateHot',
+                    data: angular.toJson({
+                        id:id,
+                        isHot:isHot
+                    })
+                }).then(function(result) {
+                    $scope.loading = false;
+                    if (result.code == 200) {
+                        $scope.search();
+                    } else {
+                        $scope.msg = result.msg;
+                    }
+                    $scope.$apply();
+                });
+            }
+
+            $scope.toSubject = function (keyword) {
+                $state.go('main.shuo.subject.list', {keyword: keyword});
             };
 
             // 翻页

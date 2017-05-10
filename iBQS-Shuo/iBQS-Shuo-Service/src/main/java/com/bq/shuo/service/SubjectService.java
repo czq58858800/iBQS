@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <p>
@@ -58,6 +60,9 @@ public class SubjectService extends BaseService<Subject> {
 
     @Autowired
     private NotifyService notifyService;
+
+    // 线程池
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     public Page<Subject> queryByHot(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
@@ -124,31 +129,35 @@ public class SubjectService extends BaseService<Subject> {
 
     public void setSubjectCounter(String subjectId, String field,int cal) {
         if (StringUtils.isNotBlank(subjectId)) {
-            String key = CounterHelper.Subject.SUBJECT_COUNTER_KEY + subjectId;
-            String lockKey = new StringBuilder(Constants.CACHE_NAMESPACE).append(CounterHelper.Subject.SUBJECT_COUNTER_KEY).append("LOCK:").append(subjectId).toString();
-            while (!CacheUtil.getLock(lockKey)) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    logger.error("", e);
+            executorService.submit(new Runnable() {
+                public void run() {
+                    String key = CounterHelper.Subject.SUBJECT_COUNTER_KEY + subjectId;
+                    String lockKey = new StringBuilder(Constants.CACHE_NAMESPACE).append(CounterHelper.Subject.SUBJECT_COUNTER_KEY).append("LOCK:").append(subjectId).toString();
+                    while (!CacheUtil.getLock(lockKey)) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            logger.error("", e);
+                        }
+                    }
+
+                    try {
+                        Integer number = selectSubjectCounter(subjectId, field) + cal;
+
+                        if (number < 0) {
+                            number = selectSubjectCounter(subjectId, field);
+                        }
+
+                        logger.info("表情（Subject） key:" + key + " field:" + field + " " + number);
+
+                        CacheUtil.getCache().hset(key, field, String.valueOf(number));
+
+                        subjectMapper.updateCounter(subjectId, field, number);
+                    } finally {
+                        CacheUtil.unlock(lockKey);
+                    }
                 }
-            }
-
-            try {
-                Integer number = selectSubjectCounter(subjectId, field) + cal;
-
-                if (number < 0) {
-                    number = selectSubjectCounter(subjectId,field);
-                }
-
-                logger.info("表情（Subject） key:"+key+" field:"+field+" " + number);
-
-                CacheUtil.getCache().hset(key,field,String.valueOf(number));
-
-                subjectMapper.updateCounter(subjectId,field,number);
-            } finally {
-                CacheUtil.unlock(lockKey);
-            }
+            });
         }
     }
 
@@ -190,7 +199,7 @@ public class SubjectService extends BaseService<Subject> {
             record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
             record.setForwardNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.FORWARD));
             record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
-            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
+//            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
         }
 
         record = getUserStatus(record,currUserId);
@@ -250,7 +259,7 @@ public class SubjectService extends BaseService<Subject> {
         if (!params.containsKey("endLimit")) {
             params.put("endLimit",10);
         }
-        return getSubjectListInfo(getList(subjectMapper.queryByNew(params)),params);
+        return getList(subjectMapper.queryByNew(params));
     }
 
 

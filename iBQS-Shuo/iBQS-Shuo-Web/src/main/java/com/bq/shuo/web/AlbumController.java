@@ -117,7 +117,7 @@ public class AlbumController extends AbstractController<IShuoProvider> {
                                @ApiParam(required = true, value = "JSON data[] 专辑喜欢ID")@RequestParam(value = "data") String data) {
         Assert.notNull(data, "DATA");
         JSONArray dataArr = JSONArray.parseArray(data);
-        Parameter selectCountByUserIdParam = new Parameter(getService(),"selectCountByUserId").setId(getCurrUser());
+        Parameter selectCountByUserIdParam = new Parameter("abumLikedService","selectCountByUserId").setId(getCurrUser());
         int maxLikedCount = (int) provider.execute(selectCountByUserIdParam).getObject();
         for (int i = 0;dataArr.size() > i;i++) {
             String likedId = (String) dataArr.get(i);

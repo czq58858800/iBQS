@@ -28,25 +28,25 @@ public abstract class AbstractController<T extends BaseProvider> extends BaseCon
 
     public Object query(ModelMap modelMap, Map<String, Object> param) {
         Parameter parameter = new Parameter(getService(), "query").setMap(param);
-        logger.info("{} execute query start...", parameter.getNo());
+        logger.debug("{} execute query start...", parameter.getNo());
         Page<?> list = provider.execute(parameter).getPage();
-        logger.info("{} execute query end.", parameter.getNo());
+        logger.debug("{} execute query end.", parameter.getNo());
         return setSuccessModelMap(modelMap, list);
     }
 
     public Object queryList(ModelMap modelMap, Map<String, Object> param) {
         Parameter parameter = new Parameter(getService(), "queryList").setMap(param);
-        logger.info("{} execute queryList start...", parameter.getNo());
+        logger.debug("{} execute queryList start...", parameter.getNo());
         List<?> list = provider.execute(parameter).getList();
-        logger.info("{} execute queryList end.", parameter.getNo());
+        logger.debug("{} execute queryList end.", parameter.getNo());
         return setSuccessModelMap(modelMap, list);
     }
 
     public Object get(ModelMap modelMap, BaseModel param) {
         Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        logger.info("{} execute queryById start...", parameter.getNo());
+        logger.debug("{} execute queryById start...", parameter.getNo());
         BaseModel result = provider.execute(parameter).getModel();
-        logger.info("{} execute queryById end.", parameter.getNo());
+        logger.debug("{} execute queryById end.", parameter.getNo());
         return setSuccessModelMap(modelMap, result);
     }
 
@@ -57,17 +57,17 @@ public abstract class AbstractController<T extends BaseProvider> extends BaseCon
         }
         param.setUpdateTime(new Date());
         Parameter parameter = new Parameter(getService(), "update").setModel(param);
-        logger.info("{} execute update start...", parameter.getNo());
+        logger.debug("{} execute update start...", parameter.getNo());
         provider.execute(parameter);
-        logger.info("{} execute update end.", parameter.getNo());
+        logger.debug("{} execute update end.", parameter.getNo());
         return setSuccessModelMap(modelMap);
     }
 
     public Object delete(ModelMap modelMap, BaseModel param) {
         Parameter parameter = new Parameter(getService(), "delete").setId(param.getId());
-        logger.info("{} execute delete start...", parameter.getNo());
+        logger.debug("{} execute delete start...", parameter.getNo());
         provider.execute(parameter);
-        logger.info("{} execute delete end.", parameter.getNo());
+        logger.debug("{} execute delete end.", parameter.getNo());
         return setSuccessModelMap(modelMap);
     }
 }

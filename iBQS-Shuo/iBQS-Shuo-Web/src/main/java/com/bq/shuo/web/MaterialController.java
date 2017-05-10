@@ -97,6 +97,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
         Assert.notNull(categoryId, "CATEGORY_ID");
         Map<String, Object> params = WebUtil.getParameterMap(request);
+        params.put("pageSize",20);
         params.put("enable",true);
 
         Parameter queryParam = new Parameter("materialService","query").setMap(params);
@@ -179,29 +180,59 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(categoryId, "CATEGORY_ID");
         Assert.notNull(stuffImg, "STUFF_IMG");
         JSONArray stuffImgJson = JSONArray.parseArray(stuffImg);
-        for (Object obj:stuffImgJson) {
-            String image = (String) obj;
+        for (int i = 0; i < stuffImgJson.size(); i++) {
+            String image = (String) stuffImgJson.get(i);
             Material record = new Material();
-            record.setCategoryId(categoryId);
-            record.setCitations(0);
-            record.setImage(image);
-            record.setUserId(getCurrUser());
             JSONObject imageInfo = QiniuUtil.getImageInfo(image);
             if (imageInfo.containsKey("format")) {
                 record.setImageType(imageInfo.getString("format"));
                 record.setImageWidth(imageInfo.getInteger("width"));
                 record.setImageHeight(imageInfo.getInteger("height"));
             }
+            if (i == 0) {
+                record.setIsCover(true);
+                Category category = (Category) provider.execute(new Parameter("categoryService","queryById").setId(categoryId)).getModel();
+                category.setCitations(stuffImgJson.size());
+                if (StringUtils.isBlank(category.getCover())) {
+                    category.setStuffNum(category.getStuffNum()+stuffImgJson.size());
+                    category.setCover((String) stuffImgJson.get(0));
+                    category.setCoverType(record.getImageType());
+                    category.setCoverWidth(record.getImageWidth());
+                    category.setCoverHeight(record.getImageHeight());
+                }
+                provider.execute(new Parameter("categoryService","update").setModel(category));
+            }
+            record.setCategoryId(categoryId);
+            record.setCitations(0);
+            record.setImage(image);
+            record.setUserId(getCurrUser());
             provider.execute(new Parameter("materialService","update").setModel(record));
         }
-        Category category = (Category) provider.execute(new Parameter("categoryService","queryById").setId(categoryId)).getModel();
-        category.setCitations(stuffImgJson.size());
-        if (StringUtils.isBlank(category.getCover())) {
-            category.setStuffNum(category.getStuffNum()+stuffImgJson.size());
-            category.setCover((String) stuffImgJson.get(0));
-        }
-        provider.execute(new Parameter("categoryService","update").setModel(category));
 
+
+        return setSuccessModelMap(modelMap);
+    }
+
+    @ApiOperation(value = "添加素材")
+    @PostMapping("/update")
+    public Object update(HttpServletRequest request, ModelMap modelMap,
+                      @ApiParam(required = true, value = "贴纸ID") @RequestParam(value = "id") String id,
+                      @ApiParam(required = false, value = "设为封面") @RequestParam(value = "isCover",required = false) Boolean isCover,
+                      @ApiParam(required = true, value = "贴纸名称") @RequestParam(value = "name",required = false) String name) {
+        Assert.notNull(id, "ID");
+        Parameter parameter = new Parameter("materialService","queryById").setId(id);
+        Material material = (Material) provider.execute(parameter).getModel();
+
+        if (!StringUtils.equals(material.getUserId(),getCurrUser())) {
+            return setModelMap(modelMap,HttpCode.UNAUTHORIZED);
+        }
+        if (StringUtils.isNotBlank(name)) {
+            material.setName(name);
+        }
+        if (isCover != null) {
+            material.setIsCover(isCover);
+        }
+        provider.execute(new Parameter("materialService","update").setModel(material));
         return setSuccessModelMap(modelMap);
     }
 

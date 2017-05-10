@@ -23,7 +23,7 @@
 				<div class="w-lg">
 					<form ng-submit="search()" class="ng-pristine ng-valid">
 						<div class="input-group search-box">
-							<input type="text" class="form-control" ng-model="param.keyword" placeholder="内容">
+							<input type="text" class="form-control" ng-model="param.keyword" placeholder="名称">
 							<i ng-show="user.keyword" ng-click="clearSearch()" class="fa fa-times-circle text-muted search-clear"></i>
 							<span class="input-group-btn">
                                 <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
@@ -42,9 +42,7 @@
 						<th>名称</th>
 						<th>浏览数</th>
 						<th>热门</th>
-						<th>热门排序</th>
-						<th>热门开始时间</th>
-						<th>热门结束时间</th>
+						<th>热门更新时间</th>
 						<th>创建时间</th>
 						<th>审核状态</th>
 						<th>状态</th>
@@ -53,20 +51,30 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td><a ui-sref="main.shuo.subject.update({id: item.id})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.content}}" /></a></td>
-						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.update({id: item.id})" alt="{{item.content}}">{{item.content}}</a></span></td>
-						<td class="v-middle">{{item.userName}}</td>
+						<td><a ui-sref="main.shuo.subject.list({keyword: item.name})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.name}}" /></a></td>
+						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.list({keyword: item.name})" alt="{{item.name}}">{{item.name}}</a></span></td>
 						<td class="v-middle">{{item.viewNum}}</td>
-						<td class="v-middle"><a ui-sref="main.bq.sub.update({id: item.id})">{{item.commentsNum}}</a></td>
-						<td class="v-middle">{{item.likedNum}}</td>
 						<td class="v-middle">
-							<span ng-hide="item.isHot==1" class="text-success">否</span>
-							<span ng-show="item.isHot==1" class="text-danger">是</span>
+							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
+							<span ng-show="item.isHot=='true'" class="text-danger"><a ng-click="updateHot(item.id,0)">是</a></span>
 						</td>
+						<td class="v-middle">{{item.hotTime}}</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">
-							<span ng-hide="item.enable==1" class="text-danger">禁用</span>
-							<span ng-show="item.enable==1" class="text-success">启用</span>
+
+							<span ng-if="item.audit == '2'" class="text-success">审核通过
+							<button type="button"  ng-click="auditItem(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
+							</span>
+							<span ng-if="item.audit == '1'" class="text-warning">审核中
+							<button type="button" ng-click="auditItem(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>通过</button>
+							<button type="button" ng-click="auditItem(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
+							</span>
+							<span ng-if="item.audit == '-1'" class="text-danger">审核失败
+							</span>
+						</td>
+						<td class="v-middle">
+							<span ng-hide="item.enable=='true'" class="text-danger">禁用</span>
+							<span ng-show="item.enable=='true'" class="text-success">启用</span>
 						</td>
 						<td class="v-middle">
 							<a ui-sref="main.shuo.subject.update({id: item.id})" class="btn btn-sm btn-default">

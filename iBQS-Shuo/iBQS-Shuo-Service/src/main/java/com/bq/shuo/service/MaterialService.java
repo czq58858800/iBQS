@@ -4,16 +4,20 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
+import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SystemConfigUtil;
 import com.bq.shuo.model.Category;
 import com.bq.shuo.model.Material;
 import com.bq.shuo.core.base.BaseService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,6 +41,34 @@ public class MaterialService extends BaseService<Material> {
         record.setEnable(true);
         Wrapper<Material> wrapper = new EntityWrapper<>(record);
         return mapper.selectCount(wrapper);
+    }
+
+    @Override
+    public Material update(Material record) {
+        if (StringUtils.isBlank(record.getId())) {
+
+            if (record.getIsCover()) {
+                Map<String, Object> params = InstanceUtil.newHashMap();
+                params.put("categoryId", record.getCategoryId());
+                params.put("isCover", record.getIsCover());
+                List<Material> materialList = queryList(params);
+                if (materialList != null && materialList.size() > 0) {
+                    Material material = materialList.get(0);
+                    material.setIsCover(false);
+                    super.update(material);
+                }
+            }
+
+            Category category = categoryService.queryById(record.getCategoryId());
+
+            category.setCover(record.getImage());
+            category.setCoverType(record.getImageType());
+            category.setCoverWidth(record.getImageWidth());
+            category.setCoverHeight(record.getImageHeight());
+
+            categoryService.update(category);
+        }
+        return super.update(record);
     }
 
     public void updateCites(String id) {

@@ -52,15 +52,8 @@ public class Topics extends BaseModel {
      */
 	@TableField("is_hot")
 	private Boolean isHot;
-    /**
-     * 热门索引位置
-     */
-	@TableField("hot_index")
-	private Integer hotIndex;
-	@TableField("hot_start_time")
-	private Date hotStartTime;
-	@TableField("hot_end_time")
-	private Date hotEndTime;
+	@TableField("hot_time")
+	private Date hotTime;
     /**
      * 审核状态(-1：审核失败；0：上传素材中；1：审核中；2：审核通过）
      */
@@ -157,28 +150,12 @@ public class Topics extends BaseModel {
 		this.isHot = isHot;
 	}
 
-	public Integer getHotIndex() {
-		return hotIndex;
+	public Date getHotTime() {
+		return hotTime;
 	}
 
-	public void setHotIndex(Integer hotIndex) {
-		this.hotIndex = hotIndex;
-	}
-
-	public Date getHotStartTime() {
-		return hotStartTime;
-	}
-
-	public void setHotStartTime(Date hotStartTime) {
-		this.hotStartTime = hotStartTime;
-	}
-
-	public Date getHotEndTime() {
-		return hotEndTime;
-	}
-
-	public void setHotEndTime(Date hotEndTime) {
-		this.hotEndTime = hotEndTime;
+	public void setHotTime(Date hotTime) {
+		this.hotTime = hotTime;
 	}
 
 	public String getAudit() {

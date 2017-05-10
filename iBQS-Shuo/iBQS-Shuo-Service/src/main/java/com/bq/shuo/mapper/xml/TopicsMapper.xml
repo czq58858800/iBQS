@@ -35,13 +35,10 @@
 		ORDER BY
 		<choose>
 			<when test='cm.orderType != null and cm.orderType.equals("HOT")'>
-				view_num DESC
-			</when>
-			<when test='cm.orderType != null and cm.orderType.equals("NEW")'>
-				view_num DESC
+				hot_time DESC,view_num DESC,id_ DESC
 			</when>
 			<otherwise>
-				is_hot DESC,hot_index ASC
+				hot_time DESC,id_ DESC
 			</otherwise>
 		</choose>
 	</select>

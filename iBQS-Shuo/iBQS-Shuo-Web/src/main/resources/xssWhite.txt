@@ -4,3 +4,4 @@ material/add
 material/category/coll/updateSortNo
 user/contacts/upload
 user/weibo/invite
+album/updateSortNo

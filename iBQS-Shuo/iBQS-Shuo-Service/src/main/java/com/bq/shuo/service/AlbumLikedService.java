@@ -46,8 +46,10 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         for (AlbumLiked record:pageInfo.getRecords()) {
             record.setAlbum(albumService.queryById(record.getAlbumId()));
             Subject subject = subjectService.queryById(record.getAlbum().getSubjectId());
-            subject.setUser(userService.queryById(subject.getUserId()));
-            record.setSubject(subject);
+            if (subject != null) {
+                subject.setUser(userService.queryById(subject.getUserId()));
+                record.setSubject(subject);
+            }
         }
         return pageInfo;
     }
@@ -116,5 +118,9 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
             }
         }
         return false;
+    }
+
+    public int selectCountByUserId(String userId) {
+        return albumLikedMapper.selectCountByUserId(userId);
     }
 }
