@@ -18,6 +18,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Layer extends BaseModel {
 
+	@TableField("subject_id")
+	private String subjectId;
+
     /**
      * 层信息
      */
@@ -29,6 +32,13 @@ public class Layer extends BaseModel {
 	@TableField("user_id")
 	private String userId;
 
+	public String getSubjectId() {
+		return subjectId;
+	}
+
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
+	}
 
 	public String getLayer() {
 		return layer;

@@ -335,7 +335,6 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
             JSONObject imageInfo = QiniuUtil.getImageInfo(img);
 
-
             Album album = new Album();
             album.setImage(img);
             if (imageInfo.containsKey("format")) {
@@ -351,6 +350,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
                 layer.setEnable(true);
                 layer.setLayer(JSONObject.toJSONString(imageObj.getString("layerInfo")));
                 layer.setUserId(getCurrUser());
+                layer.setSubjectId(record.getId());
                 Parameter parameter = new Parameter("layerService","update").setModel(layer);
                 layer = (Layer) provider.execute(parameter).getModel();
                 album.setLayerId(layer.getId());

@@ -1,7 +1,9 @@
 package com.bq.shuo.support;
 
 import com.bq.core.util.InstanceUtil;
+import com.bq.shuo.model.Album;
 import com.bq.shuo.model.AlbumLiked;
+import com.bq.shuo.model.Layer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -37,6 +39,26 @@ public final class AlbumHelper {
             resultMap.put("createTime", record.getAlbum().getCreateTime().getTime());
             resultMap.put("enable",record.getSubject().getEnable());
             resultMap.put("subject",SubjectHelper.formatBriefResultMap(record.getSubject()));
+        }
+        return resultMap;
+    }
+
+    public static Map<String,Object> formatResultMap(Album record) {
+        Map<String, Object> resultMap = InstanceUtil.newHashMap();
+        resultMap.put("uid", record.getId());
+        resultMap.put("image", record.getImage());
+        Map<String, Object> exifMap = InstanceUtil.newHashMap();
+        exifMap.put("type", record.getImageType());
+        exifMap.put("width", record.getImageWidth());
+        exifMap.put("height", record.getImageHeight());
+        resultMap.put("exif", exifMap);
+        resultMap.put("isLayer", StringUtils.isNotBlank(record.getLayerId()));
+        if (StringUtils.isNotBlank(record.getLayerId())) {
+            Map<String, Object> layerMap = InstanceUtil.newHashMap();
+            Layer layer = record.getLayer();
+            layerMap.put("uid", layer.getId());
+            layerMap.put("layer", layer.getLayer());
+            resultMap.put("layerInfo", layerMap);
         }
         return resultMap;
     }
