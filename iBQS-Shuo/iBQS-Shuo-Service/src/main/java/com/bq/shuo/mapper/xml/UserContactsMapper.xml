@@ -28,18 +28,25 @@
 
 	<select id="selectIdPageByFollow" resultType="java.lang.String">
 		SELECT A.id_ FROM bq_user_contacts A
-			LEFT JOIN bq_user B ON A.contact_user_id = B.id_
-			LEFT JOIN bq_user_following C ON C.follow_user_id = A.user_id AND C.befollow_user_id = A.contact_user_id
+		LEFT JOIN bq_user_following B ON A.user_id = B.follow_user_id AND A.contact_user_id = B.befollow_user_id
 		<where>
-			NOT ISNULL(A.contact_user_id)
-			<if test="cm.userId != null and cm.userId != ''">
-				AND user_id = #{cm.userId}
+			<if test="cm.unregistered != null and cm.unregistered != ''">/*未注册*/
+				ISNULL(contact_user_id)
 			</if>
-			<if test="cm.follow != null and cm.follow == false">
-				AND C.id_ IS NULL
+			<if test="cm.follow != null and cm.follow == true">/*已关注*/
+				NOT ISNULL(A.contact_user_id) AND NOT ISNULL(B.id_)
+			</if>
+			<if test="cm.follow != null and cm.follow == false">/*未关注*/
+				NOT ISNULL(A.contact_user_id) AND ISNULL(B.id_)
+			</if>
+			<if test="cm.deviceId != null and cm.deviceId != ''">
+				AND A.device_id = #{cm.deviceId}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				AND A.user_id = #{cm.userId}
 			</if>
 		</where>
-		ORDER BY A.name_ ASC,A.create_time DESC
+		ORDER BY A.name_ DESC,A.create_time DESC
 	</select>
     <select id="selectByPhone" resultType="java.lang.String">
 		SELECT  id_ FROM bq_user_contacts WHERE device_id = #{deviceId} AND user_id = #{userId} AND phone_ = #{phone}

@@ -13,6 +13,9 @@
 			<if test="cm.categoryId != null and cm.categoryId != ''">
 				and category_id = #{cm.categoryId}
 			</if>
+			<if test="cm.isCover != null and cm.isCover != ''">
+				and is_cover = #{cm.isCover}
+			</if>
 		</where>
 		ORDER BY create_time DESC
 	</select>

@@ -1,6 +1,8 @@
 package com.bq.web.shuo;
 
 import com.bq.shuo.core.base.AbstractController;
+import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.Topics;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
@@ -9,6 +11,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -40,9 +43,10 @@ public class TopicControler extends AbstractController<IShuoProvider> {
         return super.get(modelMap, param);
     }
 
-    @PostMapping
+
     @ApiOperation(value = "修改话题")
     @RequiresPermissions("shuo.topic.update")
+    @PostMapping("/update")
     public Object update(ModelMap modelMap, @RequestBody Topics param) {
         return super.update(modelMap, param);
     }
@@ -52,5 +56,27 @@ public class TopicControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.topic.delete")
     public Object delete(ModelMap modelMap, @RequestBody Topics param) {
         return super.delete(modelMap, param);
+    }
+
+    @ApiOperation(value = "推荐热门话题")
+    @RequiresPermissions("shuo.topic.update")
+    @PostMapping(value = "/updateHot")
+    public Object updateHot(ModelMap modelMap, @RequestBody Subject param) {
+        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
+        logger.debug("{} execute queryById start...", parameter.getNo());
+        Topics record = (Topics) provider.execute(parameter).getModel();
+        logger.debug("{} execute queryById end.", parameter.getNo());
+        record.setIsHot(param.getIsHot());
+        if (param.getIsHot()) {
+            record.setHotTime(new Date());
+        } else {
+            record.setHotTime(null);
+        }
+
+        parameter = new Parameter(getService(), "update").setModel(param);
+        logger.debug("{} execute update start...", parameter.getNo());
+        provider.execute(parameter);
+        logger.debug("{} execute update end.", parameter.getNo());
+        return setSuccessModelMap(modelMap);
     }
 }

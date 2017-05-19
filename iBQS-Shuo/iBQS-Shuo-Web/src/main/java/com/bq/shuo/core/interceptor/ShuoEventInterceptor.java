@@ -1,12 +1,15 @@
-package com.bq.core.interceptor;
+package com.bq.shuo.core.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.bq.core.base.BaseProvider;
-import com.bq.core.base.Parameter;
+import com.bq.core.interceptor.BaseInterceptor;
 import com.bq.core.util.DateUtil;
 import com.bq.core.util.ExceptionUtil;
 import com.bq.core.util.WebUtil;
-import com.bq.model.SysEvent;
+import com.bq.shuo.core.base.BaseProvider;
+import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.core.support.login.LoginHelper;
+import com.bq.shuo.core.support.login.NoPwdAuthenticationToken;
+import com.bq.shuo.model.ShuoEvent;
 import cz.mallat.uasparser.OnlineUpdater;
 import cz.mallat.uasparser.UASparser;
 import cz.mallat.uasparser.UserAgentInfo;
@@ -15,14 +18,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.codec.Base64;
+import org.apache.shiro.io.ClassResolvingObjectInputStream;
+import org.apache.shiro.io.DefaultSerializer;
+import org.apache.shiro.io.SerializationException;
+import org.apache.shiro.io.Serializer;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.web.method.HandlerMethod;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,7 +53,7 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 
 	@Autowired
 	@Qualifier("shuoProvider")
-	protected BaseProvider shuoProvider;
+	protected BaseProvider provider;
 
 	static UASparser uasParser = null;
 
@@ -58,23 +70,6 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 			throws Exception {
 		// 开始时间（该数据只有当前请求的线程可见）
 		startTimeThreadLocal.set(System.currentTimeMillis());
-
-		System.out.println(request.getContextPath());
-		Subject currentUser = SecurityUtils.getSubject();
-		//判断用户是通过记住我功能自动登录,此时session失效
-		if(!currentUser.isAuthenticated() && currentUser.isRemembered()){
-			try {
-			}catch (Exception e){
-				//自动登录失败,跳转到登录页面
-				response.sendRedirect(request.getContextPath()+"/unauthorized");
-				return false;
-			}
-			if(!currentUser.isAuthenticated()){
-				//自动登录失败,跳转到登录页面
-				response.sendRedirect(request.getContextPath()+"/unauthorized");
-				return false;
-			}
-		}
 		return super.preHandle(request, response, handler);
 	}
 
@@ -93,7 +88,7 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 		}
 		String path = request.getServletPath();
 		if (!path.contains("/read/") && !path.contains("/unauthorized") && !path.contains("/forbidden")) {
-			final SysEvent record = new SysEvent();
+			final ShuoEvent record = new ShuoEvent();
 			String uid = WebUtil.getCurrentUser();
 			record.setMethod(request.getMethod());
 			record.setRequestUri(request.getServletPath());
@@ -105,8 +100,6 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 				record.setParameters(JSON.toJSONString(request.getParameterMap()));
 			}
 			record.setStatus(response.getStatus());
-			record.setCreateBy(uid);
-			record.setUpdateBy(uid);
 			final String msg = (String) request.getAttribute("msg");
 			try {
 				HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -124,7 +117,7 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 							record.setRemark(ExceptionUtil.getStackTraceAsString(ex));
 						}
 
-						Parameter parameter = new Parameter("shuoEventService", "update").setModel(record);
+						Parameter parameter = new Parameter("eventService", "update").setModel(record);
 //						shuoProvider.execute(parameter);
 
 						// 内存信息
@@ -154,5 +147,40 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 			logger.warn("用户[{}]没有权限", WebUtil.getCurrentUser() + "@" + WebUtil.getHost(request) + "@" + userAgent);
 		}
 		super.afterCompletion(request, response, handler, ex);
+	}
+
+	public PrincipalCollection deserialize(byte[] serialized) {
+		if(serialized == null) {
+			String bais1 = "argument cannot be null.";
+			throw new IllegalArgumentException(bais1);
+		} else {
+			ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
+			BufferedInputStream bis = new BufferedInputStream(bais);
+
+			try {
+				ClassResolvingObjectInputStream e = new ClassResolvingObjectInputStream(bis);
+				Object msg1 = e.readObject();
+				e.close();
+				return (PrincipalCollection) msg1;
+			} catch (Exception var6) {
+				String msg = "Unable to deserialze argument byte array.";
+				throw new SerializationException(msg, var6);
+			}
+		}
+	}
+
+	private String ensurePadding(String base64) {
+		int length = base64.length();
+		if(length % 4 != 0) {
+			StringBuilder sb = new StringBuilder(base64);
+
+			for(int i = 0; i < length % 4; ++i) {
+				sb.append('=');
+			}
+
+			base64 = sb.toString();
+		}
+
+		return base64;
 	}
 }

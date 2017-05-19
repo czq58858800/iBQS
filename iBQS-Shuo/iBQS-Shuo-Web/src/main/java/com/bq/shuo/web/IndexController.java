@@ -5,6 +5,7 @@ import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
+import com.bq.shuo.model.Subject;
 import com.bq.shuo.support.SubjectHelper;
 import com.bq.shuo.model.Tag;
 import com.bq.shuo.provider.IShuoProvider;
@@ -43,6 +44,7 @@ public class IndexController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
         params.put("pageSize",4);
+        params.put("enable",true);
         params.put("blankNew",true);
 
         Parameter querParam = new Parameter(getService(),"query").setMap(params);
@@ -56,14 +58,16 @@ public class IndexController extends AbstractController<IShuoProvider> {
             resultMap.put("name",tag.getName());
             resultMap.put("code",tag.getCode());
             if (tag.getCode() != null) {
+                params.put("orderHot",true);
                 params.put("pageSize",8);
-                Parameter querSubjectHotParam = new Parameter("subjectService","queryByHot").setMap(params);
-                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(querSubjectHotParam).getPage().getRecords()));
+                Parameter parameter = new Parameter("subjectService","queryByHot").setMap(params);
+                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
             } else {
+                params.remove("orderHot");
                 params.put("keyword",tag.getName());
                 params.put("pageSize",4);
-                Parameter querSubjectNewParam = new Parameter("subjectService","queryByNew").setMap(params);
-                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(querSubjectNewParam).getPage().getRecords()));
+                Parameter parameter = new Parameter("subjectService","queryByNew").setMap(params);
+                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
             }
             resultList.add(resultMap);
         }

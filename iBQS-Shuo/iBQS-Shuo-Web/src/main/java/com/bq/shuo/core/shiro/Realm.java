@@ -52,7 +52,7 @@ public class Realm extends AuthorizingRealm {
 //            }
 //        }
 //        // 添加用户权限
-        info.addStringPermission("user");
+//        info.addStringPermission("user");
         return info;
     }
 

@@ -18,24 +18,19 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class TopicsReview extends BaseModel {
 
+	/**
+	 * 话题ID
+	 */
 	@TableField("topic_id")
 	private String topicId;
-    /**
-     * 封面
-     */
-	@TableField("cover_")
-	private String cover;
-	@TableField("cover_type")
-	private String coverType;
-	@TableField("cover_width")
-	private Integer coverWidth;
-	@TableField("cover_height")
-	private Integer coverHeight;
-    /**
-     * 名称
-     */
-	@TableField("name_")
-	private String name;
+	/**
+	 * 话题原因
+	 */
+	@TableField("reason_")
+	private String reason;
+	/**
+	 * 话题主持人
+	 */
 	@TableField("owner_id")
 	private String ownerId;
     /**
@@ -44,7 +39,7 @@ public class TopicsReview extends BaseModel {
 	@TableField("summary_")
 	private String summary;
     /**
-     * 审核状态(-1：审核失败；0：上传素材中；1：审核中；2：审核通过）
+     * 审核状态(-1:审核失败；1:审核中；2:审核通过）
      */
 	@TableField("audit_")
 	private String audit;
@@ -54,16 +49,18 @@ public class TopicsReview extends BaseModel {
 	@TableField("audit_user_id")
 	private String auditUserId;
 
+	@TableField(exist = false)
+	private Topics topics;
+
+	@TableField(exist = false)
+	private User owner;
+
 	public TopicsReview(){}
 
-	public TopicsReview(String topicId,String name, String ownerId, String cover, String coverType, Integer coverWidth, Integer coverHeight, String summary) {
+	public TopicsReview(String topicId,String reason, String ownerId, String summary) {
 		this.topicId = topicId;
-		this.name = name;
+		this.reason = reason;
 		this.ownerId = ownerId;
-		this.cover = cover;
-		this.coverType = coverType;
-		this.coverWidth = coverWidth;
-		this.coverHeight = coverHeight;
 		this.summary = summary;
 		this.audit = "1";
 		this.setEnable(true);
@@ -78,44 +75,12 @@ public class TopicsReview extends BaseModel {
 		this.topicId = topicId;
 	}
 
-	public String getCover() {
-		return cover;
+	public String getReason() {
+		return reason;
 	}
 
-	public void setCover(String cover) {
-		this.cover = cover;
-	}
-
-	public String getCoverType() {
-		return coverType;
-	}
-
-	public void setCoverType(String coverType) {
-		this.coverType = coverType;
-	}
-
-	public Integer getCoverWidth() {
-		return coverWidth;
-	}
-
-	public void setCoverWidth(Integer coverWidth) {
-		this.coverWidth = coverWidth;
-	}
-
-	public Integer getCoverHeight() {
-		return coverHeight;
-	}
-
-	public void setCoverHeight(Integer coverHeight) {
-		this.coverHeight = coverHeight;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	public String getOwnerId() {
@@ -150,4 +115,19 @@ public class TopicsReview extends BaseModel {
 		this.auditUserId = auditUserId;
 	}
 
+	public Topics getTopics() {
+		return topics;
+	}
+
+	public void setTopics(Topics topics) {
+		this.topics = topics;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
 }

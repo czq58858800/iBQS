@@ -25,7 +25,6 @@ angular.module('app')
                     $scope.loading = false;
                     if (result.code == 200) {
                         $scope.pageInfo = result.data;
-                        console.info(result)
                     } else {
                         $scope.msg = result.msg;
                     }
@@ -40,24 +39,39 @@ angular.module('app')
                 $scope.search();
             }
 
+            $scope.searchAudit = function (audit) {
+                $scope.param.audit = audit;
+                $scope.search();
+            }
+
+            $scope.searchHot = function (isHot) {
+                $scope.param.isHot = isHot;
+                $scope.search();
+            }
+
             $scope.clearSearch = function() {
                 $scope.param.keyword= null;
                 $scope.search();
             }
 
             $scope.disableItem = function(id, enable) {
+                $scope.update({
+                    id:id,
+                    enable:enable
+                })
+            }
+
+            $scope.update = function (param) {
                 $scope.loading = true;
                 $.ajax({
-                    type: 'DELETE',
+                    type: 'POST',
                     dataType: 'json',
-                    url : '/shuo/topic/delete',
-                    data: {
-                        id:id,
-                        enable:enable
-                    }
+                    contentType:'application/json;charset=UTF-8',
+                    url : '/shuo/topic/update',
+                    data: angular.toJson(param)
                 }).then(function(result) {
                     $scope.loading = false;
-                    if (result.httpCode == 200) {
+                    if (result.code == 200) {
                         $scope.search();
                     } else {
                         $scope.msg = result.msg;
@@ -66,8 +80,22 @@ angular.module('app')
                 });
             }
 
-            $scope.toComments = function (topicjectId) {
-                $state.go('main.shuo.topic.update', {topicjectId: topicjectId});
+            $scope.updateHot = function (id,isHot) {
+                $scope.update({
+                    id:id,
+                    isHot:isHot
+                })
+            }
+
+            $scope.updateAudit = function (id,audit) {
+                $scope.update({
+                    id:id,
+                    audit:audit
+                })
+            }
+
+            $scope.toSubject = function (keyword) {
+                $state.go('main.shuo.subject.list', {keyword: keyword});
             };
 
             // 翻页

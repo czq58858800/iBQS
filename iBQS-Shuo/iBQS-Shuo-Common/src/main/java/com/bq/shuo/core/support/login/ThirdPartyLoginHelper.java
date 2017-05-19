@@ -51,7 +51,7 @@ public final class ThirdPartyLoginHelper {
 				user.setGender("2");
 			}
 			user.setToken(token);
-			user.setOpenid(openid);
+			user.setOpenid(json.getString("unionid"));
 			user.setProvider("QQ");
 		} else {
 			throw new IllegalArgumentException(json.getString("msg"));
@@ -82,7 +82,7 @@ public final class ThirdPartyLoginHelper {
 				user.setGender("2");
 			}
 			user.setToken(token);
-			user.setOpenid(openid);
+			user.setOpenid(json.getString("unionid"));
 			user.setProvider("WX");
 		} else {
 			throw new IllegalArgumentException(json.getString("errmsg"));

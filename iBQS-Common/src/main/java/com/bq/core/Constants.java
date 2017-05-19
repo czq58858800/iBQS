@@ -45,6 +45,17 @@ public interface Constants {
     /** 系統配置 */
     public static final String SYSTEM_CONFIG_CACHA = CACHE_NAMESPACE+"SYSTEM_CONFIG";
 
+    public static final String CACHE_RELATIONS = CACHE_NAMESPACE+CACHE_SHUO_NAMESPACE+"RELATIONS:";
+    /** 主题关系 */
+    public static final String CACHE_RELATIONS_SUBJECT = CACHE_RELATIONS+"SUBJECT:";
+    /** 用户关系 */
+    public static final String CACHE_RELATIONS_USER = CACHE_RELATIONS+"USER:";
+    /** 专辑关系 */
+    public static final String CACHE_RELATIONS_ALBUM = CACHE_RELATIONS+"ALBUM:";
+
+    /** 主题专辑 */
+    public static final String CACHE_SUBJECT_ALBUM = CACHE_RELATIONS+"SUBJECT_ALBUM:";
+
     /** 日志表状态 */
     public interface JOBSTATE {
         /**

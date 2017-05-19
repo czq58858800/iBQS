@@ -47,9 +47,8 @@ public class MyController extends AbstractController<IShuoProvider> {
         if (StringUtils.isBlank(userId)) {
             if (StringUtils.isBlank(getCurrUser())) return setModelMap(modelMap, HttpCode.UNAUTHORIZED);
             params.put("userId",getCurrUser());
-        } else {
-            params.put("audit",2);
         }
+        params.put("enable",true);
         params.put("currUserId",getCurrUser());
         params.put("myWorks",true);
         Parameter queryBeansParam = new Parameter("subjectService","queryBeans").setMap(params);
@@ -131,11 +130,16 @@ public class MyController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
 
         Map<String, Object> params = WebUtil.getParameterMap(request);
-        params.put("stuffNum",true);
+        params.put("enable",true);
+
         if (StringUtils.isBlank(userId)) {
             if (StringUtils.isBlank(getCurrUser())) return setModelMap(modelMap, HttpCode.UNAUTHORIZED);
             params.put("userId",getCurrUser());
+        } else {
+            params.put("stuffNumLT",true);
         }
+
+
         Parameter queryBeansParam = new Parameter("categoryService","query").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(CategoryHelper.formatCategoryResultList(page.getRecords()));

@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
+import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.UserFollowingMapper;
 import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserFollowing;
 import com.bq.shuo.core.base.BaseService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -46,13 +48,19 @@ public class UserFollowingService extends BaseService<UserFollowing> {
     }
 
     public boolean selectByIsFollow(String userId, String beUserId) {
-        UserFollowing userFollowing = new UserFollowing();
-        userFollowing.setFollowUserId(userId);
-        userFollowing.setBefollowUserId(beUserId);
-        Wrapper<UserFollowing> wrapper = new EntityWrapper<>(userFollowing);
-        int count = userFollowingMapper.selectCount(wrapper);
-        if (count>0) {
-            return true;
+        if (StringUtils.isNotBlank(userId) && StringUtils.isNotBlank(beUserId)) {
+            String key = Constants.CACHE_RELATIONS_USER + userId;
+            if (CacheUtil.getCache().hexists(key, beUserId)) {
+                return Boolean.valueOf((String) CacheUtil.getCache().hget(key, beUserId));
+            } else {
+                boolean isLiked = false;
+                if (StringUtils.isNotBlank(selectByFollowId(userId, beUserId))) {
+                    isLiked = true;
+                }
+                CacheUtil.getCache().hset(key, beUserId, BooleanUtils.toStringTrueFalse(isLiked));
+                CacheUtil.getCache().expire(key,600);
+                return isLiked;
+            }
         }
         return false;
     }
@@ -78,6 +86,10 @@ public class UserFollowingService extends BaseService<UserFollowing> {
             userService.incrUserCounter(userId, CounterHelper.User.FOLLOW);
             // 添加粉丝数计数器
             userService.incrUserCounter(beUserId,CounterHelper.User.FANS);
+
+            String key = Constants.CACHE_RELATIONS_USER + userId;
+            CacheUtil.getCache().hset(key, beUserId, BooleanUtils.toStringTrueFalse(true));
+            CacheUtil.getCache().expire(key,600);
             return true;
         }
         return false;
@@ -91,6 +103,10 @@ public class UserFollowingService extends BaseService<UserFollowing> {
             userService.decrUserCounter(userId,CounterHelper.User.FOLLOW);
             // 减去粉丝数计数器
             userService.decrUserCounter(beUserId,CounterHelper.User.FANS);
+
+            String key = Constants.CACHE_RELATIONS_USER + userId;
+            CacheUtil.getCache().hset(key, beUserId, BooleanUtils.toStringTrueFalse(false));
+            CacheUtil.getCache().expire(key,600);
             return true;
         }
         return false;

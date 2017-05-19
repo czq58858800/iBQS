@@ -51,9 +51,9 @@ public class AuthRealm extends AuthorizingRealm {
     // 权限
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        String userId = WebUtil.getCurrentUser();
+//        String userId = WebUtil.getCurrentUser();
         // 添加用户权限
-        info.addStringPermission("user");
+//        info.addStringPermission("user");
         return info;
     }
 
@@ -114,4 +114,6 @@ public class AuthRealm extends AuthorizingRealm {
         provider.execute(parameter);
         logger.info("{} execute sessionService.update end.", parameter.getNo());
     }
+
+
 }

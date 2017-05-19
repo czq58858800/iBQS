@@ -2,6 +2,7 @@ package com.bq.shuo.support;
 
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.model.Topics;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,17 @@ import java.util.regex.Pattern;
 public final class TopicHelper {
     private TopicHelper() {}
 
-    public static Matcher findTopic(String str) {
-        String regex = "#(.*?)#";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(str);//匹配类
-        return matcher;
+    public static List<String> findTopic(String str) {
+        List<String> topic = InstanceUtil.newArrayList();
+        if (StringUtils.isNotBlank(str)) {
+            String regex = "#(.*?)#";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(str);//匹配类
+            while (matcher.find()) {
+                topic.add(matcher.group(1));
+            }
+        }
+        return topic;
     }
 
     public static List<Map<String,Object>> formatResultList(List<Topics> list) {
@@ -44,6 +51,7 @@ public final class TopicHelper {
             resultMap.put("cover",record.getCover());
             resultMap.put("createTime",record.getCreateTime().getTime());
             resultMap.put("audit",record.getAudit());
+            resultMap.put("status",record.getOwnerStatus());
             if (record.getOwner() != null) {
                 Map<String,Object> userMap = InstanceUtil.newHashMap();
                 userMap.put("uid",record.getOwner().getId());

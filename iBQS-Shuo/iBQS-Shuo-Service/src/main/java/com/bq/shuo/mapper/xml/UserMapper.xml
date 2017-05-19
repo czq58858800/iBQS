@@ -59,6 +59,9 @@
 			<if test="cm.keyword != null">
 				and (account_ like CONCAT('%',#{cm.keyword},'%') or name_ like CONCAT('%',#{cm.keyword},'%'))
 			</if>
+			<if test="cm.notInBeFollowUser != null and cm.notInBeFollowUser !=''">
+				and id_ not in (SELECT A.befollow_user_id FROM bq_user_following A WHERE A.enable_ = 1 and A.follow_user_id = #{cm.notInBeFollowUser} )
+			</if>
 			<if test="cm.notNullLastDynamicTime != null and cm.notNullLastDynamicTime != ''">
 				and not isnull(last_dynamic_time)
 			</if>

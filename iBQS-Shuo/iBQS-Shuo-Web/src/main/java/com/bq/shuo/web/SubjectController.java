@@ -56,6 +56,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         Assert.notNull(keyword, "KEYWORD");
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("currUserId",getCurrUser());
+        params.put("enable",true);
         Map<String,Object> resultMap = InstanceUtil.newHashMap();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
         if (StringUtils.equals(keyword, "1") || StringUtils.equals("HOT",keyword.toUpperCase()) || StringUtils.equals("最热",keyword)) { // 热门主题
@@ -103,6 +104,8 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             params.put("keyword", topic.get(0));
         }
 
+
+        params.put("enable",true);
         int rowLimit = (int) provider.execute(new Parameter(getService(),"selectRowByMap").setMap(params)).getObject();
         params.put("startLimit", rowLimit);
         params.put("endLimit", 8);
@@ -127,7 +130,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
             subjects.addAll((List<Subject>) provider.execute(new Parameter(getService(),"queryByRecommentNew").setMap(params)).getList());
         }
-        return setSuccessModelMap(modelMap, SubjectHelper.formatResultList(subjects));
+        return setSuccessModelMap(modelMap, SubjectHelper.formatRCMDResultList(subjects));
     }
 
     // 详细信息
@@ -332,7 +335,6 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
             JSONObject imageInfo = QiniuUtil.getImageInfo(img);
 
-
             Album album = new Album();
             album.setImage(img);
             if (imageInfo.containsKey("format")) {
@@ -346,8 +348,9 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             if (isLayer) {
                 Layer layer = new Layer();
                 layer.setEnable(true);
-                layer.setLayer(JSONObject.toJSONString(imageObj.getString("layerInfo")));
+                layer.setLayer(imageObj.getString("layerInfo"));
                 layer.setUserId(getCurrUser());
+                layer.setSubjectId(record.getId());
                 Parameter parameter = new Parameter("layerService","update").setModel(layer);
                 layer = (Layer) provider.execute(parameter).getModel();
                 album.setLayerId(layer.getId());

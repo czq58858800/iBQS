@@ -94,7 +94,7 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
             params.put("follow",false);
             parameter = new Parameter("userContactsService","queryFollow").setMap(params);
         }else {
-            params.put("contactUserIdNotIsNull",false);
+            params.put("unregistered",true);
             parameter = new Parameter("userContactsService","queryBeans").setMap(params);
         }
         Page page = provider.execute(parameter).getPage();

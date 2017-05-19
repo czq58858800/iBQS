@@ -74,14 +74,14 @@ public class TopicsService extends BaseService<Topics> {
             params.put("keyword",record.getName());
             params.put("topicOrderHot",true);
             params.put("pageSize",1);
-            Page<Subject> subjectPage = subjectService.queryByHot(params);
-            if (subjectPage != null && subjectPage.getRecords() != null && subjectPage.getRecords().size() > 0) {
-                Subject subject = subjectPage.getRecords().get(0);
-                record.setCover(subject.getCover());
-                record.setCoverType(subject.getCoverType());
-                record.setCoverWidth(subject.getCoverWidth());
-                record.setCoverHeight(subject.getCoverHeight());
-            }
+//            Page<Subject> subjectPage = subjectService.queryByHot(params);
+//            if (subjectPage != null && subjectPage.getRecords() != null && subjectPage.getRecords().size() > 0) {
+//                Subject subject = subjectPage.getRecords().get(0);
+//                record.setCover(subject.getCover());
+//                record.setCoverType(subject.getCoverType());
+//                record.setCoverWidth(subject.getCoverWidth());
+//                record.setCoverHeight(subject.getCoverHeight());
+//            }
         }
         if (record.getOwnerId() != null) {
             User owner = userService.queryById(record.getOwnerId());
@@ -91,5 +91,9 @@ public class TopicsService extends BaseService<Topics> {
             record.setOwner(owner);
         }
         return record;
+    }
+
+    public String selectIdByName(String name) {
+        return topicsMapper.selectIdByName(name);
     }
 }

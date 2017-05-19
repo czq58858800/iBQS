@@ -6,6 +6,7 @@ import com.bq.shuo.mapper.UserConfigMapper;
 import com.bq.shuo.model.UserConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,18 @@ import org.springframework.stereotype.Service;
  * @since 2017-04-13
  */
 @Service
-@CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"userConfig")
 public class UserConfigService extends BaseService<UserConfig>  {
     @Autowired
     private UserConfigMapper userConfigMapper;
 
+    @Cacheable("userConfig")
     public UserConfig selectByUserId(String userId) {
         return queryById(userConfigMapper.selectByUserId(userId));
+    }
+
+    @Override
+    @CachePut("userConfig")
+    public UserConfig update(UserConfig record) {
+        return super.update(record);
     }
 }

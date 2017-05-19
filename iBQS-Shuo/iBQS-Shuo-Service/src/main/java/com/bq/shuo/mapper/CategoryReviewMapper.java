@@ -1,7 +1,11 @@
 package com.bq.shuo.mapper;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.shuo.model.CategoryReview;
 import com.bq.shuo.core.base.BaseMapper;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

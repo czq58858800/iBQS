@@ -73,9 +73,7 @@ public final class SubjectHelper {
             coverExif.put("width", record.getCoverWidth());
             coverExif.put("height", record.getCoverHeight());
             resultMap.put("coverExif", coverExif);
-            resultMap.put("likedNum", record.getLikedNum());
             resultMap.put("albumNum", record.getAlbumNum());
-            resultMap.put("isLiked", record.isLiked());
             resultMap.put("publishTime", record.getCreateTime().getTime());
             if (record.getIsLocation()) {
                 resultMap.put("location", record.getLocation());
@@ -87,6 +85,9 @@ public final class SubjectHelper {
     public static Map<String,Object> formatResultMap(Subject record) {
         Map<String,Object> resultMap = formatListResultMap(record);
         if (record != null) {
+
+            resultMap.put("likedNum", record.getLikedNum());
+            resultMap.put("isLiked", record.isLiked());
             resultMap.put("commentsNum", record.getCommentsNum());
             resultMap.put("viewNum", record.getViewNum());
             resultMap.put("isWorks", record.isWorks());
@@ -130,5 +131,13 @@ public final class SubjectHelper {
             resultMap.put("user",UserHelper.formatBriefResultMap(record.getUser()));
         }
         return resultMap;
+    }
+
+    public static Object formatRCMDResultList(List<Subject> subjects) {
+        List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
+        for (Subject record: subjects) {
+            resultList.add(formatListResultMap(record));
+        }
+        return resultList;
     }
 }

@@ -398,6 +398,30 @@ var app = angular.module('app')
                         }]
                     }
                 }) // 话题
+                .state('main.shuo.topic.review.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/shuo/topicReview/topicReview.html',
+                    controller: 'topicReviewController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/topicReview/topicReviewController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.topic.review.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/shuo/topicReview/update.html',
+                    controller: 'topicReviewUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/topic/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 话题
                 .state('main.shuo.subject', {
                     url: '/subject',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
@@ -458,13 +482,49 @@ var app = angular.module('app')
                         }
                     }
                 })
-                .state('main.shuo.category', {
-                    url: '/category',
-                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
-                })
                 .state('main.shuo.material', {
                     url: '/material',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.shuo.material.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/shuo/material/material.html',
+                    controller: 'materialController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/material/materialController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.material.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/shuo/material/update.html',
+                    controller: 'materialUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/material/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 表情
+                .state('main.shuo.material.update.sticker', {
+                    url: '/sticker',
+                    views:{
+                        "stickerList": {
+                            templateUrl:'src/app/shuo/material/sticker/sticker.html',
+                            controller: 'stickerController',
+                            resolve: {
+                                deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                                    return uiLoad.load('src/app/shuo/material/sticker/stickerController.js').then(function() {
+                                        return $ocLazyLoad.load('toaster');
+                                    });
+                                }]
+                            }
+                        }
+                    }
                 })
                 .state('main.shuo.material.hot', {
                     url: '/hot',

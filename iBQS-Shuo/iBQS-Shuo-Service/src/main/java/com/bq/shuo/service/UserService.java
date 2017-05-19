@@ -109,7 +109,6 @@ public class UserService extends BaseService<User> {
             record.setFollowNum(selectUserCounter(id, CounterHelper.User.FOLLOW));
             record.setFansNum(selectUserCounter(id, CounterHelper.User.FANS));
             record.setForwardNum(selectUserCounter(id, CounterHelper.User.FORWARD));
-            record.setConfig(userConfigService.selectByUserId(record.getId()));
             return record;
         }
         return record;
@@ -239,6 +238,16 @@ public class UserService extends BaseService<User> {
         Page<User> page = queryBeans(params);
         if (page != null && page.getRecords() != null && page.getRecords().size() > 0) {
             return page.getRecords().get(0);
+        }
+        return null;
+    }
+
+    public String queryAccountByToken(String token) {
+        Map<String,Object> params = InstanceUtil.newHashMap();
+        params.put("token",token);
+        Page<User> page = query(params);
+        if (page != null && page.getRecords() != null && page.getRecords().size() > 0) {
+            return page.getRecords().get(0).getAccount();
         }
         return null;
     }

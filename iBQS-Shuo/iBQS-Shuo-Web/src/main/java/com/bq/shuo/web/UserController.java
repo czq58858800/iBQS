@@ -58,6 +58,8 @@ public class UserController extends AbstractController<IShuoProvider> {
              @ApiParam(required = true, value = "分页") @RequestParam(value = "pageNum") int pageNum) {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("notNullLastDynamicTime",true);
+        params.put("notInBeFollowUser",getCurrUser());
+        params.put("currUserId",getCurrUser());
         Parameter parameter = new Parameter(getService(),"queryBeans").setMap(params);
         Page page = provider.execute(parameter).getPage();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
@@ -69,18 +71,8 @@ public class UserController extends AbstractController<IShuoProvider> {
             resultMap.put("avatar",record.getAvatar());
             resultMap.put("type",record.getUserType());
             resultMap.put("summary",record.getSummary());
-//            resultMap.put("fansNum",record.getFansNum());
-
-            boolean isFollow = false;
-            if (getCurrUser() != null) {
-                UserFollowing userFollowing = new UserFollowing();
-                userFollowing.setFollowUserId(getCurrUser());
-                userFollowing.setBefollowUserId(record.getId());
-
-                parameter = new Parameter("userFollowingService","selectByIsFollow").setObjects(new Object[] {record.getId(),getCurrUser()});
-                isFollow = (boolean) provider.execute(parameter).getObject();
-            }
-            resultMap.put("isFollow",isFollow);
+            resultMap.put("fansNum",record.getFansNum());
+            resultMap.put("isFollow",record.isFollow());
             resultList.add(resultMap);
         }
         page.setRecords(resultList);
@@ -188,6 +180,13 @@ public class UserController extends AbstractController<IShuoProvider> {
         if (StringUtils.equals(follow,"Y")) {
             // 不允许关注自己
             if (StringUtils.equals(userId,beUserId)) return setModelMap(modelMap,HttpCode.DONT_FOLLOW);
+
+            User u = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
+
+            if (u.getFollowNum() > 2000) {
+                return setModelMap(modelMap,HttpCode.LIMIT_OF_ATTENTION);
+            }
+
             Parameter parameter = new Parameter("userFollowingService","updateFollow").setObjects(new Object[] {userId,beUserId});
             boolean isFollow = (boolean) provider.execute(parameter).getObject();
             if (!isFollow){
@@ -346,7 +345,7 @@ public class UserController extends AbstractController<IShuoProvider> {
     @PostMapping(value = "bind/phone")
     public Object bindPhone(HttpServletRequest request, ModelMap modelMap,
                        @ApiParam(required = true, value = "手机号") @RequestParam(value = "phone") String phone,
-                       @ApiParam(required = true, value = "密码") @RequestParam(value = "password",required = false) String password,
+                       @ApiParam(value = "密码") @RequestParam(value = "password",required = false) String password,
                        @ApiParam(required = true, value = "验证码") @RequestParam(value = "smsCode") int smsCode) {
         Map<String,Object> params = InstanceUtil.newHashMap();
         params.put("account",phone);

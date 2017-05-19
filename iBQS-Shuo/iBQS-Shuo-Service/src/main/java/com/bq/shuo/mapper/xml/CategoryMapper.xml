@@ -10,14 +10,11 @@
 			<if test="cm.enable != null and cm.enable != ''">
 				and enable_ = #{cm.enable}
 			</if>
-			<if test="cm.stuffNum == null">
+			<if test="cm.stuffNumLT != null">
 				and stuff_num != 0
 			</if>
 			<if test="cm.orderHot != null and cm.orderHot == true">
 				and is_hot = 1
-			</if>
-			<if test="cm.audit != null and cm.audit != ''">
-				and audit_ = #{cm.audit}
 			</if>
 			<if test="cm.userId != null and cm.userId != ''">
 				and user_id = #{cm.userId}

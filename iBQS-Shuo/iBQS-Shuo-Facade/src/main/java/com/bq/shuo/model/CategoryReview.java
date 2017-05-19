@@ -71,6 +71,8 @@ public class CategoryReview extends BaseModel {
 	@TableField("audit_user_id")
 	private String auditUserId;
 
+
+
 	public CategoryReview() {
 
 	}

@@ -21,7 +21,9 @@
 			INNER JOIN bq_subject_counter AS B ON B.subject_id = A.id_ AND B.subject_id = A.id_
 		</if>
 		<where>
-			AND A.enable_ = 1
+			<if test="cm.enable != null and cm.enable != ''">
+				and A.enable_ = #{cm.enable}
+			</if>
 			<if test="cm.userId != null and cm.userId != ''">
 				and A.user_id = #{cm.userId}
 			</if>
@@ -30,6 +32,9 @@
 			</if>
 			<if test="cm.content != null and cm.content != ''">
 				and A.content_ = #{cm.content}
+			</if>
+			<if test="cm.isHot != null and cm.isHot != ''">
+				and A.is_hot = #{cm.isHot}
 			</if>
 			<if test="cm.orderHot != null and cm.orderHot == true">
 				and A.is_hot = 1
@@ -41,6 +46,9 @@
 		ORDER BY
 		<choose>
 			<when test="cm.orderHot != null and cm.orderHot == true">
+				A.hot_time DESC
+			</when>
+			<when test="cm.orderHotTime != null and cm.orderHotTime == true">
 				A.hot_time DESC
 			</when>
 			<when test="cm.topicOrderHot != null and cm.topicOrderHot == true">
@@ -149,5 +157,8 @@
 	</select>
     <select id="selectHashById" resultType="java.lang.String">
 		SELECT id_ FROM bq_subject WHERE enable_ = 1 AND cover_hash = #{hashCode} LIMIT 1
+	</select>
+    <select id="selectIsReleaseSubject" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM bq_subject WHERE content_ like CONCAT('%#',#{topic},'#%') AND user_id = #{userId}
 	</select>
 </mapper>

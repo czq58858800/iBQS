@@ -39,7 +39,7 @@ public final class LoginHelper {
 	/** 无密码用户登录 */
 	public static final Boolean login(String account) {
 		NoPwdAuthenticationToken token = new NoPwdAuthenticationToken(account);
-
+		token.setRememberMe(true);
 		Subject subject = SecurityUtils.getSubject();
 		try {
 			subject.login(token);

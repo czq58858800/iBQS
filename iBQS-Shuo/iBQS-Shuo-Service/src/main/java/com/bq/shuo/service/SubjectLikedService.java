@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
+import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.util.SystemConfigUtil;
@@ -13,6 +14,7 @@ import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.SubjectLiked;
 import com.bq.shuo.core.base.BaseService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -59,8 +61,19 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
     }
 
     public boolean selectByIsLiked(String subjectId, String userId) {
-        if (StringUtils.isNotBlank(selectLikedById(subjectId,userId))) {
-            return true;
+        if (StringUtils.isNotBlank(subjectId) && StringUtils.isNotBlank(userId)) {
+            String key = Constants.CACHE_RELATIONS_SUBJECT + subjectId;
+            if (CacheUtil.getCache().hexists(key, userId)) {
+                return Boolean.valueOf((String) CacheUtil.getCache().hget(key, userId));
+            } else {
+                boolean isLiked = false;
+                if (StringUtils.isNotBlank(selectLikedById(subjectId, userId))) {
+                    isLiked = true;
+                }
+                CacheUtil.getCache().hset(key, userId, BooleanUtils.toStringTrueFalse(isLiked));
+                CacheUtil.getCache().expire(key,600);
+                return isLiked;
+            }
         }
         return false;
     }
@@ -73,7 +86,7 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
         if (StringUtils.isBlank(selectLikedById(subjectId,userId))) {
             Subject subject = subjectService.queryById(subjectId);
             if (subject!=null) {
-                update(new SubjectLiked(userId,subjectId));
+                SubjectLiked subjectLiked = update(new SubjectLiked(userId,subjectId));
                 // 主题喜欢数+1
                 subjectService.incrSubjectCounter(subjectId, CounterHelper.Subject.LIKED);
                 // 用户喜欢作品数+1
@@ -94,6 +107,10 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
                     Album album = albumService.querySubjectIdByList(subjectId,userId).get(0);
                     albumLikedService.updateLiked(album.getId(),userId);
                 }
+
+                String key =  Constants.CACHE_RELATIONS_SUBJECT+ subjectId;
+                CacheUtil.getCache().hset(key,userId, BooleanUtils.toStringTrueFalse(true));
+                CacheUtil.getCache().expire(key,600);
                 return true;
             }
         }
@@ -122,6 +139,10 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
                 // 删除通知
                 Notify notify = new Notify(userId,subject.getUserId(),subjectId,PushType.LIKED);
                 notifyService.delete(notify);
+
+                String key =  Constants.CACHE_RELATIONS_SUBJECT+ subjectId;
+                CacheUtil.getCache().hset(key,userId, BooleanUtils.toStringTrueFalse(false));
+                CacheUtil.getCache().expire(key,600);
             }
             return true;
         }

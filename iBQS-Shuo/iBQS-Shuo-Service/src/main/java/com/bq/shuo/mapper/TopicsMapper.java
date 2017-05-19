@@ -23,4 +23,6 @@ public interface TopicsMapper extends BaseMapper<Topics> {
     Integer queryByHotCount(@Param("cm") Map<String, Object> params);
 
     String queryBeanByKeyword(@Param("keyword") String keyword);
+
+    String selectIdByName(@Param("name") String name);
 }

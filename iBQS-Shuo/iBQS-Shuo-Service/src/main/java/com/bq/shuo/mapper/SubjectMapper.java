@@ -34,4 +34,6 @@ public interface SubjectMapper extends BaseMapper<Subject> {
     String selectHashById(String hashCode);
 
     void updateCounter(@Param("subjectId") String subjectId,@Param("field") String field, @Param("number")Integer number);
+
+    int selectIsReleaseSubject(@Param("topic") String topic, @Param("userId") String userId);
 }

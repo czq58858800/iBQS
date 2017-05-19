@@ -69,8 +69,17 @@ public enum HttpCode {
 	HAS_FOLLOW(2013),
 	/** 2014未关注 */
 	NOT_FOLLOW(2014),
+	/** 2015关注数量超过2000 */
+	LIMIT_OF_ATTENTION(2015),
+	/** 2016贴纸上传数量超过20 */
+	LIMIT_OF_STICKER(2016),
+	/** 2017未发布主题 */
+	UNRELEASED_SUBJECT(2017),
+	/** 2018未开放申请 */
+	NOT_ALLOW_APPLY_TOPIC(2018),
 	/** 2101表情已存在*/
 	SUBJECT_EXIST(2101);
+
 
 	private final Integer value;
 

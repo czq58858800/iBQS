@@ -7,21 +7,50 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		select id_ from bq_category_review
 		<where>
+			<if test="cm.topicId != null and cm.topicId != ''">
+				topic_id = #{cm.topicId}
+			</if>
+			<if test="cm.name != null and cm.name != ''">
+				name_ = #{cm.name}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				user_id = #{cm.userId}
+			</if>
+			<if test="cm.audit != null and cm.audit != ''">
+				audit_ = #{cm.audit}
+			</if>
+			<if test="cm.auditUserId != null and cm.auditUserId != ''">
+				audit_user_id = #{cm.auditUserId}
+			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
-				and (
-					or category_id like CONCAT('%',#{cm.keyword},'%')
-					or cover_ like CONCAT('%',#{cm.keyword},'%')
-					or cover_type like CONCAT('%',#{cm.keyword},'%')
-					or cover_width like CONCAT('%',#{cm.keyword},'%')
-					or cover_height like CONCAT('%',#{cm.keyword},'%')
-					or name_ like CONCAT('%',#{cm.keyword},'%')
-					or summary_ like CONCAT('%',#{cm.keyword},'%')
-					or user_id like CONCAT('%',#{cm.keyword},'%')
-					or tags_ like CONCAT('%',#{cm.keyword},'%')
-					or audit_ like CONCAT('%',#{cm.keyword},'%')
-					or audit_user_id like CONCAT('%',#{cm.keyword},'%')
-				)
+				and name_ like CONCAT('%',#{cm.keyword},'%') or summary_ like CONCAT('%',#{cm.keyword},'%')
 			</if>
 		</where>
+		order by create_time desc,update_time desc
+	</select>
+    <select id="selectIdByGroupTopic" resultType="java.lang.String">
+		select id_ from bq_category_review
+		<where>
+			<if test="cm.topicId != null and cm.topicId != ''">
+				topic_id = #{cm.topicId}
+			</if>
+			<if test="cm.name != null and cm.name != ''">
+				name_ = #{cm.name}
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				user_id = #{cm.userId}
+			</if>
+			<if test="cm.audit != null and cm.audit != ''">
+				audit_ = #{cm.audit}
+			</if>
+			<if test="cm.auditUserId != null and cm.auditUserId != ''">
+				audit_user_id = #{cm.auditUserId}
+			</if>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and name_ like CONCAT('%',#{cm.keyword},'%') or summary_ like CONCAT('%',#{cm.keyword},'%')
+			</if>
+		</where>
+		group by topicId
+		order by create_time desc,update_time desc
 	</select>
 </mapper>

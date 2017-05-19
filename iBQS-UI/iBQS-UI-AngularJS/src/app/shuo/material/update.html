@@ -1,0 +1,48 @@
+<!-- toaster directive -->
+<toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container>
+<!-- / toaster directive -->
+
+<!-- 导航条 -->
+<div class="bg-white bread-crumb">
+	<ul class="breadcrumb b-a m-b-n-xs lter b-b wrapper-md">
+		<li><a ui-sref="main"><i class="fa fa-home"></i> 首页</a></li>
+		<li><a ui-sref="main.sys.dic.list">字典管理</a></li>
+		<li class="active" ng-bind="title"></li>
+	</ul>
+</div>
+
+<!-- 内容区域 -->
+<div class="wrapper-md content">
+	<div class="panel panel-default">
+		<!-- 头部 -->
+		<div class="panel-heading font-bold">{{title}}
+			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.bq.comments.list"><i class="text-md fa fa-times text-muted"></i></a>
+		</div>
+		<!--表单-->
+		<div class="panel-body">
+			<div class="menu-left">
+				<header>
+					<img width="80%" src="{{record.cover}}">
+					<div>
+						{{record.content}}
+					</div>
+					<div>
+						<span>发布用户:<img width="50px" src="{{record.user.avatar}}">{{record.user.name}}</span><br/>
+						<span>浏览数:{{record.viewNum}}</span><br/>
+						<span>发布时间:{{record.createTime}}</span><br/>
+					</div>
+				</header>
+				<div>
+					<span>喜欢数:<a ui-sref="main.bq.material.update.sticker({materialId: record.id})" class="btn btn-sm btn-default"> {{record.stuffNum}}</a></span>
+				</div>
+				<div>
+
+					<span>热门:{{record.isHot ? '是': '否'}}</span>
+				</div>
+			</div>
+			<div ng-hide="loading" ui-view="albumList" class="panel panel-default" style="float: left;width: 80%"></div>
+			<div ng-hide="loading" ui-view="commentsList" class="panel panel-default" style="float: left;width: 80%"></div>
+			<div ng-hide="loading" ui-view="likedList" class="panel panel-default" style="float: left;width: 80%"></div>
+		</div>
+	</div>
+</div>

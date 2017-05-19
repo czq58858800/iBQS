@@ -1,6 +1,8 @@
 upload/imageData
 subject/add
 material/add
+material/category/create
 material/category/coll/updateSortNo
 user/contacts/upload
 user/weibo/invite
+album/updateSortNo

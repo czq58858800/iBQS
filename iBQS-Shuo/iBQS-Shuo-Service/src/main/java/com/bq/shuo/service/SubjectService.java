@@ -6,10 +6,8 @@ import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.SubjectMapper;
-import com.bq.shuo.model.Album;
-import com.bq.shuo.model.Notify;
-import com.bq.shuo.model.Subject;
-import com.bq.shuo.model.User;
+import com.bq.shuo.model.*;
+import com.bq.shuo.support.SubjectHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -17,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <p>
@@ -58,6 +58,12 @@ public class SubjectService extends BaseService<Subject> {
 
     @Autowired
     private NotifyService notifyService;
+
+    @Autowired
+    private TopicsService topicsService;
+
+    // 线程池
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     public Page<Subject> queryByHot(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
@@ -124,38 +130,40 @@ public class SubjectService extends BaseService<Subject> {
 
     public void setSubjectCounter(String subjectId, String field,int cal) {
         if (StringUtils.isNotBlank(subjectId)) {
-            String key = CounterHelper.Subject.SUBJECT_COUNTER_KEY + subjectId;
-            String lockKey = new StringBuilder(Constants.CACHE_NAMESPACE).append(CounterHelper.Subject.SUBJECT_COUNTER_KEY).append("LOCK:").append(subjectId).toString();
-            while (!CacheUtil.getLock(lockKey)) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    logger.error("", e);
+            executorService.submit(new Runnable() {
+                public void run() {
+                    String key = CounterHelper.Subject.SUBJECT_COUNTER_KEY + subjectId;
+                    String lockKey = new StringBuilder(Constants.CACHE_NAMESPACE).append(CounterHelper.Subject.SUBJECT_COUNTER_KEY).append("LOCK:").append(subjectId).toString();
+                    while (!CacheUtil.getLock(lockKey)) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            logger.error("", e);
+                        }
+                    }
+
+                    try {
+                        Integer number = selectSubjectCounter(subjectId, field) + cal;
+
+                        if (number < 0) {
+                            number = selectSubjectCounter(subjectId, field);
+                        }
+
+                        logger.info("表情（Subject） key:" + key + " field:" + field + " " + number);
+
+                        CacheUtil.getCache().hset(key, field, String.valueOf(number));
+
+                        subjectMapper.updateCounter(subjectId, field, number);
+                    } finally {
+                        CacheUtil.unlock(lockKey);
+                    }
                 }
-            }
-
-            try {
-                Integer number = selectSubjectCounter(subjectId, field) + cal;
-
-                if (number < 0) {
-                    number = selectSubjectCounter(subjectId,field);
-                }
-
-                logger.info("表情（Subject） key:"+key+" field:"+field+" " + number);
-
-                CacheUtil.getCache().hset(key,field,String.valueOf(number));
-
-                subjectMapper.updateCounter(subjectId,field,number);
-            } finally {
-                CacheUtil.unlock(lockKey);
-            }
+            });
         }
     }
 
     public List<Subject> getSubjectListInfo(List<Subject> records, Map<String,Object> params) {
         for (Subject record:records) {
-            // 增加浏览数
-            incrSubjectCounter(record.getId(), CounterHelper.Subject.VIEW);
             String currUserId = null;
             if (params.containsKey("currUserId")) {
                 currUserId = (String)params.get("currUserId");
@@ -190,7 +198,7 @@ public class SubjectService extends BaseService<Subject> {
             record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
             record.setForwardNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.FORWARD));
             record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
-            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
+//            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
         }
 
         record = getUserStatus(record,currUserId);
@@ -250,7 +258,7 @@ public class SubjectService extends BaseService<Subject> {
         if (!params.containsKey("endLimit")) {
             params.put("endLimit",10);
         }
-        return getSubjectListInfo(getList(subjectMapper.queryByNew(params)),params);
+        return getList(subjectMapper.queryByNew(params));
     }
 
 
@@ -301,7 +309,33 @@ public class SubjectService extends BaseService<Subject> {
     public Subject update(Subject record) {
         if (StringUtils.isBlank(record.getId())) {
             userService.incrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
+
+            executorService.submit(new Runnable() {
+                public void run() {
+                    List<String> topics = SubjectHelper.findTopic(record.getContent());
+                    if (topics !=  null && topics.size() > 0) {
+                        for (String topic:topics) {
+                            String topicId = topicsService.selectIdByName(topic);
+                            if (StringUtils.isBlank(topicId)) {
+                                Topics topicRecord = new Topics();
+                                topicRecord.setName(topic);
+                                topicRecord.setAudit("2");
+                                topicRecord.setOwnerStatus(1);
+                                topicsService.update(topicRecord);
+                            }
+                        }
+                    }
+                }
+            });
         }
         return super.update(record);
+    }
+
+    public Boolean selectIsReleaseSubject(String topic,String userId) {
+        int count = subjectMapper.selectIsReleaseSubject(topic,userId);
+        if (count > 0) {
+            return true;
+        }
+        return false;
     }
 }
