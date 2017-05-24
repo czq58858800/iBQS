@@ -65,6 +65,7 @@
 				/regin=anon
 				/login=anon
 				/tokenLogin=anon
+				/forget=anon
 				/tag/index=anon
 				/qiniuUpToken=anon
 				/logout=anon

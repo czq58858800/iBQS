@@ -78,7 +78,13 @@ public enum HttpCode {
 	/** 2018未开放申请 */
 	NOT_ALLOW_APPLY_TOPIC(2018),
 	/** 2101表情已存在*/
-	SUBJECT_EXIST(2101);
+	SUBJECT_EXIST(2101),
+	/** 4001帐号不存在 */
+	USER_ACCOUNT_NOT_EXIST(4001),
+	/** 4002验证码不正确 */
+	SMS_CAPTCHA_INCORRECT(4002),
+	/** 4003验证吗失效 */
+	SMS_CAPTCHA_FAIL(4003);
 
 
 	private final Integer value;

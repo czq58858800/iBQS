@@ -210,7 +210,8 @@ public class UserController extends AbstractController<IShuoProvider> {
     @GetMapping(value = "bind/list")
     public Object bindWX(HttpServletRequest request, ModelMap modelMap) {
 
-        List<UserThirdparty> thirdparties = (List<UserThirdparty>) provider.execute(new Parameter("userThirdpartyService","queryThirdPartByList").setId(getCurrUser())).getList();
+        Parameter parameter = new Parameter("userThirdpartyService","selectThirdPartByList").setId(getCurrUser());
+        List<UserThirdparty> thirdparties = (List<UserThirdparty>) provider.execute(parameter).getList();
         Map<String,Object> resultMap = InstanceUtil.newHashMap();
 
         if (thirdparties != null && thirdparties.size() > 0) {
@@ -238,7 +239,9 @@ public class UserController extends AbstractController<IShuoProvider> {
             resultMap.put("SINA",reMap);
         }
 
-        User user = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
+        parameter = new Parameter("userService","queryById").setId(getCurrUser());
+
+        User user = (User) provider.execute(parameter).getModel();
         if (user != null) {
             Map<String,Object> reMap = InstanceUtil.newHashMap();
             boolean flag = false;
@@ -267,20 +270,21 @@ public class UserController extends AbstractController<IShuoProvider> {
         UserThirdparty thirdpartyUser;
 
         // 解除绑定
-        if (thirdId != null) {
+        if (StringUtils.isNotBlank(thirdId)) {
+
+            User user = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
 
             thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryById").setId(thirdId)).getModel();
+
             if (thirdpartyUser == null || StringUtils.isBlank(thirdpartyUser.getUserId())) {
                 return setModelMap(modelMap,HttpCode.USER_NO_BOUND);
             }
 
-            String userId = thirdpartyUser.getUserId();
-            int thirdUserCount = (int) provider.execute(new Parameter("userThirdpartyService","selectCountByUserId").setId(userId)).getObject();
-            if (thirdUserCount <= 1) {
+            if (StringUtils.isBlank(user.getPhone())) {
                 return setModelMap(modelMap,HttpCode.USER_NO_BOUND);
             }
+
             if (thirdpartyUser.getVerified()) {
-                User user = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
                 if (user != null && StringUtils.equals("2",user.getUserType())) {
                     user.setUserType("1");
                     provider.execute(new Parameter("userService","update").setModel(user));
@@ -320,7 +324,7 @@ public class UserController extends AbstractController<IShuoProvider> {
                     thirdpartyUser.setAvatar(thirdUser.getAvatarUrl());
                     thirdpartyUser.setName(thirdUser.getUserName());
 
-                    thirdpartyUser.setToken(openId);
+                    thirdpartyUser.setToken(token);
 
                     thirdpartyUser.setUserId(getCurrUser());
 
@@ -331,12 +335,11 @@ public class UserController extends AbstractController<IShuoProvider> {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return setModelMap(modelMap,HttpCode.INTERNAL_SERVER_ERROR);
                 }
             } else {
                 return setModelMap(modelMap,HttpCode.USER_HAS_BOUND);
             }
-
-            return setSuccessModelMap(modelMap);
         }
     }
 

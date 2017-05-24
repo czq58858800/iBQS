@@ -86,16 +86,13 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
 
         params.put("userId",getCurrUser());
 
-        Parameter parameter = null;
+        Parameter parameter = new Parameter("userContactsService","queryFollow").setMap(params);
         if (StringUtils.equals(status,"1")) {
             params.put("follow",true);
-            parameter = new Parameter("userContactsService","queryFollow").setMap(params);
         } else if (StringUtils.equals(status,"2")){
             params.put("follow",false);
-            parameter = new Parameter("userContactsService","queryFollow").setMap(params);
         }else {
             params.put("unregistered",true);
-            parameter = new Parameter("userContactsService","queryBeans").setMap(params);
         }
         Page page = provider.execute(parameter).getPage();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();

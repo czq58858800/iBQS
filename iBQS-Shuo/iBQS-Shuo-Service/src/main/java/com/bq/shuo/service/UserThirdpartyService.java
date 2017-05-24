@@ -89,7 +89,15 @@ public class UserThirdpartyService extends BaseService<UserThirdparty> {
 
     @Cacheable
     public List<UserThirdparty> queryThirdPartByList(String userId) {
-        return getList(thirdpartyMapper.selectIdByList(userId));
+        List<String> ids = thirdpartyMapper.selectIdByList(userId);
+        List<UserThirdparty> userThirdpartyList = getList(ids);
+        return userThirdpartyList;
+    }
+
+    public List<UserThirdparty> selectThirdPartByList(String userId) {
+        List<String> ids = thirdpartyMapper.selectIdByList(userId);
+        List<UserThirdparty> userThirdpartyList = getList(ids);
+        return userThirdpartyList;
     }
 
     @Cacheable

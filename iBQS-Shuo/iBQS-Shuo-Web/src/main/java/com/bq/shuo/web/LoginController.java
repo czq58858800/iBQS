@@ -12,14 +12,12 @@ import com.bq.core.util.CacheUtil;
 import com.bq.core.util.EncryptUtils;
 import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
-import com.bq.model.Login;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
-import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SendSms;
-import com.bq.shuo.support.UserHelper;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
+import com.bq.shuo.support.UserHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,14 +26,10 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
-
-import static org.apache.shiro.web.filter.mgt.DefaultFilter.user;
 
 /**
  * 用户登录
@@ -110,9 +104,19 @@ public class LoginController extends AbstractController<IShuoProvider> {
     // 发送SMS验证码
     @ApiOperation(value = "发送SMS验证码")
     @GetMapping("/sendSMS")
-    public Object sendSMS(ModelMap modelMap,@ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account) throws UnsupportedEncodingException {
+    public Object sendSMS(ModelMap modelMap,
+              @ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account,
+              @ApiParam(required = true, value = "类型：(Y:需要注册;N:不需要)") @RequestParam(value = "t",required = false) String t) throws UnsupportedEncodingException {
         // 账号不允许为空
         Assert.notNull(account,"USER_ID_IS_NULL");
+
+        if (StringUtils.isNotBlank(t) && StringUtils.equals(t.trim().toUpperCase(),"Y")) {
+            Parameter parameter = new Parameter("userService","selectByPhone").setId(account);
+            User user = (User) provider.execute(parameter).getModel();
+            if (user == null) {
+                return setModelMap(modelMap,HttpCode.USER_ACCOUNT_NOT_EXIST);
+            }
+        }
 
         String lockKey = new StringBuilder(Constants.JR_SMS_CAPTCHA).append("LOCK:").append(account).toString();
 
@@ -124,21 +128,22 @@ public class LoginController extends AbstractController<IShuoProvider> {
             }
         }
 
+        JSONObject res = new JSONObject();
+
         try {
             int captcha;
             Random ne=new Random();//实例化一个random的对象ne
             captcha=ne.nextInt(9999-1000+1)+1000;//为变量赋随机值1000-9999
 
-            JSONObject res = new JSONObject();
             res.put("account",account);
             res.put("captcha",captcha);
             res.put("timestamp", System.currentTimeMillis());
 
-            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
-
-            if (!sendStatus) {
-                return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
-            }
+//            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
+//
+//            if (!sendStatus) {
+//                return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
+//            }
 
             // 序列化验证码信息到Redis
             CacheUtil.getCache().set(Constants.JR_SMS_CAPTCHA+account,res);
@@ -147,7 +152,7 @@ public class LoginController extends AbstractController<IShuoProvider> {
             CacheUtil.unlock(lockKey);
         }
 
-        return setSuccessModelMap(modelMap);
+        return setSuccessModelMap(modelMap,res);
     }
 
     // 校验帐号是否存在
@@ -198,6 +203,138 @@ public class LoginController extends AbstractController<IShuoProvider> {
         }
         provider.execute(new Parameter(getService(),"update").setModel(record));
     }
+
+    // 注册
+    @ApiOperation(value = "用户注册")
+    @PostMapping("/regin")
+    public Object regin(HttpServletRequest request, ModelMap modelMap,
+                        @RequestHeader(value = "Push-Device-Token",required = false) String pushDeviceToken,
+                        @RequestHeader(value = "Login-Device",required = false) String LoginDevice,
+                        @RequestHeader(value = "Login-lat",required = false) Double LoginLat,
+                        @RequestHeader(value = "Login-lng",required = false) Double LoginLng,
+                        @ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account,
+                        @ApiParam(required = true, value = "头像") @RequestParam(value = "avatar") String avatar,
+                        @ApiParam(required = true, value = "验证码") @RequestParam(value = "smsCode") int smsCode,
+                        @ApiParam(required = true, value = "昵称") @RequestParam(value = "name") String name,
+                        @ApiParam(required = true, value = "密码") @RequestParam(value = "password") String password,
+                        @ApiParam(required = true, value = "简介") @RequestParam(value = "summary") String summary,
+                        @ApiParam(required = true, value = "性别") @RequestParam(value = "sex") int sex) {
+        Map<String,Object> params = WebUtil.getParameterMap(request);
+
+        User user = new User(account,name,password,summary,sex,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+        user.setAvatar(avatar);
+        // 账号不允许为空
+        Assert.notNull(account,"ACCOUNT");
+        // 验证码不允许为空
+        Assert.notNull(smsCode,"SMS_CODE");
+        Assert.notNull(name,"NAME");
+        Assert.notNull(name,"SUMMARY");
+
+        // 判断手机号是否注册
+        params.clear();
+        params.put("account",account);
+        Parameter parameter = new Parameter(getService(),"selectCheck").setMap(params);
+        boolean isAccountExist = (boolean) provider.execute(parameter).getObject();
+        if (isAccountExist) {
+            return setModelMap(modelMap, HttpCode.REG_HAS_PHONE);
+        }
+        // 判断昵称是否注册
+        params.clear();
+        params.put("name",name);
+        parameter = new Parameter(getService(),"selectCheck").setMap(params);
+        boolean isNicknameExist = (boolean) provider.execute(parameter).getObject();
+        if (isNicknameExist) {
+            return setModelMap(modelMap, HttpCode.REG_HAS_NAME);
+        }
+
+        // 获取短信验证码
+        JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_SMS_CAPTCHA+account));
+        // 判断短信验证码是否失效
+        if (jCaptcha != null) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_FAIL);
+        }
+
+
+        int captcha = jCaptcha.getInteger("captcha");
+        // 判断验证码是否一致
+        if (smsCode != captcha) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
+        }
+
+        // 注册用户
+        parameter = new Parameter("userService","update").setModel(user);
+        user = (User) provider.execute(parameter).getModel();
+        CacheUtil.getCache().del(Constants.JR_SMS_CAPTCHA+account);
+        // 有密码
+        if (StringUtils.isNotEmpty(user.getPassword())) {
+            if (LoginHelper.login(account, password)) {
+                String token = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
+                User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
+                updateUser(record,token,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+                request.setAttribute("msg", "[" + account + "]登录成功.");
+                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(token, record.getId(), record.getName(),record.getAvatar()));
+            }
+        } else {
+            if (LoginHelper.login(user.getAccount())) {
+                String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
+                User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
+                updateUser(record,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
+            }
+        }
+
+        throw new IllegalArgumentException(Resources.getMessage("REGISTER_FAIL"));
+    }
+
+    // 忘记密码
+    @ApiOperation(value = "忘记密码")
+    @PostMapping("/forget")
+    public Object forget(HttpServletRequest request, ModelMap modelMap,
+                         @RequestHeader(value = "Push-Device-Token",required = false) String pushDeviceToken,
+                         @RequestHeader(value = "Login-Device",required = false) String LoginDevice,
+                         @RequestHeader(value = "Login-lat",required = false) Double LoginLat,
+                         @RequestHeader(value = "Login-lng",required = false) Double LoginLng,
+                        @ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account,
+                        @ApiParam(required = true, value = "验证码") @RequestParam(value = "smsCode") int smsCode,
+                        @ApiParam(required = true, value = "密码") @RequestParam(value = "password") String password) {
+        // 账号不允许为空
+        Assert.notNull(account,"ACCOUNT");
+        // 验证码不允许为空
+        Assert.notNull(smsCode,"SMS_CODE");
+        Assert.notNull(password,"PASSWORD");
+
+        // 获取短信验证码
+        JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_SMS_CAPTCHA+account));
+        // 判断短信验证码是否失效
+        if (jCaptcha == null) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_FAIL);
+        }
+
+        int captcha = jCaptcha.getInteger("captcha");
+        // 判断验证码是否一致
+        if (smsCode != captcha) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
+        }
+
+        Parameter parameter = new Parameter("userService","selectByPhone").setId(account);
+        User user = (User) provider.execute(parameter).getModel();
+        if (user == null) {
+            return setModelMap(modelMap,HttpCode.USER_ACCOUNT_NOT_EXIST);
+        }
+        user.setPassword(password);
+        parameter = new Parameter("userService","update").setModel(user);
+        provider.execute(parameter);
+
+        if (LoginHelper.login(user.getAccount(),password)) {
+            String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
+            User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
+            updateUser(record,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+            return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
+        }
+
+        throw new IllegalArgumentException(Resources.getMessage(("SMS_CAPTCHA_INCORRECT")));
+    }
+
 
     // 登出
     @ApiOperation(value = "用户登出")

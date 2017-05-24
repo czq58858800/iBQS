@@ -5,20 +5,46 @@
 
 
 	<select id="selectIdPage" resultType="java.lang.String">
-		select id_ from bq_user_weibo
+		SELECT id_ FROM bq_user_weibo
 		<where>
-			<if test="cm.keyword != null and cm.keyword != ''">
-				and (
-					or open_id like CONCAT('%',#{cm.keyword},'%')
-					or name_ like CONCAT('%',#{cm.keyword},'%')
-					or summary_ like CONCAT('%',#{cm.keyword},'%')
-					or avatar_ like CONCAT('%',#{cm.keyword},'%')
-					or verified_ like CONCAT('%',#{cm.keyword},'%')
-					or gender_ like CONCAT('%',#{cm.keyword},'%')
-					or user_id like CONCAT('%',#{cm.keyword},'%')
-					or is_invite like CONCAT('%',#{cm.keyword},'%')
-				)
+			<if test="cm.contactUserIdNotIsNull != null and cm.contactUserIdNotIsNull == true">
+				and not isnull(thirdparty_user_id)
+			</if>
+			<if test="cm.contactUserIdNotIsNull != null and cm.contactUserIdNotIsNull == false">
+				and isnull(thirdparty_user_id)
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				and user_id = #{cm.userId}
+			</if>
+			<if test="cm.openId != null and cm.openId != ''">
+				and open_id = #{cm.openId}
 			</if>
 		</where>
+		ORDER BY name_ ASC,create_time DESC
+	</select>
+    <select id="queryByOpenId" resultType="java.lang.String">
+		select id_ from bq_user_weibo where open_id = #{openId} and user_id = #{userId}
+	</select>
+	<select id="selectIdPageByFollow" resultType="java.lang.String">
+		SELECT A.id_ FROM bq_user_weibo A
+		LEFT JOIN bq_user_following B ON A.thirdparty_user_id = B.follow_user_id AND A.thirdparty_user_id = B.befollow_user_id
+		<where>
+			<if test="cm.unregistered != null and cm.unregistered != ''">/*未注册*/
+				ISNULL(thirdparty_user_id)
+			</if>
+			<if test="cm.follow != null and cm.follow == true">/*已关注*/
+				NOT ISNULL(A.thirdparty_user_id) AND NOT ISNULL(B.id_)
+			</if>
+			<if test="cm.follow != null and cm.follow == false">/*未关注*/
+				NOT ISNULL(A.thirdparty_user_id) AND ISNULL(B.id_)
+			</if>
+			<if test="cm.userId != null and cm.userId != ''">
+				AND A.user_id = #{cm.userId}
+			</if>
+			<if test="cm.openId != null and cm.openId != ''">
+				and open_id = #{cm.openId}
+			</if>
+		</where>
+		ORDER BY A.name_ DESC,A.create_time DESC
 	</select>
 </mapper>

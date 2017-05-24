@@ -6,19 +6,19 @@
 		select id_ from bq_topics_review
 		<where>
 			<if test="cm.topicId != null and cm.topicId != ''">
-				topic_id = #{cm.topicId}
+				and topic_id = #{cm.topicId}
 			</if>
 			<if test="cm.name != null and cm.name != ''">
-				name_ = #{cm.name}
+				and name_ = #{cm.name}
 			</if>
 			<if test="cm.userId != null and cm.userId != ''">
-				user_id = #{cm.userId}
+				and user_id = #{cm.userId}
 			</if>
 			<if test="cm.audit != null and cm.audit != ''">
-				audit_ = #{cm.audit}
+				and audit_ = #{cm.audit}
 			</if>
 			<if test="cm.auditUserId != null and cm.auditUserId != ''">
-				audit_user_id = #{cm.auditUserId}
+				and audit_user_id = #{cm.auditUserId}
 			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
 				and name_ like CONCAT('%',#{cm.keyword},'%') or summary_ like CONCAT('%',#{cm.keyword},'%')
@@ -30,25 +30,25 @@
 		select id_ from bq_topics_review
 		<where>
 			<if test="cm.topicId != null and cm.topicId != ''">
-				topic_id = #{cm.topicId}
+				and topic_id = #{cm.topicId}
 			</if>
 			<if test="cm.name != null and cm.name != ''">
-				name_ = #{cm.name}
+				and name_ = #{cm.name}
 			</if>
 			<if test="cm.userId != null and cm.userId != ''">
-				user_id = #{cm.userId}
+				and user_id = #{cm.userId}
 			</if>
 			<if test="cm.audit != null and cm.audit != ''">
-				audit_ = #{cm.audit}
+				and audit_ = #{cm.audit}
 			</if>
 			<if test="cm.auditUserId != null and cm.auditUserId != ''">
-				audit_user_id = #{cm.auditUserId}
+				and audit_user_id = #{cm.auditUserId}
 			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
 				and name_ like CONCAT('%',#{cm.keyword},'%') or summary_ like CONCAT('%',#{cm.keyword},'%')
 			</if>
 		</where>
-		group by topicId
+		group by topic_id
 		order by create_time desc,update_time desc
 	</select>
 </mapper>

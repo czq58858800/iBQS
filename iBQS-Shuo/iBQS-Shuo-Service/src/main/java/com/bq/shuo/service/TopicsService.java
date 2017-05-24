@@ -61,6 +61,8 @@ public class TopicsService extends BaseService<Topics> {
 
     public Topics queryBeansByKeyword(String keyword, String currUserId) {
         Topics topics = queryById(topicsMapper.queryBeanByKeyword(keyword));
+        topics.setViewNum(topics.getViewNum()+1);
+        super.update(topics);
         if (topics != null && StringUtils.isNotBlank(topics.getId())) {
             Topics record = InstanceUtil.to(topics, Topics.class);
             return getDetail(record, currUserId);

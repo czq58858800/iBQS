@@ -50,6 +50,19 @@ public class UserWeibo extends BaseModel {
      */
 	@TableField("user_id")
 	private String userId;
+
+	/**
+	 * 第三方ID
+	 */
+	@TableField("thirdparty_id")
+	private String thirdpartyId;
+
+	/**
+	 * 第三方用户ID
+	 */
+	@TableField("thirdparty_user_id")
+	private String thirdpartyUserId;
+
     /**
      * true:允许邀请；false：不允许邀请
      */
@@ -111,6 +124,22 @@ public class UserWeibo extends BaseModel {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getThirdpartyId() {
+		return thirdpartyId;
+	}
+
+	public void setThirdpartyId(String thirdpartyId) {
+		this.thirdpartyId = thirdpartyId;
+	}
+
+	public String getThirdpartyUserId() {
+		return thirdpartyUserId;
+	}
+
+	public void setThirdpartyUserId(String thirdpartyUserId) {
+		this.thirdpartyUserId = thirdpartyUserId;
 	}
 
 	public Boolean getIsInvite() {

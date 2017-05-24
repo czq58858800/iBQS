@@ -5,6 +5,7 @@ import com.bq.core.config.Resources;
 import com.bq.core.util.HttpUtil;
 import com.bq.core.util.InstanceUtil;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +31,6 @@ public class WeiboHelper {
         params.add(new NameValuePair("status",status));
         String res = HttpUtil.httpClientPost(url,params);
         JSONObject json = JSONObject.parseObject(res);
-        logger.debug("发布一条新微博："+res);
+        logger.debug("发布一条新微博："+json);
     }
 }

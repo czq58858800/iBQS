@@ -66,46 +66,45 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
 
         Map<String, Object> params = WebUtil.getParameterMap(request);
 
-
-
         if (flag) {
             updateWeibo(getCurrUser());
+        } else {
+          if (pageNum == 1) {
+              executorService.submit(new Runnable() {
+                 public void run() {
+                     updateWeibo(getCurrUser());
+                 }
+              });
+          }
         }
 
+
+        if (StringUtils.equals(status,"1")) {
+            params.put("follow",true);
+        } else if (StringUtils.equals(status,"2")){
+            params.put("follow",false);
+        }else {
+            params.put("unregistered",true);
+        }
         params.put("userId",getCurrUser());
-
-        Parameter parameter = new Parameter(getService(),"queryBeans").setMap(params);
-        Page pageInfo = provider.execute(parameter).getPage();
-
+        Parameter parameter = new Parameter(getService(),"queryFollow").setMap(params);
+        Page page = provider.execute(parameter).getPage();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
-        for (Object obj:pageInfo.getRecords()) {
+        for (Object obj:page.getRecords()) {
             UserWeibo record = (UserWeibo) obj;
             Map<String,Object> itemMap = InstanceUtil.newHashMap();
-
-            if (StringUtils.equals(status,"1") || StringUtils.equals(status,"2")) {
-                parameter = new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {record.getOpenId(),"SINA"});
-                UserThirdparty thirdparty = (UserThirdparty) provider.execute(parameter).getModel();
-                if (thirdparty !=null) {
-                    parameter = new Parameter("userService","queryById").setId(thirdparty.getUserId());
-                    User user = (User) provider.execute(parameter).getModel();
-                    resultList.add(UserHelper.formatResultMap(user));
-                } else {
-                    return setModelMap(modelMap, HttpCode.NOT_DATA);
-                }
-            } else {
-                itemMap.put("uid",record.getId());
-                itemMap.put("openId",record.getOpenId());
-                itemMap.put("avatar",record.getAvatar());
-                itemMap.put("name",record.getName());
-                itemMap.put("gender",record.getGender());
-                itemMap.put("isInvite",record.getIsInvite());
-                itemMap.put("verified",record.getVerified());
-                itemMap.put("summary",record.getSummary());
-                resultList.add(itemMap);
-            }
+            itemMap.put("uid",record.getId());
+            itemMap.put("openId",record.getOpenId());
+            itemMap.put("avatar",record.getAvatar());
+            itemMap.put("name",record.getName());
+            itemMap.put("gender",record.getGender());
+            itemMap.put("isInvite",record.getIsInvite());
+            itemMap.put("verified",record.getVerified());
+            itemMap.put("summary",record.getSummary());
+            resultList.add(itemMap);
         }
-        pageInfo.setRecords(resultList);
-        return setSuccessModelMap(modelMap,pageInfo);
+        page.setRecords(resultList);
+        return setSuccessModelMap(modelMap,page);
     }
 
     // 获取微博好友列表
@@ -166,9 +165,9 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
                     weiboParams.clear();
                     weiboParams.put("userId",userId);
                     weiboParams.put("openId",o.getString("id"));
-                    parameter = new Parameter(getService(),"query").setMap(weiboParams);
-                    Page<UserWeibo> userWeiboPage = (Page<UserWeibo>) provider.execute(parameter).getPage();
-                    UserWeibo userWeibo = userWeiboPage != null && userWeiboPage.getRecords() != null && userWeiboPage.getRecords().size() > 0 ? userWeiboPage.getRecords().get(0) : null;
+
+                    parameter = new Parameter(getService(),"queryByOpenId").setObjects(new Object[]{o.getString("id"),userId});
+                    UserWeibo userWeibo = (UserWeibo) provider.execute(parameter).getModel();
                     if (userWeibo == null) {
                         userWeibo = new UserWeibo();
                         userWeibo.setUserId(userId);
@@ -185,8 +184,25 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
                         } else {
                             userWeibo.setGender("1");
                         }
+
+                        parameter = new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {userWeibo.getOpenId(),"SINA"});
+                        UserThirdparty userThirdparty = (UserThirdparty) provider.execute(parameter).getModel();
+                        if (userThirdparty != null) {
+                            userWeibo.setThirdpartyId(userThirdparty.getId());
+                            userWeibo.setThirdpartyUserId(userThirdparty.getUserId());
+                        }
+
                         parameter = new Parameter(getService(),"update").setModel(userWeibo);
                         provider.execute(parameter);
+                    } else {
+                        parameter = new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {userWeibo.getOpenId(),"SINA"});
+                        UserThirdparty userThirdparty = (UserThirdparty) provider.execute(parameter).getModel();
+                        if (userThirdparty != null) {
+                            userWeibo.setThirdpartyId(userThirdparty.getId());
+                            userWeibo.setThirdpartyUserId(userThirdparty.getUserId());
+                            parameter = new Parameter(getService(),"update").setModel(userWeibo);
+                            provider.execute(parameter);
+                        }
                     }
                 }
                 if (nextCursor == 0) {
