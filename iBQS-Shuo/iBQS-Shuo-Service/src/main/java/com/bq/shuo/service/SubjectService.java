@@ -6,8 +6,10 @@ import com.bq.core.util.CacheUtil;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.SubjectMapper;
-import com.bq.shuo.model.*;
-import com.bq.shuo.support.SubjectHelper;
+import com.bq.shuo.model.Album;
+import com.bq.shuo.model.Notify;
+import com.bq.shuo.model.Subject;
+import com.bq.shuo.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -58,9 +60,6 @@ public class SubjectService extends BaseService<Subject> {
 
     @Autowired
     private NotifyService notifyService;
-
-    @Autowired
-    private TopicsService topicsService;
 
     // 线程池
     private ExecutorService executorService = Executors.newCachedThreadPool();
@@ -164,6 +163,8 @@ public class SubjectService extends BaseService<Subject> {
 
     public List<Subject> getSubjectListInfo(List<Subject> records, Map<String,Object> params) {
         for (Subject record:records) {
+            // 增加浏览数
+            incrSubjectCounter(record.getId(), CounterHelper.Subject.VIEW);
             String currUserId = null;
             if (params.containsKey("currUserId")) {
                 currUserId = (String)params.get("currUserId");
@@ -309,33 +310,7 @@ public class SubjectService extends BaseService<Subject> {
     public Subject update(Subject record) {
         if (StringUtils.isBlank(record.getId())) {
             userService.incrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
-
-            executorService.submit(new Runnable() {
-                public void run() {
-                    List<String> topics = SubjectHelper.findTopic(record.getContent());
-                    if (topics !=  null && topics.size() > 0) {
-                        for (String topic:topics) {
-                            String topicId = topicsService.selectIdByName(topic);
-                            if (StringUtils.isBlank(topicId)) {
-                                Topics topicRecord = new Topics();
-                                topicRecord.setName(topic);
-                                topicRecord.setAudit("2");
-                                topicRecord.setOwnerStatus(1);
-                                topicsService.update(topicRecord);
-                            }
-                        }
-                    }
-                }
-            });
         }
         return super.update(record);
-    }
-
-    public Boolean selectIsReleaseSubject(String topic,String userId) {
-        int count = subjectMapper.selectIsReleaseSubject(topic,userId);
-        if (count > 0) {
-            return true;
-        }
-        return false;
     }
 }

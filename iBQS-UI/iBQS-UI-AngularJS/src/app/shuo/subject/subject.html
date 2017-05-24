@@ -54,7 +54,7 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td><a ui-sref="main.shuo.subject.update({id: item.id})"><img width="50" class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}"  alt="{{item.content}}" /></a></td>
+						<td><a ui-sref="main.shuo.subject.update({id: item.id})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.content}}" /></a></td>
 						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.update({id: item.id})" alt="{{item.content}}">{{item.content}}</a></span></td>
 						<td class="v-middle">{{item.user.name}}</td>
 						<td class="v-middle">{{item.viewNum}}</td>
@@ -72,10 +72,10 @@
 						<td class="v-middle">
 							<a ui-sref="main.shuo.subject.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
-							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-ban m-r-xs text-sm"></i>启用</button>
-							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-check m-r-xs text-sm"></i>禁用</button>
+							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>
+							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-check m-r-xs text-sm"></i>启用</button>
 						</td>
 					</tr>
 					</tbody>

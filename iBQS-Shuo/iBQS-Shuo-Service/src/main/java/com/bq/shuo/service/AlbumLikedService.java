@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
-import com.bq.core.util.CacheUtil;
 import com.bq.shuo.mapper.AlbumLikedMapper;
 import com.bq.shuo.model.*;
 import com.bq.shuo.core.base.BaseService;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -48,10 +46,8 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         for (AlbumLiked record:pageInfo.getRecords()) {
             record.setAlbum(albumService.queryById(record.getAlbumId()));
             Subject subject = subjectService.queryById(record.getAlbum().getSubjectId());
-            if (subject != null) {
-                subject.setUser(userService.queryById(subject.getUserId()));
-                record.setSubject(subject);
-            }
+            subject.setUser(userService.queryById(subject.getUserId()));
+            record.setSubject(subject);
         }
         return pageInfo;
     }
@@ -68,24 +64,13 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         return albumLikedMapper.selectLikedById(albumId,userId);
     }
 
-    public boolean selectByIsLikedId(String albumId, String userId) {
-        if (StringUtils.isNotBlank(albumId) && StringUtils.isNotBlank(userId)) {
-            String key = Constants.CACHE_RELATIONS_ALBUM + albumId;
-            if (CacheUtil.getCache().hexists(key, userId)) {
-                return Boolean.valueOf((String) CacheUtil.getCache().hget(key, userId));
-            } else {
-                boolean isLiked = false;
-                if (StringUtils.isNotBlank(selectByLikedId(albumId, userId))) {
-                    isLiked = true;
-                }
-                CacheUtil.getCache().hset(key, userId, BooleanUtils.toStringTrueFalse(isLiked));
-                CacheUtil.getCache().expire(key,600);
-                return isLiked;
-            }
+    public boolean selectByIsLiked(String albumId, String userId) {
+        String albumLikedId = selectByLikedId(albumId,userId);
+        if (StringUtils.isNotBlank(albumLikedId)) {
+            return true;
         }
         return false;
     }
-
 
     public synchronized boolean updateLiked(String albumId, String currUserId) {
         String albumLikedId = selectByLikedId(albumId,currUserId);
@@ -102,10 +87,6 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
 
                 // 并喜欢主题
                 subjectLikedService.updateLiked(record.getSubjectId(), currUserId);
-
-                String key =  Constants.CACHE_RELATIONS_ALBUM+ albumId;
-                CacheUtil.getCache().hset(key,currUserId, BooleanUtils.toStringTrueFalse(true));
-
                 return true;
             }
         }
@@ -131,18 +112,9 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
                     subjectLikedService.updateCancelLiked(record.getSubjectId(),currUserId);
                 }
 
-                String key =  Constants.CACHE_RELATIONS_ALBUM+ albumId;
-                CacheUtil.getCache().hset(key,currUserId, BooleanUtils.toStringTrueFalse(false));
-
                 return true;
             }
         }
         return false;
     }
-
-    public int selectCountByUserId(String userId) {
-        return albumLikedMapper.selectCountByUserId(userId);
-    }
-
-
 }

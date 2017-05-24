@@ -1,7 +1,6 @@
 package com.bq.shuo.service;
 
 import com.bq.core.Constants;
-import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.mapper.AlbumMapper;
 import com.bq.shuo.model.Album;
@@ -13,7 +12,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>
@@ -38,30 +36,25 @@ public class AlbumService extends BaseService<Album> {
 
 
     public List<Album> querySubjectIdByList(String subjectId,String currUserId) {
-        String key = Constants.CACHE_SUBJECT_ALBUM+subjectId;
-        List<Album> albums = InstanceUtil.newArrayList();
-        if (CacheUtil.getCache().exists(key)) {
-            Set<Object> ids = CacheUtil.getCache().getAll(key);
-            for (Object obj : ids) {
-                albums.add(queryById((String) obj,currUserId));
-            }
-        } else {
-            List<String> idList = albumMapper.selectIdBySubjectId(subjectId);
+        List<String> idList = albumMapper.selectIdBySubjectId(subjectId);
+        List<Album> list = InstanceUtil.newArrayList();
+        if (idList != null) {
             for (String id : idList) {
-                albums.add(queryById(id,currUserId));
+                Album record = queryById(id);
+                boolean isLayer = StringUtils.isNotBlank(record.getLayerId());
+                if(isLayer) {
+                    record.setLayer(layerService.queryById(record.getLayerId()));
+                }
+                boolean isLiked = false;
+                if (StringUtils.isNotBlank(currUserId)) {
+                    isLiked = StringUtils.isNotBlank(albumLikedService.selectByLikedId(record.getId(),currUserId));
+                }
+                record.setLiked(isLiked);
+                list.add(record);
             }
-
         }
-        return albums;
+        return list;
     }
 
 
-    public Album queryById(String albumId,String currUserId) {
-        Album record = queryById(albumId);
-        if(StringUtils.isNotBlank(record.getLayerId())) {
-            record.setLayer(layerService.queryById(record.getLayerId()));
-        }
-        record.setLiked(albumLikedService.selectByIsLikedId(record.getId(),currUserId));
-        return record;
-    }
 }
