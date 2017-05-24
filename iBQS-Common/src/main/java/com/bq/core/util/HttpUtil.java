@@ -20,6 +20,7 @@ public final class HttpUtil {
 		String result = "";
 		HttpClient client = new HttpClient();
 		GetMethod getMethod = new GetMethod(url);
+		getMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET,"utf-8");
 		try {
 			client.executeMethod(getMethod);
 			result = getMethod.getResponseBodyAsString();

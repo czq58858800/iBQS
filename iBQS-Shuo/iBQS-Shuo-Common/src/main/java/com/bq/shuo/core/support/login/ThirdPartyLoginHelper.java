@@ -27,12 +27,25 @@ public final class ThirdPartyLoginHelper {
 	 * @param token
 	 * @param openid
 	 */
-	public static final ThirdPartyUser getQQUserinfo(String token, String openid) throws Exception {
+	public static final ThirdPartyUser getQQUserinfo(String loginDevice,String token, String openid) throws Exception {
 		ThirdPartyUser user = new ThirdPartyUser();
+
+		String appid = Resources.THIRDPARTY.getString("app_id_qq");
+		if (loginDevice.trim().toUpperCase().equals("PC")) {
+			appid = Resources.THIRDPARTY.getString("app_id_pc_qq");
+		}
 		String url = Resources.THIRDPARTY.getString("getUserInfoURL_qq");
 		url = url + "?format=json&access_token=" + token + "&oauth_consumer_key="
-				+ Resources.THIRDPARTY.getString("app_id_qq") + "&openid=" + openid;
+				+ appid + "&openid=" + openid;
 		String res = HttpUtil.httpClientPost(url);
+
+
+		String unionidURL = Resources.THIRDPARTY.getString("getOpenIDURL_qq");
+		unionidURL = unionidURL+"?access_token="+token+"&unionid=1";
+		String unionidRes = HttpUtil.httpClientPost(unionidURL).replace("callback(","").replace(");","");
+		JSONObject unionidJson = JSONObject.parseObject(unionidRes);
+
+
 		JSONObject json = JSONObject.parseObject(res);
 		if (json.getIntValue("ret") == 0) {
 			user.setUserName(json.getString("nickname"));
@@ -51,7 +64,7 @@ public final class ThirdPartyLoginHelper {
 				user.setGender("2");
 			}
 			user.setToken(token);
-			user.setOpenid(json.getString("unionid"));
+			user.setOpenid(unionidJson.getString("unionid"));
 			user.setProvider("QQ");
 		} else {
 			throw new IllegalArgumentException(json.getString("msg"));

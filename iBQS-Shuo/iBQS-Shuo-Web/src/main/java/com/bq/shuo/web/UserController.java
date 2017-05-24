@@ -263,6 +263,7 @@ public class UserController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "绑定/解除微信")
     @PostMapping(value = "bind")
     public Object bind(HttpServletRequest request, ModelMap modelMap,
+                 @RequestHeader(value = "Login-Device",required = false) String LoginDevice,
                  @ApiParam(required = false, value = "第三方ID") @RequestParam(value = "thirdId",required = false) String thirdId,
                  @ApiParam(required = true, value = "类型:{WX;QQ;SINA}") @RequestParam(value = "type",required = false) String type,
                  @ApiParam(required = true, value = "token") @RequestParam(value = "token",required = false) String token,
@@ -305,7 +306,7 @@ public class UserController extends AbstractController<IShuoProvider> {
                         thirdUser = ThirdPartyLoginHelper.getWxUserinfo(token, openId);
                     }
                     if (StringUtils.equals(type.toUpperCase(),"QQ")){
-                        thirdUser = ThirdPartyLoginHelper.getQQUserinfo(token, openId);
+                        thirdUser = ThirdPartyLoginHelper.getQQUserinfo(LoginDevice,token, openId);
                     }
                     if (StringUtils.equals(type.toUpperCase(),"SINA")){
                         thirdUser = ThirdPartyLoginHelper.getSinaUserinfo(token, openId);

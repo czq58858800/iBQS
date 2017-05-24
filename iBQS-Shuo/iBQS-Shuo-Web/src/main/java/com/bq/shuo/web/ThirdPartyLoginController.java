@@ -109,7 +109,7 @@ public class ThirdPartyLoginController extends AbstractController<IShuoProvider>
 	@ApiOperation(value = "QQ登录", httpMethod = "POST")
 	public Object qqCallback(HttpServletRequest request, ModelMap modelMap,
 				 @RequestHeader(value = "Push-Device-Token",required = false) String pushDeviceToken,
-				 @RequestHeader(value = "Login-Device",required = false) String LoginDevice,
+				 @RequestHeader(value = "Login-Device",required = true) String LoginDevice,
 				 @RequestHeader(value = "Login-lat",required = false) Double LoginLat,
 				 @RequestHeader(value = "Login-lng",required = false) Double LoginLng,
 				 @ApiParam(required = false, value = "name") @RequestParam(value = "name",required = false) String name,
@@ -117,7 +117,7 @@ public class ThirdPartyLoginController extends AbstractController<IShuoProvider>
 				 @ApiParam(required = true, value = "openId") @RequestParam(value = "openId") String openId) {
 		try {
 			// 获取第三方用户信息存放到session中
-			ThirdPartyUser thirdUser = ThirdPartyLoginHelper.getQQUserinfo(access_token, openId);
+			ThirdPartyUser thirdUser = ThirdPartyLoginHelper.getQQUserinfo(LoginDevice,access_token, openId);
 			thirdUser.setProvider("QQ");
 			if (StringUtils.isNotBlank(name)) {
 				thirdUser.setUserName(name);

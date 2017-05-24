@@ -68,7 +68,8 @@ public class TopicController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("enable", true);
         params.put("currUserId", getCurrUser());
-        params.put("keyword", "#"+keyword+"#");
+        keyword = keyword.replace("#","");
+        params.put("keyword", "#" + keyword + "#");
 
         List<Object> resultList = InstanceUtil.newArrayList();
         Map<String, Object> resultMap = InstanceUtil.newHashMap();
