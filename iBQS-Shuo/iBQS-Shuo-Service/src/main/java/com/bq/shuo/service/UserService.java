@@ -9,6 +9,7 @@ import com.bq.shuo.mapper.UserMapper;
 import com.bq.shuo.model.SubjectLiked;
 import com.bq.shuo.model.User;
 import com.bq.shuo.core.base.BaseService;
+import com.bq.shuo.model.UserConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -102,7 +103,8 @@ public class UserService extends BaseService<User> {
     public User getDetail(User record) {
         if (record != null && StringUtils.isNotBlank(record.getId())) {
             String id = record.getId();
-            record.setConfig(userConfigService.selectByUserId(id));
+            UserConfig userConfig = userConfigService.selectByUserId(id);
+            record.setConfig(userConfig);
             record.setWorksLikeNum(selectUserCounter(id, CounterHelper.User.WORKS_LIKE));
             record.setWorksNum(selectUserCounter(id, CounterHelper.User.WORKS));
             record.setMyLikeWorksNum(selectUserCounter(id, CounterHelper.User.MY_LIKE_WORKS));
@@ -218,10 +220,6 @@ public class UserService extends BaseService<User> {
         }
     }
 
-    public void insertUserConfig(String userId) {
-        userMapper.insertUserConfig(userId);
-    }
-
     public User selectByName(String userName) {
         Map<String,Object> params = InstanceUtil.newHashMap();
         params.put("name",userName);
@@ -242,6 +240,16 @@ public class UserService extends BaseService<User> {
         return null;
     }
 
+    public User selectByAccount(String account) {
+        Map<String,Object> params = InstanceUtil.newHashMap();
+        params.put("account",account);
+        Page<User> page = query(params);
+        if (page != null && page.getRecords() != null && page.getRecords().size() > 0) {
+            return page.getRecords().get(0);
+        }
+        return null;
+    }
+
     public String queryAccountByToken(String token) {
         Map<String,Object> params = InstanceUtil.newHashMap();
         params.put("token",token);
@@ -250,5 +258,17 @@ public class UserService extends BaseService<User> {
             return page.getRecords().get(0).getAccount();
         }
         return null;
+    }
+
+    @Override
+    public User update(User record) {
+        if (StringUtils.isBlank(record.getId())) {
+            record = super.update(record);
+            userConfigService.update(new UserConfig(record.getId()));
+            return record;
+        } else {
+            return super.update(record);
+        }
+
     }
 }

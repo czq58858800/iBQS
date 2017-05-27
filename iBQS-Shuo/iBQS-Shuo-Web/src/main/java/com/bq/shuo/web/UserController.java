@@ -390,10 +390,6 @@ public class UserController extends AbstractController<IShuoProvider> {
 
         User record = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
 
-        if (!StringUtils.equals(phone,record.getPhone())) {
-            return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
-        }
-
         Map<String,Object> params = InstanceUtil.newHashMap();
         params.put("account",phone);
         Parameter parameter = new Parameter("userService","selectCheck").setMap(params);
@@ -478,7 +474,6 @@ public class UserController extends AbstractController<IShuoProvider> {
         provider.execute(new Parameter("userConfigService","update").setModel(record));
         return setSuccessModelMap(modelMap,"修改成功！");
     }
-
 
     // 消息通知
     @ApiOperation(value = "消息通知")

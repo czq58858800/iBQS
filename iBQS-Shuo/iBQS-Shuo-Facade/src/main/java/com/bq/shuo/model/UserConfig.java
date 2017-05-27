@@ -22,6 +22,7 @@ public class UserConfig extends BaseModel {
     /**
      * 用户ID
      */
+    @TableField("user_id")
 	private String userId;
     /**
      * 是否允许评论
@@ -54,8 +55,16 @@ public class UserConfig extends BaseModel {
 	@TableField("is_works_follow")
 	private Boolean isWorksFollow;
 
-	public UserConfig() {
+	public UserConfig() {}
 
+	public UserConfig(String userId) {
+		this.userId = userId;
+		this.isMessage = true;
+		this.isWorks = true;
+		this.isComment = true;
+		this.isMessageFollow = false;
+		this.isWorksFollow = false;
+		this.isCommentFollow = false;
 	}
 
 	public UserConfig(String userId,boolean isMessage, boolean isWorks, boolean isComment, boolean isMessageFollow, boolean isWorksFollow, boolean isCommentFollow) {
@@ -123,6 +132,54 @@ public class UserConfig extends BaseModel {
 
 	public void setIsWorksFollow(Boolean isWorksFollow) {
 		this.isWorksFollow = isWorksFollow;
+	}
+
+	public Boolean getComment() {
+		return isComment;
+	}
+
+	public void setComment(Boolean comment) {
+		isComment = comment;
+	}
+
+	public Boolean getCommentFollow() {
+		return isCommentFollow;
+	}
+
+	public void setCommentFollow(Boolean commentFollow) {
+		isCommentFollow = commentFollow;
+	}
+
+	public Boolean getMessage() {
+		return isMessage;
+	}
+
+	public void setMessage(Boolean message) {
+		isMessage = message;
+	}
+
+	public Boolean getMessageFollow() {
+		return isMessageFollow;
+	}
+
+	public void setMessageFollow(Boolean messageFollow) {
+		isMessageFollow = messageFollow;
+	}
+
+	public Boolean getWorks() {
+		return isWorks;
+	}
+
+	public void setWorks(Boolean works) {
+		isWorks = works;
+	}
+
+	public Boolean getWorksFollow() {
+		return isWorksFollow;
+	}
+
+	public void setWorksFollow(Boolean worksFollow) {
+		isWorksFollow = worksFollow;
 	}
 
 }

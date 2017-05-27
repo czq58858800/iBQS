@@ -313,4 +313,8 @@ public class SubjectService extends BaseService<Subject> {
         }
         return super.update(record);
     }
+
+    public boolean selectIsReleaseSubject(String topic,String userId) {
+        return subjectMapper.selectIsReleaseSubject(topic,userId) > 0;
+    }
 }

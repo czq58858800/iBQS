@@ -16,8 +16,6 @@ import java.util.Map;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    void insertUserConfig(String userId);
-
     String selectOne(@Param("cm") Map<String, Object> params);
 
     void updateCounter(@Param("userId") String userId,@Param("field") String field, @Param("number")Integer number);

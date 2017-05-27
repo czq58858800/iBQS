@@ -40,10 +40,20 @@ public class IndexController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "首页")
     @GetMapping(value = {"/tag/index"})
     public Object list(HttpServletRequest request,ModelMap modelMap,
+                       @ApiParam(value = "标签获取条数") @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                       @ApiParam(value = "热门获取条数") @RequestParam(value = "hotPageSize",required = false) Integer hotPageSize,
+                       @ApiParam(value = "其他获取条数") @RequestParam(value = "otherPageSize",required = false) Integer otherPageSize,
                        @ApiParam(required = true, value = "页码") @RequestParam(value = "pageNum") Integer pageNum) {
         Map<String, Object> params = WebUtil.getParameterMap(request);
+        if (pageSize == null || pageSize == 0)
+            pageSize = 2;
+        if (hotPageSize == null || hotPageSize == 0)
+            hotPageSize = 12;
+        if (otherPageSize == null || otherPageSize == 0)
+            pageSize = 8;
+
         params.put("currUserId",getCurrUser());
-        params.put("pageSize",4);
+        params.put("pageSize",pageSize);
         params.put("enable",true);
         params.put("blankNew",true);
 
@@ -59,13 +69,13 @@ public class IndexController extends AbstractController<IShuoProvider> {
             resultMap.put("code",tag.getCode());
             if (tag.getCode() != null) {
                 params.put("orderHot",true);
-                params.put("pageSize",8);
+                params.put("pageSize",hotPageSize);
                 Parameter parameter = new Parameter("subjectService","queryByHot").setMap(params);
                 resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
             } else {
                 params.remove("orderHot");
                 params.put("keyword",tag.getName());
-                params.put("pageSize",4);
+                params.put("pageSize",otherPageSize);
                 Parameter parameter = new Parameter("subjectService","queryByNew").setMap(params);
                 resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
             }

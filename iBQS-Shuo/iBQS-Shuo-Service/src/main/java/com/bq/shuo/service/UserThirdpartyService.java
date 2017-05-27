@@ -73,9 +73,6 @@ public class UserThirdpartyService extends BaseService<UserThirdparty> {
 
         userService.update(user);
 
-
-        userService.insertUserConfig(user.getId());
-
         thirdparty.setUserId(user.getId());
 
         update(thirdparty);

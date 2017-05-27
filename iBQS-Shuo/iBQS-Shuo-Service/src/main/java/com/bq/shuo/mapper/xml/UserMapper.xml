@@ -78,10 +78,6 @@
 
 	</select>
 
-	<insert id="insertUserConfig">
-		INSERT INTO bq_user_config (user_id) VALUES (#{id});
-	</insert>
-
 	<select id="selectOne" resultType="java.lang.String">
 		SELECT id_ FROM bq_user WHERE enable_ = 1 AND (account_ like CONCAT('%',#{cm.keyword},'%') or name_ like CONCAT('%',#{cm.keyword},'%')) order by name_ LIMIT 1
 	</select>

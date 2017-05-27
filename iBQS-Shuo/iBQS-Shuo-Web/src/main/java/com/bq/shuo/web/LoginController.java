@@ -217,7 +217,7 @@ public class LoginController extends AbstractController<IShuoProvider> {
                         @ApiParam(required = true, value = "验证码") @RequestParam(value = "smsCode") int smsCode,
                         @ApiParam(required = true, value = "昵称") @RequestParam(value = "name") String name,
                         @ApiParam(required = true, value = "密码") @RequestParam(value = "password") String password,
-                        @ApiParam(required = true, value = "简介") @RequestParam(value = "summary") String summary,
+                        @ApiParam(required = false, value = "简介") @RequestParam(value = "summary",required = false) String summary,
                         @ApiParam(required = true, value = "性别") @RequestParam(value = "sex") int sex) {
         Map<String,Object> params = WebUtil.getParameterMap(request);
 
@@ -250,7 +250,7 @@ public class LoginController extends AbstractController<IShuoProvider> {
         // 获取短信验证码
         JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_SMS_CAPTCHA+account));
         // 判断短信验证码是否失效
-        if (jCaptcha != null) {
+        if (jCaptcha == null) {
             return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_FAIL);
         }
 

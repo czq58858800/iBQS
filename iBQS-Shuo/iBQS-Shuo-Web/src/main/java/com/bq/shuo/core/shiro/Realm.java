@@ -60,15 +60,11 @@ public class Realm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken)
         throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken)authcToken;
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("enable", 1);
-        params.put("account", token.getUsername());
-        Parameter parameter = new Parameter("userService", "queryList").setMap(params);
+        Parameter parameter = new Parameter("userService", "selectByAccount").setId(token.getUsername());
         logger.info("{} execute userService.queryList start...", parameter.getNo());
-        List<?> list = provider.execute(parameter).getList();
+        User user = (User) provider.execute(parameter).getModel();
         logger.info("{} execute userService.queryList end.", parameter.getNo());
-        if (list.size() == 1) {
-            User user = (User) list.get(0);
+        if (user != null) {
             StringBuilder sb = new StringBuilder(100);
             for (int i = 0; i < token.getPassword().length; i++) {
                 sb.append(token.getPassword()[i]);

@@ -25,7 +25,8 @@ public class UserConfigService extends BaseService<UserConfig>  {
 
     @Cacheable("userConfig")
     public UserConfig selectByUserId(String userId) {
-        return queryById(userConfigMapper.selectByUserId(userId));
+        UserConfig record = queryById(userConfigMapper.selectByUserId(userId));
+        return record;
     }
 
     @Override

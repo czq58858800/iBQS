@@ -118,7 +118,7 @@ public class ShuoEventInterceptor extends BaseInterceptor {
 						}
 
 						Parameter parameter = new Parameter("eventService", "update").setModel(record);
-//						shuoProvider.execute(parameter);
+						provider.execute(parameter);
 
 						// 内存信息
 						if (logger.isDebugEnabled()) {
