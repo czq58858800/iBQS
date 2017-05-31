@@ -78,24 +78,25 @@ public class LoginController extends AbstractController<IShuoProvider> {
                              @RequestHeader(value = "Login-lat",required = false) Double LoginLat,
                              @RequestHeader(value = "Login-lng",required = false) Double LoginLng,
                              @ApiParam(required = true, value = "Token") @RequestParam(value = "token") String token) {
-        if (StringUtils.isBlank(getCurrUser())) {
-            Map<String, Object> params = InstanceUtil.newHashMap();
-            params.put("token", token);
-            Parameter parameter = new Parameter(getService(),"query").setMap(params);
-            Page<User> userPage = (Page<User>) provider.execute(parameter).getPage();
-            if (userPage != null && userPage.getRecords().size() > 0) {
-                User user = userPage.getRecords().get(0);
-                // 用户名密码登录
-                if (LoginHelper.login(user.getAccount())) {
+
+        String cacheKey = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"LOGIN_TOKEN:"+token;
+        if (CacheUtil.getCache().exists(cacheKey)) {
+            String userId = (String) CacheUtil.getCache().get(cacheKey);
+            Parameter parameter = new Parameter(getService(),"queryById").setId(userId);
+            User record = (User) provider.execute(parameter).getModel();
+            if (record != null && StringUtils.isNotBlank(record.getId())) {
+                if (StringUtils.isNotBlank(getCurrUser())) {
+                    CacheUtil.getCache().expire(cacheKey,60*60*24*7);
+                    return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(token, record.getId(), record.getName(),record.getAvatar()));
+                }
+
+                if (LoginHelper.login(record.getAccount())) {
+                    CacheUtil.getCache().del(cacheKey);
                     String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
-                    User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
                     updateUser(record,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
                     return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
                 }
             }
-        } else {
-            User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
-            return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(record.getToken(), record.getId(), record.getName(),record.getAvatar()));
         }
 
         throw new LoginException(Resources.getMessage("TOKEN_INVALID"));
@@ -198,9 +199,9 @@ public class LoginController extends AbstractController<IShuoProvider> {
         if (StringUtils.isNotBlank(pushDeviceToken)) {
             record.setPushDeviceToken(pushDeviceToken);
         }
-        if (StringUtils.isNotBlank(token)) {
-            record.setToken(token);
-        }
+        String cacheKey = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"LOGIN_TOKEN:"+token;
+        CacheUtil.getCache().set(cacheKey,record.getId());
+        CacheUtil.getCache().expire(cacheKey,60*60*24*7);
         provider.execute(new Parameter(getService(),"update").setModel(record));
     }
 

@@ -89,28 +89,28 @@ public class Realm extends AuthorizingRealm {
         // 踢出用户
         com.bq.shuo.model.Session record = new com.bq.shuo.model.Session();
         record.setAccount(account);
-        Parameter parameter = new Parameter("sessionService", "querySessionIdByAccount").setModel(record);
-        logger.info("{} execute querySessionIdByAccount start...", parameter.getNo());
-        List<?> sessionIds = provider.execute(parameter).getList();
-        logger.info("{} execute querySessionIdByAccount end.", parameter.getNo());
-        if (sessionIds != null) {
-            for (Object sessionId : sessionIds) {
-                record.setSessionId((String)sessionId);
-                parameter = new Parameter("sessionService", "deleteBySessionId").setModel(record);
-                logger.info("{} execute deleteBySessionId start...", parameter.getNo());
-                provider.execute(parameter);
-                logger.info("{} execute deleteBySessionId end.", parameter.getNo());
-                sessionRepository.delete((String)sessionId);
-                sessionRepository.cleanupExpiredSessions();
-            }
-        }
+//        Parameter parameter = new Parameter("sessionService", "querySessionIdByAccount").setModel(record);
+//        logger.info("{} execute querySessionIdByAccount start...", parameter.getNo());
+//        List<?> sessionIds = provider.execute(parameter).getList();
+//        logger.info("{} execute querySessionIdByAccount end.", parameter.getNo());
+//        if (sessionIds != null) {
+//            for (Object sessionId : sessionIds) {
+//                record.setSessionId((String)sessionId);
+//                parameter = new Parameter("sessionService", "deleteBySessionId").setModel(record);
+//                logger.info("{} execute deleteBySessionId start...", parameter.getNo());
+//                provider.execute(parameter);
+//                logger.info("{} execute deleteBySessionId end.", parameter.getNo());
+//                sessionRepository.delete((String)sessionId);
+//                sessionRepository.cleanupExpiredSessions();
+//            }
+//        }
         Subject currentUser = SecurityUtils.getSubject();
         Session session = currentUser.getSession();
         record.setSessionId(session.getId().toString());
         String host = (String)session.getAttribute("HOST");
         record.setIp(StringUtils.isBlank(host) ? session.getHost() : host);
         record.setStartTime(session.getStartTimestamp());
-        parameter = new Parameter("sessionService", "update").setModel(record);
+        Parameter parameter = new Parameter("sessionService", "update").setModel(record);
         logger.info("{} execute sessionService.update start...", parameter.getNo());
         provider.execute(parameter);
         logger.info("{} execute sessionService.update end.", parameter.getNo());

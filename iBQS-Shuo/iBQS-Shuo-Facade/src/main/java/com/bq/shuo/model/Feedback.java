@@ -23,12 +23,18 @@ public class Feedback extends BaseModel {
      * 用户ID
      */
 	@TableField("user_id")
-	private Long userId;
+	private String userId;
     /**
      * 提交内容
      */
 	@TableField("sub_content")
 	private String subContent;
+
+	/**
+	 * 联系人（联系方式）
+	 */
+	@TableField("contacts_")
+	private String contacts;
     /**
      * 回复内容
      */
@@ -38,7 +44,7 @@ public class Feedback extends BaseModel {
      * 系统用户ID
      */
 	@TableField("sys_user_id")
-	private Long sysUserId;
+	private String sysUserId;
     /**
      * 回复时间
      */
@@ -46,11 +52,11 @@ public class Feedback extends BaseModel {
 	private Date replyTime;
 
 
-	public Long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -70,11 +76,19 @@ public class Feedback extends BaseModel {
 		this.replyContent = replyContent;
 	}
 
-	public Long getSysUserId() {
+	public String getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(String contacts) {
+		this.contacts = contacts;
+	}
+
+	public String getSysUserId() {
 		return sysUserId;
 	}
 
-	public void setSysUserId(Long sysUserId) {
+	public void setSysUserId(String sysUserId) {
 		this.sysUserId = sysUserId;
 	}
 

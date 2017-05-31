@@ -97,6 +97,8 @@
 				/sns/sina=anon
 				/sns/qq=anon
 
+				/feedback/sub=anon
+
 				/**=authc,user
 			</value>
 		</property>

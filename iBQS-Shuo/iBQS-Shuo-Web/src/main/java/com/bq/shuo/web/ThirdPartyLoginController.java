@@ -1,9 +1,11 @@
 package com.bq.shuo.web;
 
+import com.bq.core.Constants;
 import com.bq.core.config.Resources;
 import com.bq.core.exception.LoginException;
 import com.bq.core.support.HttpCode;
 import com.bq.core.support.login.LoginHelper;
+import com.bq.core.util.CacheUtil;
 import com.bq.core.util.EncryptUtils;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.core.base.AbstractController;
@@ -53,6 +55,7 @@ public class ThirdPartyLoginController extends AbstractController<IShuoProvider>
 				 @ApiParam(required = true, value = "openId") @RequestParam(value = "openId") String openId) {
 		// 获取第三方用户信息存放到session中
 		try {
+
 			ThirdPartyUser thirdUser = ThirdPartyLoginHelper.getWxUserinfo(access_token, openId);
 			thirdUser.setProvider("WX");
 			if (StringUtils.isNotBlank(name)) {
@@ -146,9 +149,9 @@ public class ThirdPartyLoginController extends AbstractController<IShuoProvider>
 		if (StringUtils.isNotBlank(pushDeviceToken)) {
 			record.setPushDeviceToken(pushDeviceToken);
 		}
-		if (StringUtils.isNotBlank(token)) {
-			record.setToken(token);
-		}
+		String cacheKey = Constants.CACHE_NAMESPACE+Constants.CACHE_SHUO_NAMESPACE+"LOGIN_TOKEN:"+token;
+		CacheUtil.getCache().set(cacheKey,record.getId());
+		CacheUtil.getCache().expire(cacheKey,60*60*24*7);
 		provider.execute(new Parameter("userService","update").setModel(record));
 	}
 
