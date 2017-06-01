@@ -70,7 +70,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
                 List topicList = provider.execute(queryTopicByHotParam).getList();
                 resultMap.put("topics", TopicHelper.formatResultList(topicList));
             }
-            resultMap.put("subject",SubjectHelper.formatResultList(subjectHotPage.getRecords()));
+            resultMap.put("subject",SubjectHelper.formatBriefResultList(subjectHotPage.getRecords()));
             resultList.add(resultMap);
             subjectHotPage.setRecords(resultList);
             return setSuccessModelMap(modelMap,subjectHotPage);
@@ -78,14 +78,14 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             params.remove("keyword");
             Parameter queryByNewParam = new Parameter(getService(),"queryByNew").setMap(params);
             Page subjectNewPage = provider.execute(queryByNewParam).getPage();
-            resultMap.put("subject",SubjectHelper.formatResultList(subjectNewPage.getRecords()));
+            resultMap.put("subject",SubjectHelper.formatBriefResultList(subjectNewPage.getRecords()));
             resultList.add(resultMap);
             subjectNewPage.setRecords(resultList);
             return setSuccessModelMap(modelMap,subjectNewPage);
         } else {
             Parameter queryBeansParam = new Parameter(getService(),"queryBeans").setMap(params);
             Page subjectPage = provider.execute(queryBeansParam).getPage();
-            resultMap.put("subject", SubjectHelper.formatResultList(subjectPage.getRecords()));
+            resultMap.put("subject", SubjectHelper.formatBriefResultList(subjectPage.getRecords()));
             resultList.add(resultMap);
             subjectPage.setRecords(resultList);
             return setSuccessModelMap(modelMap,subjectPage);
@@ -275,6 +275,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
                       @ApiParam(required = false, value = "经度") @RequestParam(value = "lng",required = false) Double lng,
                       @ApiParam(required = true, value = "封面MD5哈希值") @RequestParam(value = "coverHash") String coverHash,
                       @ApiParam(required = true, value = "封面") @RequestParam(value = "cover") String cover,
+                      @ApiParam(required = false, value = "图层关键字") @RequestParam(value = "layerKeyword",required = false) String layerKeyword,
                       @ApiParam(required = true, value = "表情图片(List{'image':String,'isLayer':boolean,layerInfo:String})") @RequestParam(value = "images") String images,
                       @ApiParam(required = true, value = "内容") @RequestParam(value = "content") String content) {
         Parameter parameter = new Parameter("subjectService","selectHashById").setId(coverHash);
@@ -287,6 +288,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
 
         Subject subject = new Subject(getCurrUser(),content,isLocation,location);
+        subject.setLayerKeyword(layerKeyword);
         if (lat != null && lng != null) {
             subject.setLat(lat);
             subject.setLng(lng);

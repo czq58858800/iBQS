@@ -75,7 +75,7 @@ public class TopicController extends AbstractController<IShuoProvider> {
         Map<String, Object> resultMap = InstanceUtil.newHashMap();
         if (orderType != null) {
             if (StringUtils.equals(orderType, "1") || StringUtils.equals(orderType.toUpperCase(), "HOT"))
-                params.put("topicOrderHot", true);
+                params.put("topicOrderHot",true);
 
             params.remove("orderType");
         }
@@ -85,7 +85,7 @@ public class TopicController extends AbstractController<IShuoProvider> {
         Parameter queryBeansByKeywordParam = new Parameter("topicsService", "queryBeansByKeyword").setObjects(new Object[]{keyword, getCurrUser()});
         Topics topic = (Topics) provider.execute(queryBeansByKeywordParam).getModel();
         resultMap.put("topic", TopicHelper.formatResultMap(topic));
-        resultMap.put("subject", SubjectHelper.formatResultList(page.getRecords()));
+        resultMap.put("subject", SubjectHelper.formatBriefResultList(page.getRecords()));
         resultList.add(resultMap);
         page.setRecords(resultList);
         return setSuccessModelMap(modelMap, page);

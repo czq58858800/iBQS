@@ -46,6 +46,14 @@ public final class SubjectHelper {
         return resultList;
     }
 
+    public static List<Map<String,Object>> formatBriefResultList(List records) {
+        List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
+        for (Object record: records) {
+            resultList.add(formatBriefResultMap((Subject) record));
+        }
+        return resultList;
+    }
+
     public static List formatSubjectLikedResultList(List<SubjectLiked> records) {
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
         for (SubjectLiked record: records) {
@@ -74,6 +82,8 @@ public final class SubjectHelper {
             coverExif.put("height", record.getCoverHeight());
             resultMap.put("coverExif", coverExif);
             resultMap.put("albumNum", record.getAlbumNum());
+            resultMap.put("isLiked", record.isLiked());
+            resultMap.put("likedNum", record.getLikedNum());
             resultMap.put("publishTime", record.getCreateTime().getTime());
             if (record.getIsLocation()) {
                 resultMap.put("location", record.getLocation());
@@ -92,7 +102,7 @@ public final class SubjectHelper {
             resultMap.put("viewNum", record.getViewNum());
             resultMap.put("isWorks", record.isWorks());
             resultMap.put("isComment", record.isComment());
-            resultMap.put("user", UserHelper.formatBriefResultMap(record.getUser()));
+            resultMap.put("user", UserHelper.formatResultMap(record.getUser()));
             if (record.getAlbums() != null) {
                 List<Map<String, Object>> albumList = InstanceUtil.newArrayList();
                 for (Album album : record.getAlbums()) {
@@ -122,11 +132,7 @@ public final class SubjectHelper {
     }
 
     public static Map<String, Object> formatBriefResultMap(Subject record) {
-        Map<String,Object> resultMap = InstanceUtil.newHashMap();
-        if (record==null) return resultMap;
-        resultMap.put("uid",record.getId());
-        resultMap.put("content",record.getContent());
-        resultMap.put("cover",record.getCover());
+        Map<String,Object> resultMap = formatListResultMap(record);
         if (record.getUser() != null) {
             resultMap.put("user",UserHelper.formatBriefResultMap(record.getUser()));
         }

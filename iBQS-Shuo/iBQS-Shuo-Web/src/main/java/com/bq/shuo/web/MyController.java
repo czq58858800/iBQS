@@ -51,7 +51,7 @@ public class MyController extends AbstractController<IShuoProvider> {
         params.put("enable",true);
         params.put("currUserId",getCurrUser());
         params.put("myWorks",true);
-        Parameter queryBeansParam = new Parameter("subjectService","queryBeans").setMap(params);
+        Parameter queryBeansParam = new Parameter("subjectService","queryMoreBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(SubjectHelper.formatResultList(page.getRecords()));
         return setSuccessModelMap(modelMap, page);

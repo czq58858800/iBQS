@@ -125,11 +125,12 @@ public class UserService extends BaseService<User> {
         return new User();
     }
 
-    @Override
-    public User queryById(String id) {
-        User record = super.queryById(id);
+    public User queryBeanById(String id) {
+        User record = queryById(id);
         return getDetail(record);
     }
+
+
 
     public int selectUserCounter(String userId, String field) {
         String key = CounterHelper.User.USER_COUNTER_KEY + userId;

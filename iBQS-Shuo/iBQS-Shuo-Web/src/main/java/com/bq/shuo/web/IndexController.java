@@ -71,13 +71,13 @@ public class IndexController extends AbstractController<IShuoProvider> {
                 params.put("orderHot",true);
                 params.put("pageSize",hotPageSize);
                 Parameter parameter = new Parameter("subjectService","queryByHot").setMap(params);
-                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
+                resultMap.put("subject", SubjectHelper.formatBriefResultList(provider.execute(parameter).getPage().getRecords()));
             } else {
                 params.remove("orderHot");
                 params.put("keyword",tag.getName());
                 params.put("pageSize",otherPageSize);
                 Parameter parameter = new Parameter("subjectService","queryByNew").setMap(params);
-                resultMap.put("subject", SubjectHelper.formatResultList(provider.execute(parameter).getPage().getRecords()));
+                resultMap.put("subject", SubjectHelper.formatBriefResultList(provider.execute(parameter).getPage().getRecords()));
             }
             resultList.add(resultMap);
         }

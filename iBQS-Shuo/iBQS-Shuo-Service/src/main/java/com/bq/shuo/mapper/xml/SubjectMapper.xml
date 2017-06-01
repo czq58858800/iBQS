@@ -18,7 +18,7 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		select id_ from bq_subject AS A
 		<if test="cm.topicOrderHot != null and cm.topicOrderHot == true">
-			INNER JOIN bq_subject_counter AS B ON B.subject_id = A.id_ AND B.subject_id = A.id_
+			LEFT JOIN bq_subject_counter AS B ON B.subject_id = A.id_ AND B.subject_id = A.id_
 		</if>
 		<where>
 			<if test="cm.enable != null and cm.enable != ''">
@@ -148,9 +148,9 @@
 	</select>
 
 	<select id="selectByKeyword" resultType="java.lang.String">
-		SELECT A.id_ FROM bq_subject A LEFT JOIN bq_layer B ON A.id_ = B.subject_id
-		WHERE A.enable_ = 1 AND A.content_ like CONCAT('%',#{cm.keyword},'%') OR B.layer_ LIKE CONCAT('%',#{cm.keyword},'%')
-		ORDER BY A.content_,B.layer_,A.update_time
+		SELECT A.id_ FROM bq_subject A
+		WHERE A.enable_ = 1 AND A.content_ like CONCAT('%',#{cm.keyword},'%') OR A.layer_keyword LIKE CONCAT('%',#{cm.keyword},'%')
+		ORDER BY A.content_,A.layer_keyword,A.update_time
 		<if test="cm.startLimit != null and cm.startLimit != '' and cm.endLimit != null and cm.endLimit != '' ">
 			LIMIT ${cm.startLimit},${cm.endLimit}
 		</if>

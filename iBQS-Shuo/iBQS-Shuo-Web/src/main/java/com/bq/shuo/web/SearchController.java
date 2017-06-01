@@ -50,7 +50,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
         params.put("enable",true);
 
 
-        Parameter queryBeansParam = new Parameter("subjectService","queryBeans").setMap(params);
+        Parameter queryBeansParam = new Parameter("subjectService","queryMoreBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
 
         Map<String,Object> resultMap = InstanceUtil.newHashMap();
@@ -118,7 +118,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
         params.put("enable",true);
         Parameter parameter = new Parameter("subjectService","selectByKeyword").setMap(params);
         Page page = provider.execute(parameter).getPage();
-        page.setRecords(SubjectHelper.formatResultList(page.getRecords()));
+        page.setRecords(SubjectHelper.formatBriefResultList(page.getRecords()));
 //        appSearchService.update(keyword);
         return  setSuccessModelMap(modelMap,page);
     }

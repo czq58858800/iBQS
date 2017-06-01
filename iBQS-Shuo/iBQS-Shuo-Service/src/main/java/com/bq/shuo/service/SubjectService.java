@@ -66,19 +66,19 @@ public class SubjectService extends BaseService<Subject> {
 
     public Page<Subject> queryByHot(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
-        page.setRecords(getSubjectListInfo(page.getRecords(),params));
+        getBriefDetailList(page.getRecords(),params);
         return page;
     }
 
     public Page queryByNew(Map<String,Object> params) {
         Page<Subject> page = super.query(params);
-        page.setRecords(getSubjectListInfo(page.getRecords(),params));
+        getBriefDetailList(page.getRecords(),params);
         return page;
     }
 
     public Page<Subject> queryBeans(Map<String, Object> params) {
         Page<Subject> page = super.query(params);
-        page.setRecords(getSubjectListInfo(page.getRecords(),params));
+        getBriefDetailList(page.getRecords(),params);
         return page;
     }
 
@@ -86,11 +86,45 @@ public class SubjectService extends BaseService<Subject> {
         Page<String> idPage = this.getPage(params);
         idPage.setRecords(subjectMapper.selectByKeyword(idPage,params));
         Page<Subject> page = getPage(idPage);
-        getSubjectListInfo(page.getRecords(),params);
+        getBriefDetailList(page.getRecords(),params);
         return page;
     }
 
+    private void getBriefDetailList(List<Subject> subjectList,Map<String,Object> params) {
+        for (Subject record:subjectList) {
+            String currUserId = null;
+            if (params.containsKey("currUserId")) {
+                currUserId = (String)params.get("currUserId");
+            }
+            record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
+            // 当前登录用户是否喜欢了该作品
+            record.setLiked(subjectLikedService.selectByIsLiked(record.getId(),currUserId));
+            record.setUser(userService.queryById(record.getUserId()));
+        }
+    }
 
+    public Page<Subject> queryMoreBeans(Map<String, Object> params) {
+        Page<Subject> page = super.query(params);
+        getMoreDetailList(page.getRecords(),params);
+        return page;
+    }
+
+    private void getMoreDetailList(List<Subject> subjectList,Map<String,Object> params) {
+        for (Subject record:subjectList) {
+            String currUserId = null;
+            if (params.containsKey("currUserId")) {
+                currUserId = (String)params.get("currUserId");
+            }
+            record.setAlbums(albumService.querySubjectIdByList(record.getId(),currUserId));
+            record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
+            record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
+
+            // 当前登录用户是否喜欢了该作品
+            record.setLiked(subjectLikedService.selectByIsLiked(record.getId(),currUserId));
+            record.setUser(userService.queryById(record.getUserId()));
+            record.getUser().setFollow(userFollowingService.selectByIsFollow(currUserId,record.getUserId()));
+        }
+    }
 
     public Integer selectCountByUserId(String userId) {
         return subjectMapper.selectCountByUserId(userId);
@@ -177,8 +211,6 @@ public class SubjectService extends BaseService<Subject> {
 
             record.setLikedNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.LIKED));
 
-            record.setViewNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.VIEW));
-
             record.setCommentsNum(selectSubjectCounter(record.getId(), CounterHelper.Subject.COMMENTS));
 
             getUserStatus(record,currUserId);
@@ -210,7 +242,7 @@ public class SubjectService extends BaseService<Subject> {
     public Subject getUserStatus(Subject record,String currUserId) {
         // 判断当前登录用户ID 是否不等空
         if (StringUtils.isNotBlank(record.getUserId())) {
-            User user = userService.queryById(record.getUserId());
+            User user = userService.queryBeanById(record.getUserId());
             // 判断当前登录用户ID 是否不等空
             if (StringUtils.isNotBlank(currUserId)) {
                 // 当前登录用户是否喜欢了该作品

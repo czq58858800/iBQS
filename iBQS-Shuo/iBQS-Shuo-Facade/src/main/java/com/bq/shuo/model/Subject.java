@@ -39,6 +39,9 @@ public class Subject extends BaseModel {
 	private Integer coverWidth;
 	@TableField("cover_height")
 	private Integer coverHeight;
+
+	@TableField("layer_keyword")
+	private String layerKeyword;
     /**
      * 专辑数量
      */
@@ -194,6 +197,14 @@ public class Subject extends BaseModel {
 
 	public void setCoverHeight(Integer coverHeight) {
 		this.coverHeight = coverHeight;
+	}
+
+	public String getLayerKeyword() {
+		return layerKeyword;
+	}
+
+	public void setLayerKeyword(String layerKeyword) {
+		this.layerKeyword = layerKeyword;
 	}
 
 	public Integer getAlbumNum() {

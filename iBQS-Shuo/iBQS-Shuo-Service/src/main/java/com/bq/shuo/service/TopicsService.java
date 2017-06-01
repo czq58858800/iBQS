@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <p>
@@ -40,6 +42,9 @@ public class TopicsService extends BaseService<Topics> {
     @Autowired
     private UserFollowingService userFollowingService;
 
+    // 线程池
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+
     public Page<Topics> queryBeans(Map<String, Object> params) {
         Page<Topics> page = query(params);
         String currUserId = params.containsKey("currUserId") ? (String) params.get("currUserId") : null;
@@ -61,8 +66,12 @@ public class TopicsService extends BaseService<Topics> {
 
     public Topics queryBeansByKeyword(String keyword, String currUserId) {
         Topics topics = queryById(topicsMapper.queryBeanByKeyword(keyword));
-        topics.setViewNum(topics.getViewNum()+1);
-        super.update(topics);
+        executorService.submit(new Runnable() {
+            public void run() {
+                topics.setViewNum(topics.getViewNum() + 1);
+                update(topics);
+            }
+        });
         if (topics != null && StringUtils.isNotBlank(topics.getId())) {
             Topics record = InstanceUtil.to(topics, Topics.class);
             return getDetail(record, currUserId);

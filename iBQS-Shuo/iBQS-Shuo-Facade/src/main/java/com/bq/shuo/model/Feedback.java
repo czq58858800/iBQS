@@ -51,6 +51,20 @@ public class Feedback extends BaseModel {
 	@TableField("reply_time")
 	private Date replyTime;
 
+	/**
+	 * 设备
+	 * @return
+	 */
+	@TableField("device_")
+	private String device;
+
+	/**
+	 * IP
+	 * @return
+	 */
+	@TableField("ip_")
+	private String ip;
+
 
 	public String getUserId() {
 		return userId;
@@ -100,4 +114,19 @@ public class Feedback extends BaseModel {
 		this.replyTime = replyTime;
 	}
 
+	public String getDevice() {
+		return device;
+	}
+
+	public void setDevice(String device) {
+		this.device = device;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
 }

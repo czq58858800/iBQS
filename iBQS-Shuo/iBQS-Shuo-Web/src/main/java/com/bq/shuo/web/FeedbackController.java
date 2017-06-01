@@ -1,5 +1,6 @@
 package com.bq.shuo.web;
 
+import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Feedback;
@@ -37,9 +38,12 @@ public class FeedbackController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "提交")
     @PostMapping("/sub")
     public Object sub(HttpServletRequest request, ModelMap modelMap,
+                      @ApiParam(required = true,value = "设备") @RequestParam(value = "Device") String device,
                       @ApiParam(required = true, value = "提交内容") @RequestParam(value = "subContent") String subContent,
                       @ApiParam(required = true, value = "联系人(联系方式)") @RequestParam(value = "contacts") String contacts) {
         Feedback record = new Feedback();
+        record.setDevice(device);
+        record.setIp(WebUtil.getHost(request));
         record.setSubContent(subContent);
         record.setUserId(getCurrUser());
         record.setContacts(contacts);
