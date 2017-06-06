@@ -7,7 +7,12 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		SELECT id_ FROM bq_fonts
 		<where>
-			AND enable_
+			<if test="cm.enable != null and cm.enable != ''">
+				AND enable_ = #{cm.enable}
+			</if>
+			<if test="cm.code != null and cm.code != ''">
+				AND code_ = #{cm.code}
+			</if>
 			<if test="cm.lang != null and cm.lang != ''">
 				AND lang_ = #{cm.lang}
 			</if>

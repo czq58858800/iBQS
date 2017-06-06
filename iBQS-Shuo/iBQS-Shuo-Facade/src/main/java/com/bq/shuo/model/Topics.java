@@ -30,6 +30,9 @@ public class Topics extends BaseModel {
 	private Integer coverWidth;
 	@TableField("cover_height")
 	private Integer coverHeight;
+
+	@TableField("banner_")
+	private String banner;
     /**
      * 名称
      */
@@ -193,5 +196,13 @@ public class Topics extends BaseModel {
 
 	public void setOwnerStatus(Integer ownerStatus) {
 		this.ownerStatus = ownerStatus;
+	}
+
+	public String getBanner() {
+		return banner;
+	}
+
+	public void setBanner(String banner) {
+		this.banner = banner;
 	}
 }

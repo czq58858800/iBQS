@@ -24,6 +24,11 @@ public class Fonts extends BaseModel {
 	@TableField("cover_")
 	private String cover;
     /**
+     * 编号
+     */
+	@TableField("code_")
+	private String code;
+    /**
      * 字体名称
      */
 	@TableField("name_")
@@ -46,6 +51,14 @@ public class Fonts extends BaseModel {
 
 	public void setCover(String cover) {
 		this.cover = cover;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {

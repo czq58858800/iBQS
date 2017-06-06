@@ -56,7 +56,7 @@ public class NotifyService extends BaseService<Notify> {
         super.delete(id);
     }
 
-    public void delete(Notify record) {
+    public void deleteNotify(Notify record) {
         Wrapper<Notify> wrapper = new EntityWrapper(record);
         List<Notify> notifyList = notifyMapper.selectList(wrapper);
         if (notifyList != null && notifyList.size() > 0) {

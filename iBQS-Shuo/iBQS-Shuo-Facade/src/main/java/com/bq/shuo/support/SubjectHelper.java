@@ -93,9 +93,8 @@ public final class SubjectHelper {
     }
 
     public static Map<String,Object> formatResultMap(Subject record) {
-        Map<String,Object> resultMap = formatListResultMap(record);
         if (record != null) {
-
+            Map<String, Object> resultMap = formatListResultMap(record);
             resultMap.put("likedNum", record.getLikedNum());
             resultMap.put("isLiked", record.isLiked());
             resultMap.put("commentsNum", record.getCommentsNum());
@@ -127,16 +126,20 @@ public final class SubjectHelper {
                 }
                 resultMap.put("albums", albumList);
             }
+            return resultMap;
         }
-        return resultMap;
+        return InstanceUtil.newHashMap();
     }
 
     public static Map<String, Object> formatBriefResultMap(Subject record) {
-        Map<String,Object> resultMap = formatListResultMap(record);
-        if (record.getUser() != null) {
-            resultMap.put("user",UserHelper.formatBriefResultMap(record.getUser()));
+        if (record != null) {
+            Map<String, Object> resultMap = formatListResultMap(record);
+            if (record.getUser() != null) {
+                resultMap.put("user", UserHelper.formatBriefResultMap(record.getUser()));
+            }
+            return resultMap;
         }
-        return resultMap;
+        return InstanceUtil.newHashMap();
     }
 
     public static Object formatRCMDResultList(List<Subject> subjects) {

@@ -138,7 +138,7 @@ public class SubjectLikedService extends BaseService<SubjectLiked> {
 
                 // 删除通知
                 Notify notify = new Notify(userId,subject.getUserId(),subjectId,PushType.LIKED);
-                notifyService.delete(notify);
+                notifyService.deleteNotify(notify);
 
                 String key =  Constants.CACHE_RELATIONS_SUBJECT+ subjectId;
                 CacheUtil.getCache().hset(key,userId, BooleanUtils.toStringTrueFalse(false));

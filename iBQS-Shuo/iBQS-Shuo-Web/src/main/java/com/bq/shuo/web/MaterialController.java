@@ -13,6 +13,7 @@ import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.util.QiniuUtil;
 import com.bq.shuo.model.*;
 import com.bq.shuo.provider.IShuoProvider;
+import com.bq.shuo.support.CategoryHelper;
 import com.bq.shuo.support.MaterialHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -98,11 +99,14 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(pageNum, "PAGE_NUM");
         Assert.notNull(categoryId, "CATEGORY_ID");
         Map<String, Object> params = WebUtil.getParameterMap(request);
-        params.put("pageSize",20);
+        params.put("pageSize",24);
         params.put("enable",true);
 
-        Parameter queryParam = new Parameter("materialService","query").setMap(params);
-        Page page = provider.execute(queryParam).getPage();
+        Parameter parameter = new Parameter("categoryService","queryBeanById").setObjects(new Object[] {categoryId,getCurrUser()});
+        Category category = (Category) provider.execute(parameter).getModel();
+
+        parameter = new Parameter("materialService","query").setMap(params);
+        Page page = provider.execute(parameter).getPage();
         List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
         for (Object obj:page.getRecords()) {
             Material record = (Material) obj;
@@ -118,7 +122,6 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         }
         page.setRecords(resultList);
 
-        Category category = (Category) provider.execute(new Parameter("categoryService","queryById").setId(categoryId)).getModel();
         if (category.getViewNum() == null) {
             category.setViewNum(0);
         } else {
@@ -126,6 +129,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         }
 
         provider.execute(new Parameter("categoryService","update").setModel(category));
+        modelMap.put("category",CategoryHelper.formatCategoryResultMap(category));
         return setSuccessModelMap(modelMap, page);
     }
 

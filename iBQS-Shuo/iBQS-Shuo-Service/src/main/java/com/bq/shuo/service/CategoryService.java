@@ -86,6 +86,7 @@ public class CategoryService extends BaseService<Category> {
 
     public Category queryBeanById(String categoryId, String currUserId) {
         Category record = queryById(categoryId);
+
         return getBeanInfo(record,currUserId);
     }
 
@@ -124,6 +125,7 @@ public class CategoryService extends BaseService<Category> {
         if (record.getUserId() != null) {
             User user = userService.queryById(record.getUserId());
             if (user != null) {
+                user.setFollow(userFollowingService.selectByIsFollow(currUserId,record.getUserId()));
                 record.setAuthor(user);
             }
         }

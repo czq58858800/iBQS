@@ -23,6 +23,12 @@ public class TopicsReview extends BaseModel {
 	 */
 	@TableField("topic_id")
 	private String topicId;
+
+	@TableField("cover_")
+	private String cover;
+
+	@TableField("banner_")
+	private String banner;
 	/**
 	 * 话题原因
 	 */
@@ -57,9 +63,8 @@ public class TopicsReview extends BaseModel {
 
 	public TopicsReview(){}
 
-	public TopicsReview(String topicId,String reason, String ownerId, String summary) {
+	public TopicsReview(String topicId,String ownerId, String summary) {
 		this.topicId = topicId;
-		this.reason = reason;
 		this.ownerId = ownerId;
 		this.summary = summary;
 		this.audit = "1";
@@ -73,6 +78,22 @@ public class TopicsReview extends BaseModel {
 
 	public void setTopicId(String topicId) {
 		this.topicId = topicId;
+	}
+
+	public String getCover() {
+		return cover;
+	}
+
+	public void setCover(String cover) {
+		this.cover = cover;
+	}
+
+	public String getBanner() {
+		return banner;
+	}
+
+	public void setBanner(String banner) {
+		this.banner = banner;
 	}
 
 	public String getReason() {

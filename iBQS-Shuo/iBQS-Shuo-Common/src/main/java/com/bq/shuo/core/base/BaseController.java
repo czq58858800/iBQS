@@ -48,8 +48,8 @@ public abstract class BaseController {
 	}
 
 	/** 设置成功响应代码 */
-	protected ResponseEntity<ModelMap> setSuccessModelMap(ModelMap modelMap, Object data) {
-		return setModelMap(modelMap, HttpCode.OK, data);
+	protected ResponseEntity<ModelMap> setSuccessModelMap(ModelMap modelMap, Object data, Object... extendData) {
+		return setModelMap(modelMap, HttpCode.OK, data,extendData);
 	}
 
 	/** 设置响应代码 */
@@ -58,7 +58,7 @@ public abstract class BaseController {
 	}
 
 	/** 设置响应代码 */
-	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code, Object data) {
+	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code, Object data, Object... extendData) {
 		Map<String, Object> map = InstanceUtil.newLinkedHashMap();
 		map.putAll(modelMap);
 		modelMap.clear();
@@ -79,6 +79,9 @@ public abstract class BaseController {
 					resultMap.put("current",page.getCurrent());
 					resultMap.put("size",page.getSize());
 					resultMap.put("records",page.getRecords());
+					if (extendData!=null && extendData.length > 0) {
+						resultMap.putAll((Map<String,Object>) extendData[0]);
+					}
 					modelMap.put("data", resultMap);
 				} else {
 					modelMap.put("code", HttpCode.NOT_DATA.value());
@@ -91,7 +94,10 @@ public abstract class BaseController {
 			} else {
 				modelMap.put("data", data);
 			}
+
+
 		}
+
 		modelMap.put("code", code.value());
 		modelMap.put("msg", code.msg());
 		modelMap.put("timestamp", System.currentTimeMillis());

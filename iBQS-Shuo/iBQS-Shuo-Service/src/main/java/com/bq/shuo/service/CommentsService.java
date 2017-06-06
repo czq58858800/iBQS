@@ -89,9 +89,9 @@ public class CommentsService extends BaseService<Comments> {
             CacheUtil.getCache().del(getCacheKey(id));
 
             Notify notify = new Notify(currUserId,record.getSubjectId(),record.getId());
-            notifyService.delete(notify);
+            notifyService.deleteNotify(notify);
             notify.setMsgType(PushType.AT);
-            notifyService.delete(notify);
+            notifyService.deleteNotify(notify);
         }
     }
 

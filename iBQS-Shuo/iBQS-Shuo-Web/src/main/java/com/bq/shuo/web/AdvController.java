@@ -49,7 +49,7 @@ public class AdvController extends AbstractController<IShuoProvider> {
     @GetMapping(value = "list")
     @ApiOperation(value = "广告列表")
     public Object list(HttpServletRequest request, ModelMap modelMap,
-                 @ApiParam(value = "广告类型：(1:发现;2:热门素材;3:新品素材)") @RequestParam(value = "type") String type) {
+                 @ApiParam(value = "广告类型：(1:话题;2:贴纸;)") @RequestParam(value = "type") String type) {
         Assert.notNull(type, "TYPE");
         Map<String, Object> params = WebUtil.getParameterMap(request);
         Parameter shuoParameter = new Parameter(getService(), "query").setMap(params);

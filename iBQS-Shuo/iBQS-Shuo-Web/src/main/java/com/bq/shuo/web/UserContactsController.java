@@ -44,7 +44,7 @@ public class UserContactsController extends AbstractController<IShuoProvider> {
     @PostMapping("/upload")
     public Object upload(HttpServletRequest request, ModelMap modelMap,
                  @ApiParam(required = true, value = "设备ID") @RequestParam(value = "deviceId") String deviceId,
-                   @ApiParam(required = true, value = "data {phone:'',name:''}") @RequestParam(value = "data") String data) {
+                 @ApiParam(required = true, value = "data {phone:'',name:''}") @RequestParam(value = "data") String data) {
         JSONArray jsonData = JSONArray.parseArray(data);
 
         String regex = "0?(13|14|15|18)[0-9]{9}";

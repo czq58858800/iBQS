@@ -120,7 +120,8 @@ public class TopicController extends AbstractController<IShuoProvider> {
     @PostMapping("/update")
     public Object update(HttpServletRequest request, ModelMap modelMap,
                          @ApiParam(required = true, value = "话题Id") @RequestParam(value = "id") String id,
-                         @ApiParam(required = false, value = "封面") @RequestParam(value = "cover", required = false) String cover,
+                         @ApiParam(required = true, value = "封面") @RequestParam(value = "cover") String cover,
+                         @ApiParam(required = false, value = "Banner") @RequestParam(value = "banner", required = false) String banner,
                          @ApiParam(required = true, value = "描述") @RequestParam(value = "summary") String summary) {
         Topics record = (Topics) provider.execute(new Parameter("topicsService", "queryById").setId(id)).getModel();
         if (!StringUtils.equals(record.getOwnerId(), getCurrUser())) {
@@ -128,6 +129,7 @@ public class TopicController extends AbstractController<IShuoProvider> {
             return setModelMap(modelMap, HttpCode.FORBIDDEN);
         }
         record.setSummary(summary);
+        record.setBanner(banner);
         if (StringUtils.isNotBlank(cover)) {
             JSONObject imageInfo = QiniuUtil.getImageInfo(cover);
             if (imageInfo.containsKey("format")) {
@@ -162,35 +164,11 @@ public class TopicController extends AbstractController<IShuoProvider> {
     }
 
     @ApiOperation(value = "话题主持人申请")
-    @GetMapping(value = "owner/apply")
-    public Object ownerApply(HttpServletRequest request,ModelMap modelMap,
-             @ApiParam(required = true, value = "话题Id") @RequestParam(value = "id") String id) {
-        Parameter parameter = new Parameter("topicsService","queryById").setId(id);
-        Topics topics = (Topics) provider.execute(parameter).getModel();
-
-        parameter = new Parameter("subjectService","selectIsReleaseSubject").setObjects(new Object[] {topics.getName(),getCurrUser()});
-        boolean isRelease = (boolean) provider.execute(parameter).getObject();
-        if (!isRelease) {
-            return setModelMap(modelMap,HttpCode.UNRELEASED_SUBJECT);
-        }
-        if (topics.getOwnerStatus() == -1){
-            return setModelMap(modelMap,HttpCode.NOT_ALLOW_APPLY_TOPIC);
-        }
-        if (topics.getOwnerStatus() == 2){
-            parameter = new Parameter("userService","queryById").setId(getCurrUser());
-            User user = (User) provider.execute(parameter).getModel();
-            if (!StringUtils.equals("2",user.getUserType()) || !StringUtils.equals("3",user.getUserType())) {
-                return setModelMap(modelMap, HttpCode.NOT_ALLOW_APPLY_TOPIC);
-            }
-        }
-        return setSuccessModelMap(modelMap);
-    }
-
-    @ApiOperation(value = "话题主持人申请")
     @PostMapping(value = "owner/apply")
     public Object ownerApply(HttpServletRequest request,ModelMap modelMap,
              @ApiParam(required = true, value = "话题Id") @RequestParam(value = "id") String id,
-             @ApiParam(required = true, value = "申请原因") @RequestParam(value = "reason") String reason,
+             @ApiParam(required = true, value = "封面") @RequestParam(value = "cover") String cover,
+             @ApiParam(required = false, value = "Banner") @RequestParam(value = "banner", required = false) String banner,
              @ApiParam(required = true, value = "描述") @RequestParam(value = "summary") String summary) {
         Parameter parameter = new Parameter("topicsService","queryById").setId(id);
         Topics topics = (Topics) provider.execute(parameter).getModel();
@@ -210,7 +188,9 @@ public class TopicController extends AbstractController<IShuoProvider> {
                 return setModelMap(modelMap, HttpCode.NOT_ALLOW_APPLY_TOPIC);
             }
         }
-        TopicsReview record = new TopicsReview(id,reason,getCurrUser(),summary);
+        TopicsReview record = new TopicsReview(id,getCurrUser(),summary);
+        record.setCover(cover);
+        record.setBanner(banner);
         parameter = new Parameter("topicsReviewService","update").setModel(record);
         provider.execute(parameter);
         return setSuccessModelMap(modelMap);

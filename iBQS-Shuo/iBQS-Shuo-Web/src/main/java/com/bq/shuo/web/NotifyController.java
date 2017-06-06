@@ -64,11 +64,13 @@ public class NotifyController extends AbstractController<IShuoProvider> {
     public Object delete(HttpServletRequest request, ModelMap modelMap,
                        @ApiParam(required = true, value = "通知ID") @RequestParam(value = "id") String id) {
         Assert.notNull(id, "ID");
-        Notify record = (Notify) provider.execute(new Parameter("notifyService","queryById").setId(id)).getModel();
+        Parameter parameter = new Parameter("notifyService","queryById").setId(id);
+        Notify record = (Notify) provider.execute(parameter).getModel();
         if (record == null || !StringUtils.equals(record.getReceiveUserId(),getCurrUser())) {
             return setModelMap(modelMap, HttpCode.UNAUTHORIZED,"无法删除别人的消息");
         }
-        provider.execute(new Parameter("notifyService","delete").setId(id));
+        parameter = new Parameter("notifyService","delete").setId(id);
+        provider.execute(parameter);
         return  setSuccessModelMap(modelMap);
     }
 

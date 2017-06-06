@@ -49,6 +49,7 @@ public final class TopicHelper {
             }
             resultMap.put("cover",record.getCover());
             resultMap.put("createTime",record.getCreateTime().getTime());
+            resultMap.put("banner",record.getBanner());
             resultMap.put("audit",record.getAudit());
             resultMap.put("status",record.getOwnerStatus());
             resultMap.put("viewNum",record.getViewNum());
@@ -84,6 +85,7 @@ public final class TopicHelper {
         resultMap.put("uid",record.getId());
         resultMap.put("name",record.getName());
         resultMap.put("summary",record.getSummary());
+        resultMap.put("banner",record.getBanner());
         resultMap.put("cover",record.getCover());
         Map<String,Object> coverExifMap = InstanceUtil.newHashMap();
         coverExifMap.put("width",record.getCoverWidth());

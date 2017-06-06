@@ -329,7 +329,7 @@ public class SubjectService extends BaseService<Subject> {
 
             Notify notify = new Notify();
             notify.setSubjectId(id);
-            notifyService.delete(notify);
+            notifyService.deleteNotify(notify);
         }
     }
 
