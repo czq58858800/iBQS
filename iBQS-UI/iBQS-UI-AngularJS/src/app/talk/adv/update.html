@@ -1,0 +1,103 @@
+<!-- toaster directive -->
+<toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container>
+<!-- / toaster directive -->
+
+<!-- 导航条 -->
+<div class="bg-white bread-crumb">
+	<ul class="breadcrumb b-a m-b-n-xs lter b-b wrapper-md">
+		<li><a ui-sref="main"><i class="fa fa-home"></i> 首页</a></li>
+		<li><a ui-sref="main.talk.adv.list">广告管理</a></li>
+		<li class="active" ng-bind="title"></li>
+	</ul>
+</div>
+
+<!-- 内容区域 -->
+<div class="wrapper-md content">
+	<div class="panel panel-default">
+		<!-- 头部 -->
+		<div class="panel-heading font-bold">{{title}}
+			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.sys.user.list"><i class="text-md fa fa-times text-muted"></i></a>
+		</div>
+		<!--表单-->
+		<div class="panel-body">
+			<form class="form-horizontal"  name="adv_form">
+				<!-- 广告图片 -->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="adv_image">图片</label>
+					<div class="col-sm-6">
+						<div class="m-b upload-pic-box">
+							<a href="javascript:void(0);" class="btn btn-default btn-addon">
+								<i class="fa fa-upload"></i>上传图片
+							</a>
+						</div>
+						<input type="file" id="adv_image" ng-hide="1" />
+						<div class="hbox hbox-auto-xs " style="width: 403px">
+							<div class="col">
+								<div class="wrapper-sm b-a bg-white m-r-xs m-b-xs">
+									<div class="bg-light" style="height:94px;width:375px;">
+										<div id="small_adv_image">
+											<img ng-src="{{record.image}}" width="375" height="94" alt= ""/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<span class="help-block m-b-none">封面尺寸要求宽度*高度为750px*188px。图片格式支持gif,jpg,png</span>
+					</div>
+				</div>
+				<!--名称-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="name">
+						<span class="text-danger wrapper-sm">*</span>名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="name" id="name" placeholder="请输入名称..." ng-model="record.name">
+						<span class="help-block m-b-none">名称</span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--链接-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="url">链接</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="url" id="url" placeholder="请输入链接..." ng-model="record.url">
+						<span class="help-block m-b-none">
+							1.外部链接：http://xxxx<br/>
+							2.内部链接：<br/>
+							&emsp;&emsp;1.话题内部链接：/topic/【关键字】; /thread/【主题ID】;<br/>
+							&emsp;&emsp;2.贴纸内链接：/stickers/【关键字】; /sticker/【贴纸ID】;
+						</span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--类型-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="type">类型</label>
+					<div class="col-sm-6">
+						<select class="form-control" id="type"  name="type" ng-model="record.type">
+							<option value ="1" selected="selected">话题</option>
+							<option value ="2">贴纸</option>
+						</select>
+						<span class="help-block m-b-none">广告类型：话题、贴纸</span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--排序-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="sortNo">排序</label>
+					<div class="col-sm-6">
+						<input type="number" class="form-control" name="sortNo" id="sortNo" placeholder="排序..." ng-model="record.sortNo">
+						<span class="help-block m-b-none"></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--btn-->
+				<div class="form-group">
+					<div class="col-sm-6 col-sm-offset-2">
+						<button type="reset" class="btn btn-default w-xs">重置</button>
+						<button type="submit" class="btn btn-info w-xs m-l-xl" ng-disabled="isDisabled">保存</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -47,5 +47,5 @@ angular.module('app')
 
 
 
-                $state.go('main.shuo.subject.update.album',{subjectId:id});
+                $state.go('main.face.subject.update.album',{subjectId:id});
         }]);

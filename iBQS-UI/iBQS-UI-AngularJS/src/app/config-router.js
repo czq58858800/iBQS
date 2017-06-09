@@ -354,29 +354,29 @@ var app = angular.module('app')
                         }]
                       }
                 })
-                .state('main.shuo', {
-                    url: '/shuo',
+                .state('main.face', {
+                    url: '/face',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.topic', {
+                .state('main.face.topic', {
                     url: '/topic',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.topic.list', {
+                .state('main.face.topic.list', {
                     url: '/list',
-                    templateUrl: 'src/app/shuo/topic/topic.html',
+                    templateUrl: 'src/app/face/topic/topic.html',
                     controller: 'topicController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/topic/topicController.js').then(function() {
+                            return uiLoad.load('src/app/face/topic/topicController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 })
-                .state('main.shuo.topic.create', {
+                .state('main.face.topic.create', {
                     url: '/create',
-                    templateUrl: 'src/app/shuo/topic/update.html',
+                    templateUrl: 'src/app/shuo/face/update.html',
                     controller: 'topicUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
@@ -386,9 +386,9 @@ var app = angular.module('app')
                         }]
                     }
                 })
-                .state('main.shuo.topic.update', {
+                .state('main.shuo.face.update', {
                     url: '/update/{id}?params',
-                    templateUrl: 'src/app/shuo/topic/update.html',
+                    templateUrl: 'src/app/shuo/face/update.html',
                     controller: 'topicUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
@@ -398,21 +398,26 @@ var app = angular.module('app')
                         }]
                     }
                 }) // 话题
-                .state('main.shuo.topic.review.list', {
+
+                .state('main.face.topic.review', {
+                    url: '/review',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.face.topic.review.list', {
                     url: '/list',
-                    templateUrl: 'src/app/shuo/topicReview/topicReview.html',
+                    templateUrl: 'src/app/face/topicReview/topicReview.html',
                     controller: 'topicReviewController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/topicReview/topicReviewController.js').then(function() {
+                            return uiLoad.load('src/app/face/topicReview/topicReviewController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 })
-                .state('main.shuo.topic.review.update', {
+                .state('main.face.topic.review.update', {
                     url: '/update/{id}?params',
-                    templateUrl: 'src/app/shuo/topicReview/update.html',
+                    templateUrl: 'src/app/face/topicReview/update.html',
                     controller: 'topicReviewUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
@@ -422,43 +427,43 @@ var app = angular.module('app')
                         }]
                     }
                 }) // 话题
-                .state('main.shuo.subject', {
+                .state('main.face.subject', {
                     url: '/subject',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.subject.list', {
+                .state('main.face.subject.list', {
                     url: '/list',
-                    templateUrl: 'src/app/shuo/subject/subject.html',
+                    templateUrl: 'src/app/face/subject/subject.html',
                     controller: 'subjectController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/subject/subjectController.js').then(function() {
+                            return uiLoad.load('src/app/face/subject/subjectController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 })
-                .state('main.shuo.subject.update', {
+                .state('main.face.subject.update', {
                     url: '/update/{id}?params',
-                    templateUrl: 'src/app/shuo/subject/update.html',
+                    templateUrl: 'src/app/face/subject/update.html',
                     controller: 'subjectUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/subject/updateController.js').then(function() {
+                            return uiLoad.load('src/app/face/subject/updateController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 }) // 表情
-                .state('main.shuo.subject.update.comments', {
+                .state('main.face.subject.update.comments', {
                     url: '/comments',
                     views:{
                         "commentsList": {
-                            templateUrl:'src/app/shuo/subject/comments/comments.html',
+                            templateUrl:'src/app/face/subject/comments/comments.html',
                             controller: 'commentsController',
                             resolve: {
                                 deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                                    return uiLoad.load('src/app/shuo/subject/comments/commentsController.js').then(function() {
+                                    return uiLoad.load('src/app/face/subject/comments/commentsController.js').then(function() {
                                         return $ocLazyLoad.load('toaster');
                                     });
                                 }]
@@ -466,15 +471,15 @@ var app = angular.module('app')
                         }
                     }
                 })
-                .state('main.shuo.subject.update.album', {
+                .state('main.face.subject.update.album', {
                     url: '/album',
                     views:{
                         "albumList": {
-                            templateUrl:'src/app/shuo/subject/album/album.html',
+                            templateUrl:'src/app/face/subject/album/album.html',
                             controller: 'albumController',
                             resolve: {
                                 deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                                    return uiLoad.load('src/app/shuo/subject/album/albumController.js').then(function() {
+                                    return uiLoad.load('src/app/face/subject/album/albumController.js').then(function() {
                                         return $ocLazyLoad.load('toaster');
                                     });
                                 }]
@@ -482,43 +487,47 @@ var app = angular.module('app')
                         }
                     }
                 })
-                .state('main.shuo.material', {
+                .state('main.matter', {
+                    url: '/matter',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.matter.material', {
                     url: '/material',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.material.list', {
+                .state('main.matter.material.list', {
                     url: '/list',
-                    templateUrl: 'src/app/shuo/material/material.html',
+                    templateUrl: 'src/app/matter/material/material.html',
                     controller: 'materialController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/material/materialController.js').then(function() {
+                            return uiLoad.load('src/app/matter/material/materialController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 })
-                .state('main.shuo.material.update', {
+                .state('main.matter.material.update', {
                     url: '/update/{id}?params',
-                    templateUrl: 'src/app/shuo/material/update.html',
+                    templateUrl: 'src/app/matter/material/update.html',
                     controller: 'materialUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/material/updateController.js').then(function() {
+                            return uiLoad.load('src/app/matter/material/updateController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]
                     }
                 }) // 表情
-                .state('main.shuo.material.update.sticker', {
+                .state('main.matter.material.update.sticker', {
                     url: '/sticker',
                     views:{
                         "stickerList": {
-                            templateUrl:'src/app/shuo/material/sticker/sticker.html',
+                            templateUrl:'src/app/matter/material/sticker/sticker.html',
                             controller: 'stickerController',
                             resolve: {
                                 deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                                    return uiLoad.load('src/app/shuo/material/sticker/stickerController.js').then(function() {
+                                    return uiLoad.load('src/app/matter/material/sticker/stickerController.js').then(function() {
                                         return $ocLazyLoad.load('toaster');
                                     });
                                 }]
@@ -526,38 +535,316 @@ var app = angular.module('app')
                         }
                     }
                 })
-                .state('main.shuo.material.hot', {
+                .state('main.matter.material.hot', {
                     url: '/hot',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.font', {
-                    url: '/font',
+                .state('main.matter.material.hot.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/matter/materialHot/materialHot.html',
+                    controller: 'materialHotController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/materialHot/materialHotController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.matter.material.hot.create', {
+                    url: '/update',
+                    templateUrl: 'src/app/matter/materialHot/update.html',
+                    controller: 'materialHotUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/materialHot/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.matter.material.hot.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/matter/materialHot/update.html',
+                    controller: 'materialHotUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/materialHot/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 表情
+                .state('main.matter.fonts', {
+                    url: '/fonts',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.user', {
+                .state('main.matter.fonts.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/matter/fonts/fonts.html',
+                    controller: 'fontsController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/fonts/fontsController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.matter.fonts.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/matter/fonts/update.html',
+                    controller: 'fontsUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/fonts/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.matter.fonts.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/matter/fonts/update.html',
+                    controller: 'fontsUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/fonts/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 字体管理
+                .state('main.talk', {
+                    url: '/talk',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.talk.user', {
                     url: '/user',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.adv', {
+                .state('main.talk.user.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/user/user.html',
+                    controller: 'userController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/user/userController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.user.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/user/update.html',
+                    controller: 'userUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/shuo/user/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 用户管理
+
+                .state('main.talk.tag', {
+                    url: '/tag',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.talk.tag.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/tag/tag.html',
+                    controller: 'tagController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/tag/tagController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.tag.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/talk/tag/update.html',
+                    controller: 'tagUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/tag/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.tag.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/tag/update.html',
+                    controller: 'tagUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/tag/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 频道管理
+                .state('main.talk.adv', {
                     url: '/adv',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.session', {
+                .state('main.talk.adv.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/adv/adv.html',
+                    controller: 'advController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/adv/advController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.adv.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/talk/adv/update.html',
+                    controller: 'advUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/adv/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.adv.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/adv/update.html',
+                    controller: 'advUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/adv/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 字体管理
+                .state('main.talk.session', {
                     url: '/session',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.feedback', {
+                .state('main.talk.session.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/session/session.html',
+                    controller: 'sessionController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/session/sessionController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.feedback', {
                     url: '/feedback',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.report', {
+
+                .state('main.talk.feedback.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/feedback/feedback.html',
+                    controller: 'feedbackController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/feedback/feedbackController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.feedback.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/feedback/update.html',
+                    controller: 'feedbackUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/feedback/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 字体管理
+                .state('main.talk.report', {
                     url: '/report',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
                 })
-                .state('main.shuo.system.config', {
-                    url: '/system/config',
+                .state('main.talk.report.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/report/report.html',
+                    controller: 'reportController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/report/reportController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.report.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/report/update.html',
+                    controller: 'reportUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/report/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 举报管理
+                .state('main.talk.system', {
+                    url: '/system',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
-                });
+                })
+                .state('main.talk.system.config', {
+                    url: '/config',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.talk.system.config.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/systemConfig/systemConfig.html',
+                    controller: 'systemConfigController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/systemConfig/systemConfigController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.system.config.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/talk/systemConfig/update.html',
+                    controller: 'systemConfigUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/systemConfig/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.shuo.system.config.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/systemConfig/update.html',
+                    controller: 'advUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/systemConfig/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }); // 字体管理
     }])
     .controller("navCtrl",function($rootScope,$state) {
     	$.ajax({

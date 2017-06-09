@@ -20,6 +20,8 @@
 		<div class="panel panel-default">
 			<!-- 头部 -->
 			<div class="panel-heading clearfix">
+				<a ui-sref="main.shuo.material.hot.create" class="btn btn-info pull-right">
+					<i class="icon-user-follow m-r-sm text-md"></i>添加热词</a>
 				<div class="w-lg">
 					<form ng-submit="search()" class="ng-pristine ng-valid">
 						<div class="input-group search-box">
@@ -31,8 +33,6 @@
 						</div>
 					</form>
 				</div>
-				<button type="button" ng-click="searchNew()" class="btn btn-sm btn-default m-l-xs">最新</button>
-				<button type="button" ng-click="searchHot()" class="btn btn-sm btn-default m-l-xs">热门</button>
 			</div>
 
 			<!-- 数据表格 -->
@@ -40,13 +40,11 @@
 				<table class="table table-striped b-t b-light text-center">
 					<thead>
 					<tr>
-						<th>封面</th>
-						<th>内容</th>
-						<th>发布用户</th>
-						<th>浏览数</th>
-						<th>评论数</th>
-						<th>喜欢数</th>
-						<th>是否热门</th>
+						<th>类型</th>
+						<th>举报内容</th>
+						<th>举报原因</th>
+						<th>状态</th>
+						<th>备注</th>
 						<th>创建时间</th>
 						<th>状态</th>
 						<th>&nbsp;</th>
@@ -54,15 +52,26 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td><a ui-sref="main.shuo.subject.update({id: item.id})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.content}}" /></a></td>
-						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.update({id: item.id})" alt="{{item.content}}">{{item.content}}</a></span></td>
-						<td class="v-middle">{{item.user.name}}</td>
-						<td class="v-middle">{{item.viewNum}}</td>
-						<td class="v-middle"><a ui-sref="main.bq.sub.update({id: item.id})">{{item.commentsNum}}</a></td>
-						<td class="v-middle">{{item.likedNum}}</td>
 						<td class="v-middle">
-							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
-							<span ng-show="item.isHot=='true'" class="text-danger"><a ng-click="updateHot(item.id,0)">是</a></span>
+							<span ng-if="item.type == '1'" class="text-success">表情</span>
+							<span ng-if="item.type == '2'" class="text-warning">评论</span>
+							<span ng-if="item.type == '3'" class="text-info">用户</span>
+						</td>
+						<td class="v-middle">
+							<span ng-if="item.type == '1'">
+								<img width="50" class="thumb-lg" ng-src="{{item.valItem.cover || defaultAvatar}}"  alt="{{item.valItem.content}}" />{{item.valItem.content}}
+							</span>
+							<span ng-if="item.type == '2'">
+								{{item.valItem.content}}
+							</span>
+							<span ng-if="item.type == '3'">
+								{{item.valItem.name}}
+							</span>
+						</td>
+						<td class="v-middle">{{item.subContent}}</td>
+						<td class="v-middle">
+							<span ng-if="item.status == '0'" class="text-success">已处理</span>
+							<span ng-if="item.status == '1'" class="text-danger">处理中</span>
 						</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">
@@ -70,12 +79,12 @@
 							<span ng-show="item.enable=='true'" class="text-success">启用</span>
 						</td>
 						<td class="v-middle">
-							<a ui-sref="main.shuo.subject.update({id: item.id})" class="btn btn-sm btn-default">
+							<a ui-sref="main.shuo.material.hot.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
-							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>
-							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-check m-r-xs text-sm"></i>启用</button>
+							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-ban m-r-xs text-sm"></i>启用</button>
+							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-check m-r-xs text-sm"></i>禁用</button>
 						</td>
 					</tr>
 					</tbody>

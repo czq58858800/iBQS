@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('app')
-    .controller('topicReviewController', [ '$rootScope', '$scope', '$http', '$state',
-        function($rootScope, $scope, $http, $state) {
-            $scope.title = '话题主持人管理';
+    .controller('fontsController', [ '$rootScope', '$scope', '$http', '$state','$stateParams',
+        function($rootScope, $scope, $http, $state,$stateParams) {
+            $scope.title = '字体管理';
             $scope.param = { };
             $scope.param.enable = 1;
             $scope.loading = false;
+
+
 
             var keyword = $state.params.keyword;
             if (keyword != null) {
@@ -19,7 +21,7 @@ angular.module('app')
                     type: 'PUT',
                     dataType: 'json',
                     contentType:'application/json;charset=UTF-8',
-                    url : '/shuo/topicReview/read/glist',
+                    url : '/shuo/fonts/read/list',
                     data: angular.toJson($scope.param)
                 }).then(function(result) {
                     $scope.loading = false;
@@ -33,19 +35,9 @@ angular.module('app')
             }
 
             $scope.search();
-            
+
             $scope.searchEnable = function (enable) {
                 $scope.param.enable = enable;
-                $scope.search();
-            }
-
-            $scope.searchAudit = function (audit) {
-                $scope.param.audit = audit;
-                $scope.search();
-            }
-
-            $scope.searchHot = function (isHot) {
-                $scope.param.isHot = isHot;
                 $scope.search();
             }
 
@@ -54,20 +46,13 @@ angular.module('app')
                 $scope.search();
             }
 
-            $scope.disableItem = function(id, enable) {
-                $scope.update({
-                    id:id,
-                    enable:enable
-                })
-            }
-
             $scope.update = function (param) {
                 $scope.loading = true;
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
                     contentType:'application/json;charset=UTF-8',
-                    url : '/shuo/topicReview/update',
+                    url : '/shuo/fonts/update',
                     data: angular.toJson(param)
                 }).then(function(result) {
                     $scope.loading = false;
@@ -80,23 +65,19 @@ angular.module('app')
                 });
             }
 
+            $scope.disableItem = function(id, enable) {
+                $scope.update({
+                    id:id,
+                    enable:enable
+                })
+            }
+
             $scope.updateHot = function (id,isHot) {
                 $scope.update({
                     id:id,
                     isHot:isHot
                 })
             }
-
-            $scope.updateAudit = function (id,audit) {
-                $scope.update({
-                    id:id,
-                    audit:audit
-                })
-            }
-
-            $scope.toSubject = function (keyword) {
-                $state.go('main.shuo.subject.list', {keyword: keyword});
-            };
 
             // 翻页
             $scope.pagination = function (page) {

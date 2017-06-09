@@ -32,11 +32,6 @@
 					</form>
 				</div>
 				<div class="w-lg">
-					<button type="button" ng-click="searchAudit(1)" class="btn btn-sm btn-default m-l-xs">审核中</button>
-					<button type="button" ng-click="searchAudit(2)" class="btn btn-sm btn-default m-l-xs">审核通过</button>
-					<button type="button" ng-click="searchAudit(-1)" class="btn btn-sm btn-default m-l-xs">审核失败</button>
-				</div>
-				<div class="w-lg">
 					<button type="button" ng-click="searchHot(0)" class="btn btn-sm btn-default m-l-xs">正常</button>
 					<button type="button" ng-click="searchHot(1)" class="btn btn-sm btn-default m-l-xs">热门</button>
 					<button type="button" ng-click="clearSearch()" class="btn btn-sm btn-default m-l-xs">清空</button>
@@ -54,15 +49,15 @@
 						<th>热门</th>
 						<th>热门更新时间</th>
 						<th>创建时间</th>
-						<th>审核状态</th>
+						<!--<th>审核状态</th>-->
 						<th>状态</th>
 						<th>&nbsp;</th>
 					</tr>
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td><a ui-sref="main.shuo.subject.list({keyword: item.name})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.name}}" /></a></td>
-						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.list({keyword: item.name})" alt="{{item.name}}">{{item.name}}</a></span></td>
+						<td><a ui-sref="main.face.subject.list({keyword: item.name})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.name}}" /></a></td>
+						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.face.subject.list({keyword: item.name})" alt="{{item.name}}">{{item.name}}</a></span></td>
 						<td class="v-middle">{{item.viewNum}}</td>
 						<td class="v-middle">
 							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
@@ -70,19 +65,19 @@
 						</td>
 						<td class="v-middle">{{item.hotTime}}</td>
 						<td class="v-middle">{{item.createTime}}</td>
-						<td class="v-middle">
+						<!--<td class="v-middle">-->
 
-							<span ng-if="item.audit == '2'" class="text-success">审核通过
-							<button type="button"  ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
-							</span>
-							<span ng-if="item.audit == '1'" class="text-warning">审核中
-							<button type="button" ng-click="updateAudit(item.id,2)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>通过</button>
-							<button type="button" ng-click="updateAudit(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
-							</span>
-							<span ng-if="item.audit == '-1'" class="text-danger">审核失败
-							<button type="button" ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>重审</button>
-							</span>
-						</td>
+							<!--<span ng-if="item.audit == '2'" class="text-success">审核通过-->
+							<!--<button type="button"  ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>-->
+							<!--</span>-->
+							<!--<span ng-if="item.audit == '1'" class="text-warning">审核中-->
+							<!--<button type="button" ng-click="updateAudit(item.id,2)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>通过</button>-->
+							<!--<button type="button" ng-click="updateAudit(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>-->
+							<!--</span>-->
+							<!--<span ng-if="item.audit == '-1'" class="text-danger">审核失败-->
+							<!--<button type="button" ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>重审</button>-->
+							<!--</span>-->
+						<!--</td>-->
 						<td class="v-middle">
 							<span ng-hide="item.enable=='true'" class="text-danger">禁用</span>
 							<span ng-show="item.enable=='true'" class="text-success">启用</span>

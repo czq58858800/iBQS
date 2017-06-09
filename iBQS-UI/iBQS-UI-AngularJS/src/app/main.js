@@ -96,6 +96,7 @@ angular.module('app')
 			            return null;
 			        } else if(result.code == 303) {
 			        } else if(result.code == 200) {
+			        } else if(result.code == 405) {
 			        } else if(result) {
 	                    toaster.clear('*');
 	                    toaster.pop('error', '', result.msg);
@@ -117,4 +118,46 @@ angular.module('app')
 				}
 			}
 		});
+
+        $scope.uploadQiniu = function (param) {
+            var fileData = param.fileData;
+            var Qiniu_UploadUrl = "http://up.qiniu.com";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', Qiniu_UploadUrl, true);
+            var formData, startDate;
+            formData = new FormData();
+            formData.append('key', param.key);
+            formData.append('token', param.uptoken);
+            formData.append('file', fileData);
+            var taking;
+            xhr.upload.addEventListener("progress", function(evt) {
+                if (evt.lengthComputable) {
+                    var nowDate = new Date().getTime();
+                    taking = nowDate - startDate;
+                    var x = (evt.loaded) / 1024;
+                    var y = taking / 1000;
+                    var uploadSpeed = (x / y);
+                    var formatSpeed;
+                    if (uploadSpeed > 1024) {
+                        formatSpeed = (uploadSpeed / 1024).toFixed(2) + "Mb\/s";
+                    } else {
+                        formatSpeed = uploadSpeed.toFixed(2) + "Kb\/s";
+                    }
+                }
+            }, false);
+
+            xhr.onreadystatechange = function(response) {
+                if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
+                    var blkRet = JSON.parse(xhr.responseText);
+                    param.success(blkRet,xhr);
+                } else if (xhr.status != 200 && xhr.responseText) {
+                    param.error(xhr);
+                }
+            };
+            startDate = new Date().getTime();
+            xhr.send(formData);
+        }
+
+
     }]);

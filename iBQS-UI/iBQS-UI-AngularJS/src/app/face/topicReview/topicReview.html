@@ -36,11 +36,6 @@
 					<button type="button" ng-click="searchAudit(2)" class="btn btn-sm btn-default m-l-xs">审核通过</button>
 					<button type="button" ng-click="searchAudit(-1)" class="btn btn-sm btn-default m-l-xs">审核失败</button>
 				</div>
-				<div class="w-lg">
-					<button type="button" ng-click="searchHot(0)" class="btn btn-sm btn-default m-l-xs">正常</button>
-					<button type="button" ng-click="searchHot(1)" class="btn btn-sm btn-default m-l-xs">热门</button>
-					<button type="button" ng-click="clearSearch()" class="btn btn-sm btn-default m-l-xs">清空</button>
-				</div>
 			</div>
 
 			<!-- 数据表格 -->
@@ -49,10 +44,9 @@
 					<thead>
 					<tr>
 						<th>封面</th>
-						<th>名称</th>
-						<th>浏览数</th>
-						<th>热门</th>
-						<th>热门更新时间</th>
+						<th>横幅</th>
+						<th>话题</th>
+						<th>申请人</th>
 						<th>创建时间</th>
 						<th>审核状态</th>
 						<th>状态</th>
@@ -61,27 +55,21 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td><a ui-sref="main.shuo.subject.list({keyword: item.name})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.name}}" /></a></td>
-						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.shuo.subject.list({keyword: item.name})" alt="{{item.name}}">{{item.name}}</a></span></td>
-						<td class="v-middle">{{item.viewNum}}</td>
-						<td class="v-middle">
-							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
-							<span ng-show="item.isHot=='true'" class="text-danger"><a ng-click="updateHot(item.id,0)">是</a></span>
-						</td>
-						<td class="v-middle">{{item.hotTime}}</td>
+						<td><a ng-click="searchTopic(item.topics)"><img width="100" class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}"  alt="{{item.name}}" /></a></td>
+						<td><a ng-click="searchTopic(item.topics)"><img width="100" class="thumb-lg" ng-src="{{item.banner || defaultAvatar}}"  alt="{{item.name}}" /></a></td>
+						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ng-click="searchTopic(item.topics)" alt="{{item.summary}}">#{{item.topics.name ? item.topics.name : topics.name}}#</a></span></td>
+						<td class="v-middle">{{item.owner.name}}</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">
-
-							<span ng-if="item.audit == '2'" class="text-success">审核通过
-							<button type="button"  ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
-							</span>
+							<span ng-if="item.audit == '2'" class="text-success">审核通过</span>
 							<span ng-if="item.audit == '1'" class="text-warning">审核中
-							<button type="button" ng-click="updateAudit(item.id,2)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>通过</button>
-							<button type="button" ng-click="updateAudit(item.id,-1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
+								<button type="button" ng-click="updateAudit(item.id,2)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-check m-r-xs text-sm"></i>通过</button>
+								<button type="button" ng-click="updateAudit(item.id,-1)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-ban m-r-xs text-sm"></i>驳回</button>
 							</span>
-							<span ng-if="item.audit == '-1'" class="text-danger">审核失败
-							<button type="button" ng-click="updateAudit(item.id,1)" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-ban m-r-xs text-sm"></i>重审</button>
-							</span>
+							<span ng-if="item.audit == '0'" class="text-success">已处理</span>
+							<span ng-if="item.audit == '-1'" class="text-danger">审核失败</span>
 						</td>
 						<td class="v-middle">
 							<span ng-hide="item.enable=='true'" class="text-danger">禁用</span>
@@ -90,10 +78,8 @@
 						<td class="v-middle">
 							<a ui-sref="main.shuo.subject.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
-							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>
-							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-check m-r-xs text-sm"></i>启用</button>
+							<button type="button" ng-show="item.enable == 'true' && item.audit != '2' "  ng-click="disableItem(item.id)" class="btn btn-sm btn-default m-l-xs">
+								<i class="fa fa-ban m-r-xs text-sm"></i>删除</button>
 						</td>
 					</tr>
 					</tbody>
