@@ -63,11 +63,12 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             params.remove("keyword");
             params.put("orderHot",true);
 
-            Parameter queryByHotParam = new Parameter(getService(),"queryByHot").setMap(params);
-            Page subjectHotPage = provider.execute(queryByHotParam).getPage();
+            Parameter parameter = new Parameter(getService(),"queryByHot").setMap(params);
+            Page subjectHotPage = provider.execute(parameter).getPage();
             if (pageNum == 1) {  // 当页码为第一条时同时返回话题
-                Parameter queryTopicByHotParam = new Parameter("topicsService","queryByHot").setMap(params);
-                List topicList = provider.execute(queryTopicByHotParam).getList();
+                keyword = "热门";
+                parameter = new Parameter("topicsService","queryByTag").setId(keyword);
+                List topicList = provider.execute(parameter).getList();
                 resultMap.put("topics", TopicHelper.formatResultList(topicList));
             }
             resultMap.put("subject",SubjectHelper.formatBriefResultList(subjectHotPage.getRecords()));
@@ -76,15 +77,26 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             return setSuccessModelMap(modelMap,subjectHotPage);
         } else if(StringUtils.equals(keyword, "0") || StringUtils.equals("NEW",keyword.toUpperCase())  || StringUtils.equals("最新",keyword)) {
             params.remove("keyword");
-            Parameter queryByNewParam = new Parameter(getService(),"queryByNew").setMap(params);
-            Page subjectNewPage = provider.execute(queryByNewParam).getPage();
+            Parameter parameter = new Parameter(getService(),"queryByNew").setMap(params);
+            Page subjectNewPage = provider.execute(parameter).getPage();
+            if (pageNum == 1) {  // 当页码为第一条时同时返回话题
+                keyword = "最新";
+                parameter = new Parameter("topicsService","queryByTag").setId(keyword);
+                List topicList = provider.execute(parameter).getList();
+                resultMap.put("topics", TopicHelper.formatResultList(topicList));
+            }
             resultMap.put("subject",SubjectHelper.formatBriefResultList(subjectNewPage.getRecords()));
             resultList.add(resultMap);
             subjectNewPage.setRecords(resultList);
             return setSuccessModelMap(modelMap,subjectNewPage);
         } else {
-            Parameter queryBeansParam = new Parameter(getService(),"queryBeans").setMap(params);
-            Page subjectPage = provider.execute(queryBeansParam).getPage();
+            Parameter parameter = new Parameter(getService(),"queryBeans").setMap(params);
+            Page subjectPage = provider.execute(parameter).getPage();
+            if (pageNum == 1) {  // 当页码为第一条时同时返回话题
+                parameter = new Parameter("topicsService","queryByTag").setId(keyword);
+                List topicList = provider.execute(parameter).getList();
+                resultMap.put("topics", TopicHelper.formatResultList(topicList));
+            }
             resultMap.put("subject", SubjectHelper.formatBriefResultList(subjectPage.getRecords()));
             resultList.add(resultMap);
             subjectPage.setRecords(resultList);

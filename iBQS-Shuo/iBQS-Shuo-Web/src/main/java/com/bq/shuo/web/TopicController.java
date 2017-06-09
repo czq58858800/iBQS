@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.support.HttpCode;
 import com.bq.core.util.InstanceUtil;
+import com.bq.core.util.PropertiesUtil;
 import com.bq.core.util.Request2ModelUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
@@ -14,6 +15,11 @@ import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.SearchHelper;
 import com.bq.shuo.support.SubjectHelper;
 import com.bq.shuo.support.TopicHelper;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.util.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -52,6 +58,22 @@ public class TopicController extends AbstractController<IShuoProvider> {
         params.put("currUserId", getCurrUser());
         params.put("enable", true);
         params.put("audit", "2");
+        Parameter queryBeansParam = new Parameter(getService(), "queryBeans").setMap(params);
+        Page page = provider.execute(queryBeansParam).getPage();
+        page.setRecords(TopicHelper.formatResultList(page.getRecords()));
+        return setSuccessModelMap(modelMap, page);
+    }
+
+    // 话题列表
+    @ApiOperation(value = "话题列表")
+    @GetMapping("/list/{keyword}")
+    public Object keywordList(HttpServletRequest request, ModelMap modelMap,
+                       @ApiParam(required = false, value = "关键字") @PathVariable(value = "keyword") String keyword,
+                       @ApiParam(required = true, value = "页码") @RequestParam(value = "pageNum") int pageNum) {
+        Map<String, Object> params = WebUtil.getParameterMap(request);
+        params.put("currUserId", getCurrUser());
+        params.put("enable", true);
+        params.put("nameKeyword",keyword);
         Parameter queryBeansParam = new Parameter(getService(), "queryBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
         page.setRecords(TopicHelper.formatResultList(page.getRecords()));
@@ -124,13 +146,15 @@ public class TopicController extends AbstractController<IShuoProvider> {
                          @ApiParam(required = false, value = "Banner") @RequestParam(value = "banner", required = false) String banner,
                          @ApiParam(required = true, value = "描述") @RequestParam(value = "summary") String summary) {
         Topics record = (Topics) provider.execute(new Parameter("topicsService", "queryById").setId(id)).getModel();
-        if (!StringUtils.equals(record.getOwnerId(), getCurrUser())) {
+
+        if (record != null && !StringUtils.equals(record.getOwnerId(), getCurrUser())) {
             // 无法修改，不是该话题的作者。
             return setModelMap(modelMap, HttpCode.FORBIDDEN);
         }
         record.setSummary(summary);
-        record.setBanner(banner);
+
         if (StringUtils.isNotBlank(cover)) {
+            record.setCover(cover);
             JSONObject imageInfo = QiniuUtil.getImageInfo(cover);
             if (imageInfo.containsKey("format")) {
                 record.setCoverType(imageInfo.getString("format"));
@@ -138,10 +162,36 @@ public class TopicController extends AbstractController<IShuoProvider> {
                 record.setCoverWidth(imageInfo.getInteger("height"));
             }
         }
+        if (StringUtils.isNotBlank(banner)) {
+            record.setBanner(banner);
+        }
+
         provider.execute(new Parameter("topicsService", "update").setModel(record));
+
+        TopicsReview topicsReview = new TopicsReview(id,getCurrUser(),summary);
+        topicsReview.setCover(cover);
+        topicsReview.setBanner(banner);
+        topicsReview.setAudit("2");
+        provider.execute(new Parameter("topicsReviewService", "update").setModel(record));
         return setSuccessModelMap(modelMap);
     }
 
+
+    private void removeOldImage(String image) {
+        if (StringUtils.isNotBlank(image)) {
+            Auth auth = Auth.create(PropertiesUtil.getString("qiniu.access_key"), PropertiesUtil.getString("qiniu.secret_key"));
+            String key = image.replace(PropertiesUtil.getString("qiniu.domain"), "");
+            String bucket = PropertiesUtil.getString("qiniu.bucket");
+            Configuration cfg = new Configuration(Zone.zone0());
+            BucketManager bucketManager = new BucketManager(auth, cfg);
+            try {
+                bucketManager.delete(bucket, key);
+                logger.debug("文件 {} 删除成功", key);
+            } catch (QiniuException ex) {
+                logger.error("文件 {} 删除失败 Code:{} Response:{}", key, ex.code(), ex.response.toString());
+            }
+        }
+    }
 
     // 搜索列表
     @ApiOperation(value = "话题综合推荐")

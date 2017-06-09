@@ -10,6 +10,7 @@ import com.bq.shuo.model.Album;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
+import com.bq.shuo.support.SubjectHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -60,6 +61,9 @@ public class SubjectService extends BaseService<Subject> {
 
     @Autowired
     private NotifyService notifyService;
+
+    @Autowired
+    private TopicsService topicsService;
 
     // 线程池
     private ExecutorService executorService = Executors.newCachedThreadPool();
@@ -343,6 +347,16 @@ public class SubjectService extends BaseService<Subject> {
         if (StringUtils.isBlank(record.getId())) {
             userService.incrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
         }
+
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<String> topicList = SubjectHelper.findTopic(record.getContent());
+                for (String topic:topicList) {
+                    topicsService.addTopic(topic);
+                }
+            }
+        });
         return super.update(record);
     }
 

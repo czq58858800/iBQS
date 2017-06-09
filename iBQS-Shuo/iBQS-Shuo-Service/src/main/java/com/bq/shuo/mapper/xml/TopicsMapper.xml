@@ -28,6 +28,9 @@
 			<if test="cm.summary != null and cm.summary != ''">
 				AND summary_ = #{cm.summary}
 			</if>
+			<if test="cm.nameKeyword != null and cm.nameKeyword != ''">
+				AND (name_ like CONCAT('%',#{cm.nameKeyword},'%'))
+			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
 				AND (name_ like CONCAT('%',#{cm.keyword},'%') or summary_ like CONCAT('%',#{cm.keyword},'%'))
 			</if>
@@ -53,5 +56,8 @@
 	</select>
     <select id="selectIdByName" resultType="java.lang.String">
 		SELECT id_ FROM bq_topics WHERE name_ = #{name}
+	</select>
+	<select id="queryByTag" resultType="java.lang.String">
+		SELECT id_ FROM bq_topics WHERE enable_ = 1 AND tags_ LIKE CONCAT('%',#{tags},'%') ORDER BY update_time DESC LIMIT 10
 	</select>
 </mapper>

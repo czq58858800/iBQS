@@ -60,6 +60,7 @@ public final class TopicHelper {
                 userMap.put("avatar",record.getOwner().getAvatar());
                 userMap.put("type",record.getOwner().getUserType());
                 userMap.put("isFollow",record.getOwner().isFollow());
+                userMap.put("sex",record.getOwner().getSex());
                 resultMap.put("user",userMap);
             }
             Map<String,Object> coverExifMap = InstanceUtil.newHashMap();

@@ -51,7 +51,8 @@ public class UserFollowingService extends BaseService<UserFollowing> {
         if (StringUtils.isNotBlank(userId) && StringUtils.isNotBlank(beUserId)) {
             String key = Constants.CACHE_RELATIONS_USER + userId;
             if (CacheUtil.getCache().hexists(key, beUserId)) {
-                return Boolean.valueOf((String) CacheUtil.getCache().hget(key, beUserId));
+                System.out.println(BooleanUtils.toBoolean((String) CacheUtil.getCache().hget(key, beUserId)));
+                return BooleanUtils.toBoolean((String) CacheUtil.getCache().hget(key, beUserId));
             } else {
                 boolean isLiked = false;
                 if (StringUtils.isNotBlank(selectByFollowId(userId, beUserId))) {

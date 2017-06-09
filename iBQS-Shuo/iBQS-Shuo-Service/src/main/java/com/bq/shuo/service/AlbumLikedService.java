@@ -60,6 +60,10 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         return super.update(record);
     }
 
+    public int selectCountByUserId(String userId){
+        return albumLikedMapper.selectCountByUserId(userId);
+    }
+
     public String selectByLikedId(String albumId, String userId) {
         return albumLikedMapper.selectLikedById(albumId,userId);
     }

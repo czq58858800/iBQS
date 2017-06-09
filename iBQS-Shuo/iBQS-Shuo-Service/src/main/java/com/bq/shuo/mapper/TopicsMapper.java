@@ -25,4 +25,6 @@ public interface TopicsMapper extends BaseMapper<Topics> {
     String queryBeanByKeyword(@Param("keyword") String keyword);
 
     String selectIdByName(@Param("name") String name);
+
+    List<String> queryByTag(@Param("tags") String tags);
 }

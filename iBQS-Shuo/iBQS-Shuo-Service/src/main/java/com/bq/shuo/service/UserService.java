@@ -67,7 +67,7 @@ public class UserService extends BaseService<User> {
 
     public User getDetail(User record,Map<String,Object> params) {
             record = getDetail(record);
-        if (params.containsKey("currUserId")) {
+        if (record != null && params.containsKey("currUserId")) {
             String currUserId = (String) params.get("currUserId");
             record.setFollow(userFollowingService.selectByIsFollow(currUserId,record.getId()));
         }
@@ -104,14 +104,16 @@ public class UserService extends BaseService<User> {
         if (record != null && StringUtils.isNotBlank(record.getId())) {
             String id = record.getId();
             UserConfig userConfig = userConfigService.selectByUserId(id);
-            record.setConfig(userConfig);
-            record.setWorksLikeNum(selectUserCounter(id, CounterHelper.User.WORKS_LIKE));
-            record.setWorksNum(selectUserCounter(id, CounterHelper.User.WORKS));
-            record.setMyLikeWorksNum(selectUserCounter(id, CounterHelper.User.MY_LIKE_WORKS));
-            record.setFollowNum(selectUserCounter(id, CounterHelper.User.FOLLOW));
-            record.setFansNum(selectUserCounter(id, CounterHelper.User.FANS));
-            record.setForwardNum(selectUserCounter(id, CounterHelper.User.FORWARD));
-            return record;
+            if (userConfig != null) {
+                record.setConfig(userConfig);
+                record.setWorksLikeNum(selectUserCounter(id, CounterHelper.User.WORKS_LIKE));
+                record.setWorksNum(selectUserCounter(id, CounterHelper.User.WORKS));
+                record.setMyLikeWorksNum(selectUserCounter(id, CounterHelper.User.MY_LIKE_WORKS));
+                record.setFollowNum(selectUserCounter(id, CounterHelper.User.FOLLOW));
+                record.setFansNum(selectUserCounter(id, CounterHelper.User.FANS));
+                record.setForwardNum(selectUserCounter(id, CounterHelper.User.FORWARD));
+                return record;
+            }
         }
         return record;
     }

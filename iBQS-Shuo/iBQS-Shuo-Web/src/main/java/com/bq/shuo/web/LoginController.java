@@ -3,6 +3,7 @@ package com.bq.shuo.web;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
+import com.bq.core.captcha.VerifyCodeUtils;
 import com.bq.core.config.Resources;
 import com.bq.core.exception.LoginException;
 import com.bq.core.support.Assert;
@@ -23,10 +24,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
@@ -154,6 +159,79 @@ public class LoginController extends AbstractController<IShuoProvider> {
         }
 
         return setSuccessModelMap(modelMap,res);
+    }
+
+
+
+    // 发送SMS验证码
+    @ApiOperation(value = "获取验证码")
+    @GetMapping("/getImgCaptcha")
+    public Object getCaptcha(ModelMap modelMap,
+                 HttpServletRequest request,
+                 HttpServletResponse response,
+                 @ApiParam(value = "验证码宽度") @RequestParam(value = "w",required = false) Integer w,
+                 @ApiParam(value = "验证码高度") @RequestParam(value = "h",required = false) Integer h,
+                 @ApiParam(required = true, value = "帐号") @RequestParam(value = "account") String account) throws UnsupportedEncodingException {
+        // 账号不允许为空
+        Assert.notNull(account,"USER_ID_IS_NULL");
+
+        String lockKey = new StringBuilder(Constants.JR_IMG_CAPTCHA).append("LOCK:").append(account).toString();
+
+        while (!CacheUtil.getLock(lockKey)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                logger.error("", e);
+            }
+        }
+
+        JSONObject res = new JSONObject();
+
+        try {
+            String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
+            res.put("account",account);
+            res.put("captcha",verifyCode);
+            res.put("timestamp", System.currentTimeMillis());
+            // 序列化验证码信息到Redis
+            CacheUtil.getCache().set(Constants.JR_IMG_CAPTCHA+account,res);
+            logger.debug(res.toString());
+
+            try {
+                response.setHeader("Pragma", "No-cache");
+                response.setHeader("Cache-Control", "no-cache");
+                response.setDateHeader("Expires", 0);
+                response.setContentType("image/jpeg");
+                VerifyCodeUtils.outputImage(w == null ? 276 : w,h == null ? 114 : h,response.getOutputStream(),verifyCode);
+                return ResponseEntity.ok();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } finally {
+            CacheUtil.unlock(lockKey);
+        }
+
+        return setModelMap(modelMap,HttpCode.NOT_DATA);
+    }
+
+    // 校验帐号是否存在
+    @ApiOperation(value = "校验帐号是否存在")
+    @GetMapping("/check/captcha")
+    public Object checkCaptcha(ModelMap modelMap,
+                   @ApiParam(required = true, value = "手机号") @RequestParam(value = "account") String account,
+                   @ApiParam(required = true, value = "验证码") @RequestParam(value = "account") String captcha) throws UnsupportedEncodingException {
+        // 获取短信验证码
+        JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_IMG_CAPTCHA+account));
+        // 判断短信验证码是否失效
+        if (jCaptcha == null) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_FAIL);
+        }
+        String imgCaptcha = jCaptcha.getString("captcha");
+        // 判断验证码是否一致
+        if (!StringUtils.equals(imgCaptcha,captcha)) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
+        }
+        return setSuccessModelMap(modelMap);
     }
 
     // 校验帐号是否存在
@@ -335,6 +413,8 @@ public class LoginController extends AbstractController<IShuoProvider> {
 
         throw new IllegalArgumentException(Resources.getMessage(("SMS_CAPTCHA_INCORRECT")));
     }
+
+
 
 
     // 登出

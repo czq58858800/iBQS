@@ -34,9 +34,9 @@ public class TopicsReviewService extends BaseService<TopicsReview> {
     @Autowired
     private UserService userService;
 
-    public Page<TopicsReview> queryGroupTopic(Map<String,Object> params) {
+    public Page<TopicsReview> queryBeans(Map<String,Object> params) {
         Page<String> idPage = getPage(params);
-        idPage.setRecords(topicsReviewMapper.selectIdByGroupTopic(idPage, params));
+        idPage.setRecords(topicsReviewMapper.selectIdPage(idPage, params));
         if (idPage != null) {
             Page<TopicsReview> page = new Page<TopicsReview>(idPage.getCurrent(), idPage.getSize());
             page.setTotal(idPage.getTotal());
@@ -54,5 +54,5 @@ public class TopicsReviewService extends BaseService<TopicsReview> {
         }
         return new Page<TopicsReview>();
     }
-	
+
 }

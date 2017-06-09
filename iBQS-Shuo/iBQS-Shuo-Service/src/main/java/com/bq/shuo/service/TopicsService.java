@@ -64,6 +64,12 @@ public class TopicsService extends BaseService<Topics> {
         return topics;
     }
 
+
+    public List<Topics> queryByTag(String tag) {
+        List<Topics> topics = getList(topicsMapper.queryByTag(tag));
+        return topics;
+    }
+
     public Topics queryBeansByKeyword(String keyword, String currUserId) {
         Topics topics = queryById(topicsMapper.queryBeanByKeyword(keyword));
         executorService.submit(new Runnable() {
@@ -106,5 +112,14 @@ public class TopicsService extends BaseService<Topics> {
 
     public String selectIdByName(String name) {
         return topicsMapper.selectIdByName(name);
+    }
+
+    public void addTopic(String topic) {
+        String topicId = selectIdByName(topic);
+        if (StringUtils.isBlank(topicId)) {
+            Topics record = new Topics();
+            record.setName(topic);
+            update(record);
+        }
     }
 }

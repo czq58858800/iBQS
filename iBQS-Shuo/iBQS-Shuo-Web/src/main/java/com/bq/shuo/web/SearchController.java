@@ -40,6 +40,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "搜索-综合")
     @GetMapping(value = "search/synthetic")
     public Object searchSynthetic(HttpServletRequest request, ModelMap modelMap,
+             @ApiParam(required = false, value = "获取话题数量") @RequestParam(value = "topicPageSize",required = false) Integer topicPageSize,
              @ApiParam(required = true, value = "关键字") @RequestParam(value = "keyword") String keyword,
              @ApiParam(required = true, value = "分页") @RequestParam(value = "pageNum") Integer pageNum) {
         Assert.notNull(pageNum, "PAGE_NUM");
@@ -48,7 +49,6 @@ public class SearchController extends AbstractController<IShuoProvider> {
         params.put("currUserId",getCurrUser());
         params.put("myWorks",1);
         params.put("enable",true);
-
 
         Parameter queryBeansParam = new Parameter("subjectService","queryMoreBeans").setMap(params);
         Page page = provider.execute(queryBeansParam).getPage();
@@ -66,7 +66,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
                 resultMap.put("user",userMap);
             }
 
-            params.put("pageSize",4);
+            params.put("pageSize",topicPageSize == null ? 4 : topicPageSize);
             Parameter queryTopicsBeansParam = new Parameter("topicsService","queryBeans").setMap(params);
             Page topicsPage = provider.execute(queryTopicsBeansParam).getPage();
 

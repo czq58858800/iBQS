@@ -77,7 +77,7 @@
 				/dynamic/nearby=anon
 				/user/rcmd/list=anon
 				/user/detail=anon
-				/topic/**/list=anon
+				/topic/**/list/**=anon
 				/subject/list=anon
 				/subject/recomment/list=anon
 				/subject/liked/user/list=anon
@@ -98,6 +98,8 @@
 				/sns/qq=anon
 
 				/feedback/sub=anon
+				/getImgCaptcha=anon
+				/check/captcha=anon
 
 				/**=authc,user
 			</value>
