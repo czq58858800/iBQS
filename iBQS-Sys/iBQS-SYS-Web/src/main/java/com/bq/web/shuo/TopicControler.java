@@ -79,4 +79,5 @@ public class TopicControler extends AbstractController<IShuoProvider> {
         logger.debug("{} execute update end.", parameter.getNo());
         return setSuccessModelMap(modelMap);
     }
+
 }

@@ -1,4 +1,7 @@
+/
 localhost
+manage.biaoqing.com
+192.168.0.37
 index.html
 swagger-ui.html
 springfox-swagger-ui

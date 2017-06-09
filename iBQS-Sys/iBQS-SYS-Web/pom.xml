@@ -140,5 +140,23 @@
 		    <artifactId>uasparser</artifactId>
 		    <version>0.6.2</version>
 		</dependency>
-    </dependencies>
+
+
+		<!-- 七牛云存储 -->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>7.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.bq</groupId>
+			<artifactId>umeng-push</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.bq</groupId>
+			<artifactId>rongcloud</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+	</dependencies>
 </project>
