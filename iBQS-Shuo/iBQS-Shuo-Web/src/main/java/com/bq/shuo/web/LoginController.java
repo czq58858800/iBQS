@@ -145,11 +145,11 @@ public class LoginController extends AbstractController<IShuoProvider> {
             res.put("captcha",captcha);
             res.put("timestamp", System.currentTimeMillis());
 
-//            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
-//
-//            if (!sendStatus) {
-//                return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
-//            }
+            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
+
+            if (!sendStatus) {
+                return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
+            }
 
             // 序列化验证码信息到Redis
             CacheUtil.getCache().set(Constants.JR_SMS_CAPTCHA+account,res);
@@ -196,30 +196,30 @@ public class LoginController extends AbstractController<IShuoProvider> {
             CacheUtil.getCache().set(Constants.JR_IMG_CAPTCHA+account,res);
             logger.debug(res.toString());
 
-            try {
-                response.setHeader("Pragma", "No-cache");
-                response.setHeader("Cache-Control", "no-cache");
-                response.setDateHeader("Expires", 0);
-                response.setContentType("image/jpeg");
-                VerifyCodeUtils.outputImage(w == null ? 276 : w,h == null ? 114 : h,response.getOutputStream(),verifyCode);
-                return ResponseEntity.ok();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                response.setHeader("Pragma", "No-cache");
+//                response.setHeader("Cache-Control", "no-cache");
+//                response.setDateHeader("Expires", 0);
+//                response.setContentType("image/jpeg");
+//                VerifyCodeUtils.outputImage(w == null ? 276 : w,h == null ? 114 : h,response.getOutputStream(),verifyCode);
+//                return ResponseEntity.ok();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+            return setSuccessModelMap(modelMap,VerifyCodeUtils.encodeImgageToBase64(w == null ? 276 : w,h == null ? 114 : h,verifyCode));
 
         } finally {
             CacheUtil.unlock(lockKey);
         }
-
-        return setModelMap(modelMap,HttpCode.NOT_DATA);
     }
 
     // 校验帐号是否存在
-    @ApiOperation(value = "校验帐号是否存在")
+    @ApiOperation(value = "验证码是否正确")
     @GetMapping("/check/captcha")
     public Object checkCaptcha(ModelMap modelMap,
                    @ApiParam(required = true, value = "手机号") @RequestParam(value = "account") String account,
-                   @ApiParam(required = true, value = "验证码") @RequestParam(value = "account") String captcha) throws UnsupportedEncodingException {
+                   @ApiParam(required = true, value = "验证码") @RequestParam(value = "captcha") String captcha) throws UnsupportedEncodingException {
         // 获取短信验证码
         JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_IMG_CAPTCHA+account));
         // 判断短信验证码是否失效
@@ -228,7 +228,8 @@ public class LoginController extends AbstractController<IShuoProvider> {
         }
         String imgCaptcha = jCaptcha.getString("captcha");
         // 判断验证码是否一致
-        if (!StringUtils.equals(imgCaptcha,captcha)) {
+        if (!StringUtils.equals(imgCaptcha.trim().toLowerCase(),captcha.trim().toLowerCase())) {
+            CacheUtil.getCache().del(Constants.JR_IMG_CAPTCHA+account);
             return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
         }
         return setSuccessModelMap(modelMap);

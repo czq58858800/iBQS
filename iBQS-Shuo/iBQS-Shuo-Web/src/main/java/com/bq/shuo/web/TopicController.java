@@ -155,11 +155,13 @@ public class TopicController extends AbstractController<IShuoProvider> {
 
         if (StringUtils.isNotBlank(cover)) {
             record.setCover(cover);
-            JSONObject imageInfo = QiniuUtil.getImageInfo(cover);
-            if (imageInfo.containsKey("format")) {
-                record.setCoverType(imageInfo.getString("format"));
-                record.setCoverWidth(imageInfo.getInteger("width"));
-                record.setCoverWidth(imageInfo.getInteger("height"));
+            if (!StringUtils.equals(cover,record.getCover())) {
+                JSONObject imageInfo = QiniuUtil.getImageInfo(cover);
+                if (imageInfo.containsKey("format")) {
+                    record.setCoverType(imageInfo.getString("format"));
+                    record.setCoverWidth(imageInfo.getInteger("width"));
+                    record.setCoverWidth(imageInfo.getInteger("height"));
+                }
             }
         }
         if (StringUtils.isNotBlank(banner)) {
@@ -168,11 +170,15 @@ public class TopicController extends AbstractController<IShuoProvider> {
 
         provider.execute(new Parameter("topicsService", "update").setModel(record));
 
-        TopicsReview topicsReview = new TopicsReview(id,getCurrUser(),summary);
-        topicsReview.setCover(cover);
-        topicsReview.setBanner(banner);
-        topicsReview.setAudit("2");
-        provider.execute(new Parameter("topicsReviewService", "update").setModel(record));
+
+        if (!StringUtils.equals(cover,record.getCover()) || !StringUtils.equals(banner,record.getBanner()) || !StringUtils.equals(summary,record.getSummary())) {
+            TopicsReview topicsReview = new TopicsReview(id, getCurrUser(), summary);
+            topicsReview.setCover(cover);
+            topicsReview.setBanner(banner);
+            topicsReview.setAudit("2");
+            Parameter parameter = new Parameter("topicsReviewService", "update").setModel(topicsReview);
+            provider.execute(parameter);
+        }
         return setSuccessModelMap(modelMap);
     }
 

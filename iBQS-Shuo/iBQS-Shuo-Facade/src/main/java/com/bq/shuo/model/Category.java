@@ -51,10 +51,10 @@ public class Category extends BaseModel {
 	@TableField("summary_")
 	private String summary;
     /**
-     * 是否私有(0:否;1:是)
+     * 类别:(0:全部;1:贴纸;2:素材)
      */
-	@TableField("is_private")
-	private Integer isPrivate;
+	@TableField("type_")
+	private Integer type;
     /**
      * 用户ID
      */
@@ -167,12 +167,12 @@ public class Category extends BaseModel {
 		this.summary = summary;
 	}
 
-	public Integer getIsPrivate() {
-		return isPrivate;
+	public Integer getType() {
+		return type;
 	}
 
-	public void setIsPrivate(Integer isPrivate) {
-		this.isPrivate = isPrivate;
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	public String getUserId() {

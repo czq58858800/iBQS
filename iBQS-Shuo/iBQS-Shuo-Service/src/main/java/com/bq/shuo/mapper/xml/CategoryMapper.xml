@@ -10,6 +10,9 @@
 			<if test="cm.enable != null and cm.enable != ''">
 				and enable_ = #{cm.enable}
 			</if>
+			<if test="cm.type != null and cm.type != ''">
+				and type_ = #{cm.type}
+			</if>
 			<if test="cm.stuffNumLT != null">
 				and stuff_num != 0
 			</if>

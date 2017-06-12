@@ -68,7 +68,8 @@ public class MaterialController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "分类列表")
     @GetMapping("/category/list")
     public Object categoryList(HttpServletRequest request, ModelMap modelMap,
-               @ApiParam(required = false, value = "每页页数") @RequestParam(value = "pageSize",required = false) Integer pageSize,
+               @ApiParam(value = "每页页数") @RequestParam(value = "pageSize",required = false) Integer pageSize,
+               @ApiParam(required = true, value = "类别:(0:全部;1:贴纸;2:素材)") @RequestParam(value = "type") Integer type,
                @ApiParam(required = true, value = "页码") @RequestParam(value = "pageNum") Integer pageNum,
               @ApiParam(required = true, value = "关键字 热门=(热门|HOT) 最新=(最新|NEW)") @RequestParam(value = "keyword") String keyword) {
         Assert.notNull(pageNum, "PAGE_NUM");
@@ -76,6 +77,11 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         params.put("stuffNumLT",true);
         params.put("enable",true);
+
+        if (type == 0) {
+            params.remove("type");
+        }
+
         if (StringUtils.equals(keyword.trim(),"热门") || StringUtils.equals(keyword.trim().toLowerCase(),"hot")) {
             params.put("orderHot",true);
             params.remove("keyword");
@@ -138,6 +144,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
     public Object categoryAdd(HttpServletRequest request, ModelMap modelMap,
                        @ApiParam(required = false, value = "分类ID") @RequestParam(value = "id",required = false) String id,
                        @ApiParam(required = false, value = "分类封面") @RequestParam(value = "cover",required = false) String cover,
+                       @ApiParam(required = true, value = "类别:(1:贴纸;2:素材)") @RequestParam(value = "type") Integer type,
                        @ApiParam(required = true, value = "名称") @RequestParam(value = "name") String name,
                        @ApiParam(required = true, value = "标签(tag,tag)") @RequestParam(value = "tags") String tags,
                        @ApiParam(required = true, value = "描述") @RequestParam(value = "summary") String summary) {
@@ -145,6 +152,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Assert.notNull(tags, "TAGS");
         Assert.notNull(summary, "SUMMARY");
         Category record = new Category(id,cover,name,tags,summary);
+        record.setType(type);
         if (StringUtils.isBlank(id)) {
             record.setStuffNum(0);
             record.setIsHot(false);
