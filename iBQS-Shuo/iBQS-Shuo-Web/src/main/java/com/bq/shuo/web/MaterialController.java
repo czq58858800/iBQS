@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.util.InstanceUtil;
-import com.bq.core.util.Request2ModelUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.util.QiniuUtil;
-import com.bq.shuo.model.*;
+import com.bq.shuo.model.Category;
+import com.bq.shuo.model.CategoryCollection;
+import com.bq.shuo.model.Material;
+import com.bq.shuo.model.MaterialHot;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.CategoryHelper;
 import com.bq.shuo.support.MaterialHelper;
@@ -19,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class MaterialController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "素材热词列表")
     @GetMapping("/hotWord/list")
     public Object hotWordList(HttpServletRequest request, ModelMap modelMap,
+          @ApiParam(required = true, value = "类别:(1:贴纸;2:素材)") @RequestParam(value = "type") Integer type,
           @ApiParam(required = true, value = "页码") @RequestParam(value = "pageNum") Integer pageNum) {
 
         Assert.notNull(pageNum, "PAGE_NUM");

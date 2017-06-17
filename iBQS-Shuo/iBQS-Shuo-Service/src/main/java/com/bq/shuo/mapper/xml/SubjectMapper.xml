@@ -21,7 +21,7 @@
 			LEFT JOIN bq_subject_counter AS B ON B.subject_id = A.id_ AND B.subject_id = A.id_
 		</if>
 		<where>
-			<if test="cm.enable != null and cm.enable != ''">
+			<if test="cm.enable != null">
 				and A.enable_ = #{cm.enable}
 			</if>
 			<if test="cm.userId != null and cm.userId != ''">

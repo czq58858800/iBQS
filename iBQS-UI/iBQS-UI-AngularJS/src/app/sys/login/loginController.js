@@ -12,7 +12,7 @@ angular.module('app')
 				data: angular.toJson($scope.user)
 			}).then(function(result) {
 				if (result.code == 200) {
-					$state.go('main.sys.user.list');
+					$state.go('main.index');
 				} else {
 					$scope.msg = result.msg;
 					$rootScope.$apply();

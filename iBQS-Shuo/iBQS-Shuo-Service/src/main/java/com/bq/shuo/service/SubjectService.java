@@ -3,6 +3,7 @@ package com.bq.shuo.service;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
+import com.bq.core.util.PropertiesUtil;
 import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.mapper.SubjectMapper;
@@ -11,6 +12,11 @@ import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
 import com.bq.shuo.support.SubjectHelper;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.util.Auth;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -318,11 +324,40 @@ public class SubjectService extends BaseService<Subject> {
     @Override
     public void delete(String id) {
         Subject record = queryById(id);
-        if (record != null && record.getEnable()) {
+        if (record != null) {
+            executorService.submit(new Runnable() {     //删除文件
+                @Override
+                public void run() {
+                    String domain = PropertiesUtil.getString("qiniu.domain");
+                    Auth auth = Auth.create(PropertiesUtil.getString("qiniu.access_key"), PropertiesUtil.getString("qiniu.secret_key"));
+                    String bucket = PropertiesUtil.getString("qiniu.bucket");
+                    Configuration cfg = new Configuration(Zone.zone0());
+                    BucketManager bucketManager = new BucketManager(auth, cfg);
+
+                    List<Album> albumList = albumService.querySubjectIdByList(id,null);
+                    String subjectKey = record.getCover().replace(domain,"");
+
+                    try {
+                        bucketManager.delete(bucket, subjectKey);
+                        logger.debug("表情文件 {} 删除成功", subjectKey);
+
+                        for (Album album:albumList) {
+                            String albumKey = album.getImage().replace(domain,"");
+                            if (!StringUtils.equals(subjectKey,albumKey)) {
+                                bucketManager.delete(bucket, albumKey);
+                            }
+                            logger.debug("专辑文件 {} 删除成功", subjectKey);
+                        }
+                    } catch (QiniuException ex) {
+                        logger.error("删除失败 Code:{} Response:{}",ex.code(),ex.response.toString());
+                    }
+                }
+            });
+
             // 删除动态
             dynamicService.deleteByValId(id,"1");
 
-            del(id);
+            super.delete(id);
 
             // 作品喜欢数量
             Integer likedNum = selectSubjectCounter(id,CounterHelper.Subject.LIKED);

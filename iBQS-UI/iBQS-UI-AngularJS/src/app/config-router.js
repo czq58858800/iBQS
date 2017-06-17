@@ -28,6 +28,20 @@ var app = angular.module('app')
                         }]
                       }
                 })
+
+
+                .state('main.index', {
+                    url: '/index',
+                    templateUrl: 'src/app/index/index.html',
+                    controller: 'indexController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/index/indexController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 用户
                 .state('main.sys', {
                     url: '/sys',
                     template: '<div ui-view class="fade-in-right-big smooth"></div>'
@@ -386,13 +400,13 @@ var app = angular.module('app')
                         }]
                     }
                 })
-                .state('main.shuo.face.update', {
+                .state('main.face.topic.update', {
                     url: '/update/{id}?params',
-                    templateUrl: 'src/app/shuo/face/update.html',
+                    templateUrl: 'src/app/face/topic/update.html',
                     controller: 'topicUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
-                            return uiLoad.load('src/app/shuo/topic/updateController.js').then(function() {
+                            return uiLoad.load('src/app/face/topic/updateController.js').then(function() {
                                 return $ocLazyLoad.load('toaster');
                             });
                         }]

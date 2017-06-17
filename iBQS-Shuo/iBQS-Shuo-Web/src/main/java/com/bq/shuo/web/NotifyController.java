@@ -11,6 +11,7 @@ import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.model.Notify;
+import com.bq.shuo.model.UserConfig;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.NotifyHelper;
 import io.swagger.annotations.Api;
@@ -74,4 +75,28 @@ public class NotifyController extends AbstractController<IShuoProvider> {
         return  setSuccessModelMap(modelMap);
     }
 
+    @ApiOperation(value = "获取通知配置")
+    @GetMapping(value = "config")
+    public Object delete(HttpServletRequest request, ModelMap modelMap) {
+        Parameter parameter = new Parameter("userConfigService","selectByUserId").setId(getCurrUser());
+        UserConfig record = (UserConfig) provider.execute(parameter).getModel();
+        Map<String,Object> resultMap = InstanceUtil.newHashMap();
+        resultMap.put("userId",record.getId());
+        resultMap.put("isNotifyAt",record.getIsNotifyAt());
+        return  setSuccessModelMap(modelMap,resultMap);
+    }
+
+
+    @ApiOperation(value = "通知配置")
+    @PostMapping(value = "config")
+    public Object delete(HttpServletRequest request, ModelMap modelMap,
+                         @ApiParam(required = true, value = "是否允许@通知") @RequestParam(value = "isNotifyAt") Boolean isNotifyAt) {
+        Assert.notNull(isNotifyAt, "IS_NOTIFY_AT");
+        Parameter parameter = new Parameter("userConfigService","selectByUserId").setId(getCurrUser());
+        UserConfig record = (UserConfig) provider.execute(parameter).getModel();
+        record.setIsNotifyAt(isNotifyAt);
+        parameter = new Parameter("userConfigService","update").setModel(record);
+        provider.execute(parameter);
+        return  setSuccessModelMap(modelMap);
+    }
 }

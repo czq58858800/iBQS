@@ -1,7 +1,6 @@
 package com.bq.shuo.web;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.core.captcha.VerifyCodeUtils;
 import com.bq.core.config.Resources;
@@ -9,29 +8,28 @@ import com.bq.core.exception.LoginException;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.support.login.LoginHelper;
-import com.bq.core.util.CacheUtil;
-import com.bq.core.util.EncryptUtils;
-import com.bq.core.util.InstanceUtil;
-import com.bq.core.util.WebUtil;
+import com.bq.core.util.*;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.util.SendSms;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.util.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
@@ -345,21 +343,36 @@ public class LoginController extends AbstractController<IShuoProvider> {
         parameter = new Parameter("userService","update").setModel(user);
         user = (User) provider.execute(parameter).getModel();
         CacheUtil.getCache().del(Constants.JR_SMS_CAPTCHA+account);
+
+        String domain = PropertiesUtil.getString("qiniu.domain");
+        Auth auth = Auth.create(PropertiesUtil.getString("qiniu.access_key"), PropertiesUtil.getString("qiniu.secret_key"));
+        String bucket = PropertiesUtil.getString("qiniu.bucket");
+        Configuration cfg = new Configuration(Zone.zone0());
+        BucketManager bucketManager = new BucketManager(auth, cfg);
+        String key = avatar.replace(domain, "");
+        String newKey = "avatar/"+DateUtil.getDateTime(DateUtil.DATE_PATTERN.YYYYMMDD)+"/"+DateUtil.getDateTime(DateUtil.DATE_PATTERN.HHMMSS)+user.getId()+key.substring(key.lastIndexOf("."),key.length());
+        try {
+            bucketManager.rename(bucket,key,newKey);
+        } catch (QiniuException e) {
+            e.printStackTrace();
+        }
+
+
         // 有密码
         if (StringUtils.isNotEmpty(user.getPassword())) {
             if (LoginHelper.login(account, password)) {
                 String token = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
-                User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
-                updateUser(record,token,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+                user.setAvatar(domain+newKey);
+                updateUser(user,token,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
                 request.setAttribute("msg", "[" + account + "]登录成功.");
-                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(token, record.getId(), record.getName(),record.getAvatar()));
+                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(token, user.getId(), user.getName(),user.getAvatar()));
             }
         } else {
             if (LoginHelper.login(user.getAccount())) {
                 String tokenId = EncryptUtils.encryptSHA256ToString(getCurrUser().toString()+System.currentTimeMillis());
-                User record = (User) provider.execute(new Parameter(getService(),"queryById").setId(getCurrUser())).getModel();
-                updateUser(record,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
-                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, record.getId(), record.getName(),record.getAvatar()));
+                user.setAvatar(domain+newKey);
+                updateUser(user,tokenId,pushDeviceToken,LoginDevice,LoginLat,LoginLng);
+                return setSuccessModelMap(modelMap, UserHelper.formatLoginResultMap(tokenId, user.getId(), user.getName(),user.getAvatar()));
             }
         }
 

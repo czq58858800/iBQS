@@ -78,4 +78,7 @@ public interface Constants {
 
     // 验证吗缓存
     public static String JR_SMS_CAPTCHA = "SMS_CAPTCHA:";
+
+    // 验证吗缓存
+    public static String JR_IMG_CAPTCHA = "IMG_CAPTCHA:";
 }

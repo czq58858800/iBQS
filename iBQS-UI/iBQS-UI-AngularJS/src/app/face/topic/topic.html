@@ -45,6 +45,7 @@
 					<tr>
 						<th>封面</th>
 						<th>名称</th>
+						<th>标签</th>
 						<th>浏览数</th>
 						<th>热门</th>
 						<th>热门更新时间</th>
@@ -58,6 +59,7 @@
 					<tr ng-repeat="item in pageInfo.records">
 						<td><a ui-sref="main.face.subject.list({keyword: item.name})"><img class="thumb-lg" ng-src="{{item.cover || defaultAvatar}}?imageView2/1/w/68/h/68"  alt="{{item.name}}" /></a></td>
 						<td class="v-middle" style="width: 10%"><span style="width:200px;display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><a ui-sref="main.face.subject.list({keyword: item.name})" alt="{{item.name}}">{{item.name}}</a></span></td>
+						<td class="v-middle">{{item.tags}}</td>
 						<td class="v-middle">{{item.viewNum}}</td>
 						<td class="v-middle">
 							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
@@ -83,7 +85,7 @@
 							<span ng-show="item.enable=='true'" class="text-success">启用</span>
 						</td>
 						<td class="v-middle">
-							<a ui-sref="main.shuo.subject.update({id: item.id})" class="btn btn-sm btn-default">
+							<a ui-sref="main.face.topic.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
 							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
 								<i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>

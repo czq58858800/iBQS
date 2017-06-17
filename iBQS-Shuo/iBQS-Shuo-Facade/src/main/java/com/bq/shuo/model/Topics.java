@@ -1,10 +1,10 @@
 package com.bq.shuo.model;
 
-import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
+
+import java.util.Date;
 
 
 /**
@@ -30,6 +30,9 @@ public class Topics extends BaseModel {
 	private Integer coverWidth;
 	@TableField("cover_height")
 	private Integer coverHeight;
+
+	@TableField("tags_")
+	private String tags;
 
 	@TableField("banner_")
 	private String banner;
@@ -116,6 +119,14 @@ public class Topics extends BaseModel {
 
 	public void setCoverHeight(Integer coverHeight) {
 		this.coverHeight = coverHeight;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 	public String getName() {

@@ -8,6 +8,7 @@ import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.User;
+import com.bq.shuo.model.UserConfig;
 import com.bq.shuo.provider.IShuoProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -123,34 +124,47 @@ public class Push {
                 }
 
                 if (StringUtils.isNotBlank(content)) {
-                    List<String> atUsers = findAtUser(content);
-                    for (String userName : atUsers) {
-                        Map<String,Object> params = InstanceUtil.newHashMap();
-                        params.put("name",userName);
-                        parameter = new Parameter("userService","query").setMap(params);
-                        Page<User> pageInfo = (Page<User>) provider.execute(parameter).getPage();
-                        if (!pageInfo.getRecords().isEmpty()) {
-                            User user = pageInfo.getRecords().get(0);
-                            //推送@好友
-                            if (user != null && sendUserId != user.getId()) {
-                                if (StringUtils.equals(type, PushType.COMMENTS)) {
-                                    push(sendUser.getName()+",评论中提到了你。",user, PushType.COMMENTS,subjectId);
-                                } else if (StringUtils.equals(type, PushType.FORWARD)) {
-                                    push(sendUser.getName()+",转发中提到了你。",user, PushType.FORWARD,recevieUser.getId());
-                                } else if (StringUtils.equals(type, PushType.AT)) {
-                                    push(sendUser.getName()+",主题中提到了你。",user, PushType.AT,subjectId);
-                                }
-                                setUserRemindNumber(user.getId(),PushType.NOTIFY_AT_NUM,+1);
-                                Notify notify = new Notify(sendUserId,user.getId(),subjectId,commentsId,content,"2");
-                                parameter = new Parameter("notifyService","update").setModel(notify);
-                                provider.execute(parameter);
-                            }
-                        }
-
-                    }
+                    pushAt(provider,sendUser,recevieUser,content);
                 }
             }
         });
+    }
+
+    /**
+     * at通知推送
+     * @param provider
+     * @param sendUser
+     * @param content
+     */
+    private void pushAt(IShuoProvider provider,User sendUser,User recevieUser,String content) {
+        List<String> atUsers = findAtUser(content);
+        for (String userName : atUsers) {
+            Map<String,Object> params = InstanceUtil.newHashMap();
+            params.put("name",userName);
+            Parameter parameter = new Parameter("userService","query").setMap(params);
+            Page<User> pageInfo = (Page<User>) provider.execute(parameter).getPage();
+            if (!pageInfo.getRecords().isEmpty()) {
+                User user = pageInfo.getRecords().get(0);
+
+                parameter = new Parameter("userConfigService", "selectByUserId").setId(user.getId());
+                UserConfig userConfig = (UserConfig) provider.execute(parameter).getModel();
+                //推送@好友
+                if (user != null && sendUserId != user.getId()) {
+
+                    if (userConfig.getIsNotifyAt() && StringUtils.equals(type, PushType.COMMENTS)) {
+                        push(sendUser.getName() + ",评论中提到了你。", user, PushType.COMMENTS, subjectId);
+                    } else if (userConfig.getIsNotifyAt() && StringUtils.equals(type, PushType.FORWARD)) {
+                        push(sendUser.getName() + ",转发中提到了你。", user, PushType.FORWARD, recevieUser.getId());
+                    } else if (userConfig.getIsNotifyAt() && StringUtils.equals(type, PushType.AT)) {
+                        push(sendUser.getName() + ",主题中提到了你。", user, PushType.AT, subjectId);
+                    }
+                    setUserRemindNumber(user.getId(), PushType.NOTIFY_AT_NUM, +1);
+                    Notify notify = new Notify(sendUserId, user.getId(), subjectId, commentsId, content, "2");
+                    parameter = new Parameter("notifyService", "update").setModel(notify);
+                    provider.execute(parameter);
+                }
+            }
+        }
     }
 
     private boolean push(String content,User user,String type,String identify) {

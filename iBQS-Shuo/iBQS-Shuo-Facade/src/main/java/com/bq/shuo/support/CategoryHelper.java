@@ -49,6 +49,7 @@ public final class CategoryHelper {
         resultMap.put("uid",record.getId());
         resultMap.put("cover",record.getCover());
         resultMap.put("coverType",record.getCoverType());
+        resultMap.put("type",record.getType());
         resultMap.put("name",record.getName());
         resultMap.put("summary",record.getSummary());
         resultMap.put("tags",record.getTags());

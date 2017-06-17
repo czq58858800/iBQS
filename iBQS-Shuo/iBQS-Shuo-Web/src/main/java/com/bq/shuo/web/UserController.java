@@ -8,16 +8,24 @@ import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
-import com.bq.core.util.SerializeUtil;
+import com.bq.core.util.PropertiesUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.support.login.ThirdPartyLoginHelper;
 import com.bq.shuo.core.support.login.ThirdPartyUser;
-import com.bq.shuo.model.*;
+import com.bq.shuo.model.User;
+import com.bq.shuo.model.UserConfig;
+import com.bq.shuo.model.UserFollowing;
+import com.bq.shuo.model.UserThirdparty;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.util.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,15 +34,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * UserController
@@ -154,8 +155,25 @@ public class UserController extends AbstractController<IShuoProvider> {
             }
         }
 
+        User u = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
+
+        String domain = PropertiesUtil.getString("qiniu.domain");
+        if (StringUtils.isNotBlank(avatar) && !StringUtils.equals(avatar,u.getAvatar()) && u.getAvatar().contains(domain)) {
+            Auth auth = Auth.create(PropertiesUtil.getString("qiniu.access_key"), PropertiesUtil.getString("qiniu.secret_key"));
+            String bucket = PropertiesUtil.getString("qiniu.bucket");
+            Configuration cfg = new Configuration(Zone.zone0());
+            BucketManager bucketManager = new BucketManager(auth, cfg);
+            // 旧头像
+            String key = u.getAvatar().replace(domain,"");
+            try {
+                bucketManager.delete(bucket, key);
+                logger.debug("文件 {} 删除成功", key);
+            } catch (QiniuException ex) {
+                logger.error("文件 {} 删除失败 Code:{} Response:{}", key,ex.code(),ex.response.toString());
+            }
+        }
+
         if (StringUtils.isNotBlank(password)) {
-            User u = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
             if (StringUtils.isBlank(u.getPassword())) {
                 user.setPassword(password);
             } else if (StringUtils.equals(oldPassword,u.getPassword())) {

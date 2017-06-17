@@ -1,17 +1,21 @@
 package com.bq.web.shuo;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Subject;
+import com.bq.shuo.model.Tag;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,11 +37,26 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.subject.read")
     @PutMapping(value = "/read/list")
     public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
+        String keyword = (String) param.get("keyword");
+        if (StringUtils.isNotBlank(keyword)) {
+            if (StringUtils.equals(keyword, "1") || StringUtils.equals("HOT",keyword.toUpperCase()) ) { // 热门主题
+                param.remove("keyword");
+                param.put("orderHot",true);
+            } else if (StringUtils.equals(keyword,"0") || StringUtils.equals("NEW",keyword.toUpperCase())){
+                param.remove("keyword");
+            }
+        }
+
         Parameter parameter = new Parameter(getService(), "queryBeans").setMap(param);
         logger.debug("{} execute query start...", parameter.getNo());
         Page<Subject> list = (Page<Subject>) provider.execute(parameter).getPage();
         logger.debug("{} execute query end.", parameter.getNo());
-        return setSuccessModelMap(modelMap, list);
+
+        parameter = new Parameter("tagService","queryByAll");
+        List<Tag> tagList = (List<Tag>) provider.execute(parameter).getList();
+        Map<String,Object> extendMap = InstanceUtil.newHashMap();
+        extendMap.put("tags",tagList);
+        return setSuccessModelMap(modelMap, list,extendMap);
     }
 
     @ApiOperation(value = "表情详情")
@@ -54,9 +73,9 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
         return super.update(modelMap, param);
     }
 
-    @DeleteMapping
     @ApiOperation(value = "删除表情")
     @RequiresPermissions("shuo.subject.delete")
+    @PostMapping(value = "/delete")
     public Object delete(ModelMap modelMap, @RequestBody Subject param) {
         return super.delete(modelMap, param);
     }

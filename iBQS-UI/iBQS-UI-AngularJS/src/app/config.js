@@ -1,5 +1,5 @@
 // config
-window.APP = { version : 'v=20160509' };
+window.APP = { version : 'v=20170615' };
 
 angular.module('app')
   .config(['$controllerProvider', '$compileProvider', '$filterProvider', '$provide',

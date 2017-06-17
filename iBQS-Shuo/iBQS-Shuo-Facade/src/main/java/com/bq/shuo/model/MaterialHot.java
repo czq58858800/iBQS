@@ -20,6 +20,9 @@ public class MaterialHot extends BaseModel {
 
 	@TableField("value_")
 	private String value;
+	/**类别:(0:全部;1:贴纸;2:素材)*/
+	@TableField("type_")
+	private String type;
 	@TableField("sort_")
 	private Integer sort;
 

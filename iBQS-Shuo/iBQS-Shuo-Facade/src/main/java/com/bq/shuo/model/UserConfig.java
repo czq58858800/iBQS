@@ -1,10 +1,8 @@
 package com.bq.shuo.model;
 
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
 
 
 /**
@@ -54,6 +52,13 @@ public class UserConfig extends BaseModel {
      */
 	@TableField("is_works_follow")
 	private Boolean isWorksFollow;
+
+
+	/**
+	 * 是否允许@通知
+	 */
+	@TableField("is_notify_at")
+	private Boolean isNotifyAt;
 
 	public UserConfig() {}
 
@@ -182,4 +187,11 @@ public class UserConfig extends BaseModel {
 		isWorksFollow = worksFollow;
 	}
 
+	public Boolean getIsNotifyAt() {
+		return isNotifyAt;
+	}
+
+	public void setIsNotifyAt(Boolean isNotifyAt) {
+		this.isNotifyAt = isNotifyAt;
+	}
 }

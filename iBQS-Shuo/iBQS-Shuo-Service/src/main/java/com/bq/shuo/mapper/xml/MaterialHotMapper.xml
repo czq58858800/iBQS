@@ -7,6 +7,12 @@
 	<select id="selectIdPage" resultType="java.lang.String">
 		select id_ from bq_material_hot
 		<where>
+			<if test="cm.enable != null and cm.enable != ''">
+				and enable_ = #{cm.enable}
+			</if>
+			<if test="cm.type != null and cm.type != ''">
+				and type_ = 0 or type_ = #{cm.type}
+			</if>
 			<if test="cm.keyword != null and cm.keyword != ''">
 				and (
 					or value_ like CONCAT('%',#{cm.keyword},'%')

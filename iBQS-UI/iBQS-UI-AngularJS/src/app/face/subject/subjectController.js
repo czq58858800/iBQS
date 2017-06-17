@@ -5,9 +5,8 @@ angular.module('app')
         function($rootScope, $scope, $http, $state,$stateParams) {
             $scope.title = '表情管理';
             $scope.param = { };
-            $scope.param.enable = 1;
+            $scope.param.enable = true;
             $scope.loading = false;
-            $scope.param.orderHotTime = 1;
 
             var keyword = $state.params.keyword;
             if (keyword != null) {
@@ -47,36 +46,32 @@ angular.module('app')
                 $scope.search();
             }
 
-            $scope.searchHot = function () {
-                $scope.param.orderHot = true;
+            $scope.searchKeyword = function (keyword) {
+                $scope.param.keyword = keyword;
                 $scope.search();
             }
 
-            $scope.searchNew = function () {
-                $scope.param.orderHot = null;
-                $scope.search();
-            }
-
-            $scope.disableItem = function(id, enable) {
-                $scope.loading = true;
-                $.ajax({
-                    type: 'DELETE',
-                    dataType: 'json',
-                    contentType:'application/json;charset=UTF-8',
-                    url : '/shuo/subject/delete',
-                    data: angular.toJson({
-                        id:id,
-                        enable:enable
-                    })
-                }).then(function(result) {
-                    $scope.loading = false;
-                    if (result.code == 200) {
-                        $scope.search();
-                    } else {
-                        $scope.msg = result.msg;
-                    }
-                    $scope.$apply();
-                });
+            $scope.deleteItem = function(id) {
+                if (confirm('确认要删除？')) {
+                    $scope.loading = true;
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        url: '/shuo/subject/delete',
+                        data: angular.toJson({
+                            id: id
+                        })
+                    }).then(function (result) {
+                        $scope.loading = false;
+                        if (result.code == 200) {
+                            $scope.search();
+                        } else {
+                            $scope.msg = result.msg;
+                        }
+                        $scope.$apply();
+                    });
+                }
             }
             
             $scope.updateHot = function (id,isHot) {

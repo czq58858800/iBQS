@@ -1,8 +1,10 @@
 package com.bq.web.shuo;
 
 import com.bq.shuo.core.base.AbstractController;
+import com.bq.shuo.core.base.BaseModel;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Subject;
+import com.bq.shuo.model.Tag;
 import com.bq.shuo.model.Topics;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
@@ -12,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,7 +43,13 @@ public class TopicControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.topic.read")
     @PutMapping(value = "/read/detail")
     public Object get(ModelMap modelMap, @RequestBody Topics param) {
-        return super.get(modelMap, param);
+        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
+        BaseModel result = provider.execute(parameter).getModel();
+
+        parameter = new Parameter("tagService","queryByAll");
+        List<Tag> tagList = (List<Tag>) provider.execute(parameter).getList();
+        modelMap.put("tags",tagList);
+        return setSuccessModelMap(modelMap, result);
     }
 
 

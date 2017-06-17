@@ -192,6 +192,7 @@ public class SearchController extends AbstractController<IShuoProvider> {
         params.put("currUserId",getCurrUser());
         params.put("audit",2);
         params.put("orderType",2);
+        params.put("stuffNumLT",true);
         params.put("enable",true);
         if (StringUtils.equals("SYN",t.trim().toUpperCase())) {
             Parameter queryCategoryBeansParam = new Parameter("categoryService","queryBeans").setMap(params);
