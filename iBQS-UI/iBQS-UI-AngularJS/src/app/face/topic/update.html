@@ -61,7 +61,7 @@
 					<label class="col-lg-2 col-sm-3 control-label">标签</label>
 					<div class="col-sm-6" ng-show="record.cover && record.banner">
 						<input type="text" class="form-control" name="tags" id="tags" placeholder="请输入标签名称..." ng-model="record.tags" disabled="disabled" style="color: darkred">
-						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">可用标签:<a ng-repeat="item in tags" ng-click="setTags(item.name)" class="m-l-xs"><span class="label label-default">{{item.name}}</span></a></pre></span>
+						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">可用标签:<a ng-repeat="item in tags" ng-click="setTags($event,item.name)" class="m-l-xs"><span class="label label-default">{{item.name}}</span></a></pre></span>
 					</div>
 					<div class="col-sm-6" ng-hide="record.cover && record.banner">
 						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">封面&横幅不能为空</pre></span>

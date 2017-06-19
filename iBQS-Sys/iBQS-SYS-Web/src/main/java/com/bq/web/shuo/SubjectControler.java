@@ -39,10 +39,10 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
     public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
         String keyword = (String) param.get("keyword");
         if (StringUtils.isNotBlank(keyword)) {
-            if (StringUtils.equals(keyword, "1") || StringUtils.equals("HOT",keyword.toUpperCase()) ) { // 热门主题
+            if (StringUtils.equals(keyword, "1") || StringUtils.equals("HOT",keyword.toUpperCase()) || StringUtils.equals("热门",keyword.toUpperCase())) { // 热门主题
                 param.remove("keyword");
                 param.put("orderHot",true);
-            } else if (StringUtils.equals(keyword,"0") || StringUtils.equals("NEW",keyword.toUpperCase())){
+            } else if (StringUtils.equals(keyword,"0") || StringUtils.equals("NEW",keyword.toUpperCase()) || StringUtils.equals("最新",keyword.toUpperCase())){
                 param.remove("keyword");
             }
         }

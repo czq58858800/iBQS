@@ -47,8 +47,30 @@ angular.module('app')
                 }
 
 
-            $scope.setTags = function(tags) {
-                $scope.record.tags = tags
+            $scope.setTags = function($event,tags) {
+
+                if($($event.target).hasClass("label-success")){
+                    var temp = $scope.record.tags;
+                    if(temp.split(",").length == 1) {
+                        $scope.record.tags = null;
+                    } else {
+                        if(temp.indexOf(tags+",") == 0){
+                            $scope.record.tags = temp.replace(tags+",","")
+                        } else {
+                            $scope.record.tags = temp.replace(","+tags,"")
+                        }
+                    }
+                    $($event.target).removeClass("label-success");
+                    $($event.target).addClass("label-default");
+                } else {
+                    if (!$scope.record.tags){
+                        $scope.record.tags = tags;
+                    } else {
+                        $scope.record.tags += ","+tags;
+                    }
+                    $($event.target).removeClass("label-default");
+                    $($event.target).addClass("label-success");
+                }
             }
 
                 // $state.go('main.shuo.topic.update.album',{topicId:id});

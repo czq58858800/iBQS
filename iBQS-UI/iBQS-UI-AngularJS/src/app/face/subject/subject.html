@@ -36,8 +36,7 @@
 
 				<a ng-click="setTags(item.name)" class="m-l-xs"><span class="label label-default">{{item.name}}</span></a>
 				<span id="tag" ng-repeat="item in pageInfo.tags">
-					<a ng-if="item.type == '1'" ng-click="searchKeyword(item.code == '0' ? 'NEW':'HOT')" class="m-l-xs"><span class="label label-default">{{item.name}}</span></a>
-					<a ng-if="item.type == '2'" ng-click="searchKeyword(item.name)" class="m-l-xs"><span class="label label-default">{{item.name}}</span></a>
+					<a ng-click="searchKeyword(item.name)" class="m-l-xs"><span class="label label-{{param.keyword === item.name ? 'success' : 'default'}}">{{item.name}}</span></a>
 				</span>
 
 			</div>
