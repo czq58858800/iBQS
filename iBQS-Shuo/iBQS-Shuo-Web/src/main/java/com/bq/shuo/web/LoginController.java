@@ -156,7 +156,7 @@ public class LoginController extends AbstractController<IShuoProvider> {
             CacheUtil.unlock(lockKey);
         }
 
-        return setSuccessModelMap(modelMap,res);
+        return setSuccessModelMap(modelMap);
     }
 
 

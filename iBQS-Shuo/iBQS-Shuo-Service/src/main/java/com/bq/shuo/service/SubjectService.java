@@ -71,6 +71,9 @@ public class SubjectService extends BaseService<Subject> {
     @Autowired
     private TopicsService topicsService;
 
+    @Autowired
+    private BlacklistService blacklistService;
+
     // 线程池
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -260,21 +263,30 @@ public class SubjectService extends BaseService<Subject> {
 
                 user.setFollow(userFollowingService.selectByIsFollow(currUserId,record.getUserId()));
 
-                // 判断作品作者是否关注了当前登录用户
-                boolean isFolow = userFollowingService.selectByIsFollow(record.getUserId(),currUserId);
 
-                // 是否允许改图
+                boolean isBlacklist = blacklistService.selectIsBlacklistByUserId(record.getUserId(),currUserId);
                 boolean isWorks = true;
-                if (!user.getConfig().getIsWorks()) { // 是否只允许作品作者所关注的用户改图
-                    isWorks = isFolow;
-                }
-                record.setWorks(isWorks);
-
-                // 是否允许评论
                 boolean isComment = true;
-                if (!user.getConfig().getIsComment()) { // 是否只允许作品作者所关注的用户评论
-                    isComment = isFolow;
+
+
+                if (!isBlacklist) {
+                    // 判断作品作者是否关注了当前登录用户
+                    boolean isFolow = userFollowingService.selectByIsFollow(record.getUserId(), currUserId);
+                    // 是否允许改图
+                    if (!user.getConfig().getIsWorks()) { // 是否只允许作品作者所关注的用户改图
+                        isWorks = isFolow;
+                    }
+
+                    // 是否允许评论
+                    if (!user.getConfig().getIsComment()) { // 是否只允许作品作者所关注的用户评论
+                        isComment = isFolow;
+                    }
+                } else {
+                    isWorks = false;
+                    isComment = false;
                 }
+
+                record.setWorks(isWorks);
                 record.setComment(isComment);
             } else {
                 record.setWorks(user.getConfig().getIsWorks());

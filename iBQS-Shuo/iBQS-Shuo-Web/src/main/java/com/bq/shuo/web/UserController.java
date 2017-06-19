@@ -386,7 +386,7 @@ public class UserController extends AbstractController<IShuoProvider> {
         int captcha = smsCaptcha.getInteger("captcha");
         // 判断验证码是否一致
         if (smsCode != captcha) {
-            throw new IllegalArgumentException(Resources.getMessage(("SMS_CAPTCHA_INCORRECT")));
+           return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
         }
 
         User record = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();

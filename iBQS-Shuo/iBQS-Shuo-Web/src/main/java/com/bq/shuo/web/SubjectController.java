@@ -336,7 +336,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         provider.execute(parameter);
 
         // 发布推送
-        new Push(PushType.AT,getCurrUser(),subject.getUserId(),subjectId,content);
+        new Push(PushType.AT,getCurrUser(),subject.getUserId(),subject.getId(),content);
 
         return setSuccessModelMap(modelMap);
     }

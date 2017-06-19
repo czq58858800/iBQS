@@ -38,9 +38,9 @@ public class FeedbackController extends AbstractController<IShuoProvider> {
     @ApiOperation(value = "提交")
     @PostMapping("/sub")
     public Object sub(HttpServletRequest request, ModelMap modelMap,
-                      @ApiParam(required = true,value = "设备") @RequestParam(value = "Device") String device,
+                      @ApiParam(required = true,value = "设备") @RequestParam(value = "device") String device,
                       @ApiParam(required = true, value = "提交内容") @RequestParam(value = "subContent") String subContent,
-                      @ApiParam(required = true, value = "联系人(联系方式)") @RequestParam(value = "contacts") String contacts) {
+                      @ApiParam(required = false, value = "联系人(联系方式)") @RequestParam(value = "contacts",required = false) String contacts) {
         Feedback record = new Feedback();
         record.setDevice(device);
         record.setIp(WebUtil.getHost(request));

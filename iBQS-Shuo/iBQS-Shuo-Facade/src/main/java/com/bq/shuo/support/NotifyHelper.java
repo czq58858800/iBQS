@@ -3,6 +3,7 @@ package com.bq.shuo.support;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.model.Notify;
+import com.bq.shuo.model.Subject;
 import com.bq.shuo.model.User;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,8 +28,11 @@ public final class NotifyHelper {
         Map<String, Object> resultMap = InstanceUtil.newHashMap();
         if (record != null && StringUtils.isNotBlank(record.getId())) {
             resultMap.put("uid", record.getId());
-            resultMap.put("cover",record.getSubject().getCover());
-            resultMap.put("coverType",record.getSubject().getCoverType());
+            if (record.getSubject() != null) {
+                Subject subject = record.getSubject();
+                resultMap.put("cover",subject.getCover());
+                resultMap.put("coverType",subject.getCoverType());
+            }
             resultMap.put("subjectId", record.getSubjectId());
             resultMap.put("content", record.getContent());
             resultMap.put("msgType", record.getMsgType());
