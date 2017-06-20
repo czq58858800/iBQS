@@ -2,16 +2,13 @@ package com.bq.shuo.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
-import com.bq.core.util.InstanceUtil;
-import com.bq.shuo.mapper.UserWeiboMapper;
-import com.bq.shuo.model.User;
-import com.bq.shuo.model.UserWeibo;
 import com.bq.shuo.core.base.BaseService;
+import com.bq.shuo.mapper.UserWeiboMapper;
+import com.bq.shuo.model.UserWeibo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +41,10 @@ public class UserWeiboService extends BaseService<UserWeibo> {
         idPage.setRecords(userWeiboMapper.selectIdPageByFollow(idPage, params));
         Page<UserWeibo> page = getPage(idPage);
         return page;
+    }
+
+    public void deleteAllByUserId(String userId) {
+        userWeiboMapper.deleteAllByUserId(userId);
     }
 
 

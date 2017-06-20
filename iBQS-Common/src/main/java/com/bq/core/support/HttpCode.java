@@ -55,6 +55,8 @@ public enum HttpCode {
 	USER_HAS_BOUND(2007),
 	/** 未绑定其他用户不允许解除绑定*/
 	USER_NO_BOUND(2107),
+	/** 请先绑定手机号 */
+	USER_PHONE_BOUD(2108),
 	/** 已在黑名单 */
 	ALREADY_IN_BLACKLIST(2008),
 	/** 不在黑名单 */

@@ -47,7 +47,10 @@ angular.module('app')
             }
 
             $scope.searchKeyword = function (keyword) {
-                $scope.param.keyword = keyword;
+                if ($scope.param.keyword == keyword)
+                    $scope.param.keyword = null;
+                else
+                    $scope.param.keyword = keyword;
                 $scope.search();
             }
 

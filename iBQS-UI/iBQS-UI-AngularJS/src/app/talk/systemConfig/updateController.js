@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('app')
-    .controller('materialHotUpdateController', ['$scope', '$rootScope', '$state', '$timeout', 'toaster',
+    .controller('systemConfigUpdateController', ['$scope', '$rootScope', '$state', '$timeout', 'toaster',
         function($scope, $rootScope, $state, $timeout, toaster) {
             var title = "";
-            if($state.includes('**.material.hot.update')){
-                title="编辑素材关键词";
+            if($state.includes('**.system.config.update')){
+                title="编辑App配置管理";
                 var id = $state.params.id;
                 activate(id);
                 validate(id);
-            }else if($state.includes('**.material.hot.create')){
-                title="添加素材关键词";
+            }else if($state.includes('**.system.config.create')){
+                title="添加App配置管理";
                 validate(null);
             }
 
@@ -29,7 +29,7 @@ angular.module('app')
                     $scope.isDisabled = true;//提交disabled
                     $.ajax({
                         type: 'POST',
-                        url : '/shuo/materialHot',
+                        url : '/shuo/systemConfig',
                         dataType: 'json',
                         contentType:'application/json;charset=UTF-8',
                         data: angular.toJson(m)
@@ -40,7 +40,7 @@ angular.module('app')
                         toaster.clear('*');
                         toaster.pop('success', '', "保存成功");
                         $timeout(function(){
-                            $state.go('main.shuo.material.hot.list');
+                            $state.go('main.talk.system.config.list');
                         },2000);
                     }else{
                         toaster.clear('*');
@@ -56,7 +56,7 @@ angular.module('app')
                 $scope.loading = true;
                 $.ajax({
                     type: 'PUT',
-                    url : '/shuo/materialHot/read/detail',
+                    url : '/shuo/systemConfig/read/detail',
                     dataType: 'json',
                     contentType:'application/json;charset=UTF-8',
                     data: angular.toJson({'id': id})

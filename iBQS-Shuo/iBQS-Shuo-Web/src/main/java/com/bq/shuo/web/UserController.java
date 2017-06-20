@@ -15,10 +15,7 @@ import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.helper.PushType;
 import com.bq.shuo.core.support.login.ThirdPartyLoginHelper;
 import com.bq.shuo.core.support.login.ThirdPartyUser;
-import com.bq.shuo.model.User;
-import com.bq.shuo.model.UserConfig;
-import com.bq.shuo.model.UserFollowing;
-import com.bq.shuo.model.UserThirdparty;
+import com.bq.shuo.model.*;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
 import com.qiniu.common.QiniuException;
@@ -286,7 +283,7 @@ public class UserController extends AbstractController<IShuoProvider> {
                  @ApiParam(required = true, value = "类型:{WX;QQ;SINA}") @RequestParam(value = "type",required = false) String type,
                  @ApiParam(required = true, value = "token") @RequestParam(value = "token",required = false) String token,
                  @ApiParam(required = true, value = "OpenId") @RequestParam(value = "openId",required = false) String openId) {
-        UserThirdparty thirdpartyUser;
+        UserThirdparty thirdpartyUser = null;
 
         // 解除绑定
         if (StringUtils.isNotBlank(thirdId)) {
@@ -299,7 +296,9 @@ public class UserController extends AbstractController<IShuoProvider> {
                 return setModelMap(modelMap,HttpCode.USER_NO_BOUND);
             }
 
-            if (StringUtils.isBlank(user.getPhone())) {
+            int thirdpartyUserCount = (int) provider.execute(new Parameter("userThirdpartyService","selectCountByUserId").setId(thirdpartyUser.getUserId())).getObject();
+
+            if (thirdpartyUserCount < 1) {
                 return setModelMap(modelMap,HttpCode.USER_NO_BOUND);
             }
 
@@ -309,34 +308,41 @@ public class UserController extends AbstractController<IShuoProvider> {
                     provider.execute(new Parameter("userService","update").setModel(user));
                 }
             }
+            if (StringUtils.equals(thirdpartyUser.getProvider().toUpperCase(),"SINA")) {
+                String userId = thirdpartyUser.getUserId();
+                provider.execute(new Parameter("userWeiboService", "deleteAllByUserId").setId(userId));
+            }
             provider.execute(new Parameter("userThirdpartyService","delete").setId(thirdpartyUser.getId()));
             return setSuccessModelMap(modelMap);
         } else {
 
-            thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {openId,type})).getModel();
-            if (thirdpartyUser == null) {
-                thirdpartyUser = new UserThirdparty();
-                thirdpartyUser.setOpenId(openId);
-                thirdpartyUser.setProvider(type);
-                try {
-                    ThirdPartyUser thirdUser = null;
-                    if (StringUtils.equals(type.toUpperCase(),"WX")){
-                        thirdUser = ThirdPartyLoginHelper.getWxUserinfo(token, openId);
-                    }
-                    if (StringUtils.equals(type.toUpperCase(),"QQ")){
-                        thirdUser = ThirdPartyLoginHelper.getQQUserinfo(LoginDevice,token, openId);
-                    }
-                    if (StringUtils.equals(type.toUpperCase(),"SINA")){
-                        thirdUser = ThirdPartyLoginHelper.getSinaUserinfo(token, openId);
-                        if (thirdUser.getVerified()) {
+            try {
+                ThirdPartyUser thirdUser = null;
+                if (StringUtils.equals(type.toUpperCase(),"WX")){
+                    thirdUser = ThirdPartyLoginHelper.getWxUserinfo(token, openId);
+                    thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {thirdUser.getOpenid(),type})).getModel();
+                }
+                if (StringUtils.equals(type.toUpperCase(),"QQ")){
+                    thirdUser = ThirdPartyLoginHelper.getQQUserinfo(LoginDevice,token, openId);
+                    thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {thirdUser.getOpenid(),type})).getModel();
+                }
 
-                            thirdpartyUser.setVerified(true);
-                            User user = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
-                            user.setUserType("2");
-                            provider.execute(new Parameter("userService","update").setModel(user));
-                        }
-                    }
+                if (StringUtils.equals(type.toUpperCase(),"SINA")){
+                    thirdUser = ThirdPartyLoginHelper.getSinaUserinfo(token, openId);
+                    thirdpartyUser = (UserThirdparty) provider.execute(new Parameter("userThirdpartyService","queryByThirdParty").setObjects(new Object[] {openId,type})).getModel();
+                }
 
+                if (thirdpartyUser == null) {
+                    thirdpartyUser = new UserThirdparty();
+                    thirdpartyUser.setOpenId(openId);
+                    thirdpartyUser.setProvider(type);
+
+                    if (thirdUser.getVerified()) {
+                        thirdpartyUser.setVerified(true);
+                        User user = (User) provider.execute(new Parameter("userService","queryById").setId(getCurrUser())).getModel();
+                        user.setUserType("2");
+                        provider.execute(new Parameter("userService","update").setModel(user));
+                    }
                     thirdpartyUser.setVerifiedReason(thirdUser.getVerifiedReason());
 
                     thirdpartyUser.setToken(token);
@@ -351,13 +357,12 @@ public class UserController extends AbstractController<IShuoProvider> {
                     provider.execute(new Parameter("userThirdpartyService","update").setModel(thirdpartyUser));
 
                     return setSuccessModelMap(modelMap);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return setModelMap(modelMap,HttpCode.INTERNAL_SERVER_ERROR);
+                } else {
+                    return setModelMap(modelMap,HttpCode.USER_HAS_BOUND);
                 }
-            } else {
-                return setModelMap(modelMap,HttpCode.USER_HAS_BOUND);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return setModelMap(modelMap,HttpCode.INTERNAL_SERVER_ERROR);
             }
         }
     }

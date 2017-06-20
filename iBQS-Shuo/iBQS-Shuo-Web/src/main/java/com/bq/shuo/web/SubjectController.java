@@ -8,6 +8,7 @@ import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
 import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
+import com.bq.core.util.PropertiesUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
@@ -19,6 +20,11 @@ import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.SubjectHelper;
 import com.bq.shuo.support.SubjectLikedHelper;
 import com.bq.shuo.support.TopicHelper;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.util.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -245,7 +251,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             parameter = new Parameter("subjectService","queryById").setId(subjectId);
             Subject subject = (Subject) provider.execute(parameter).getModel();
 
-            if (subject.getEnable()) {
+            if (subject != null && subject.getEnable()) {
                 parameter = new Parameter("subjectLikedService", "updateCancelLiked").setObjects(new Object[]{subjectId, getCurrUser()});
                 provider.execute(parameter);
             }
@@ -290,12 +296,27 @@ public class SubjectController extends AbstractController<IShuoProvider> {
                       @ApiParam(required = false, value = "图层关键字") @RequestParam(value = "layerKeyword",required = false) String layerKeyword,
                       @ApiParam(required = true, value = "表情图片(List{'image':String,'isLayer':boolean,layerInfo:String})") @RequestParam(value = "images") String images,
                       @ApiParam(required = true, value = "内容") @RequestParam(value = "content") String content) {
-        Parameter parameter = new Parameter("subjectService","selectHashById").setId(coverHash);
-        String subjectId = provider.execute(parameter).getId();
-        if (StringUtils.isNotBlank(subjectId)) {
-            parameter = new Parameter("subjectService","queryById").setId((String) subjectId);
-            Subject subject = (Subject) provider.execute(parameter).getModel();
-            return setModelMap(modelMap,HttpCode.SUBJECT_EXIST,SubjectHelper.formatBriefResultMap(subject));
+        JSONArray imagesArr = JSONArray.parseArray(images);
+        if (imagesArr.size() == 1) {
+            Parameter parameter = new Parameter("subjectService", "selectHashById").setId(coverHash);
+            String subjectId = provider.execute(parameter).getId();
+            if (StringUtils.isNotBlank(subjectId)) {
+                parameter = new Parameter("subjectService", "queryById").setId((String) subjectId);
+                Subject subject = (Subject) provider.execute(parameter).getModel();
+                // 删除文件
+                Auth auth = Auth.create(PropertiesUtil.getString("qiniu.access_key"), PropertiesUtil.getString("qiniu.secret_key"));
+                String key = cover.replace(PropertiesUtil.getString("qiniu.domain"),"");
+                String bucket = PropertiesUtil.getString("qiniu.bucket");
+                Configuration cfg = new Configuration(Zone.zone0());
+                BucketManager bucketManager = new BucketManager(auth, cfg);
+                try {
+                    bucketManager.delete(bucket, key);
+                    logger.debug("文件 {} 删除成功", key);
+                } catch (QiniuException ex) {
+                    logger.error("文件 {} 删除失败 Code:{} Response:{}", key,ex.code(),ex.response.toString());
+                }
+                return setModelMap(modelMap, HttpCode.SUBJECT_EXIST, SubjectHelper.formatBriefResultMap(subject));
+            }
         }
 
 
@@ -317,10 +338,9 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         subject.setCoverHash(coverHash);
         subject.setCover(cover);
 
-        parameter = new Parameter("subjectService","update").setModel(subject);
+        Parameter parameter = new Parameter("subjectService","update").setModel(subject);
         subject = (Subject) provider.execute(parameter).getModel();
 
-        JSONArray imagesArr = JSONArray.parseArray(images);
         subject = upload(imagesArr,subject);
 
         parameter = new Parameter("subjectService","update").setModel(subject);

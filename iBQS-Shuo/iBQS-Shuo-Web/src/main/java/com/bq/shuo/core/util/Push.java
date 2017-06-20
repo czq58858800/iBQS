@@ -6,6 +6,7 @@ import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.helper.PushType;
+import com.bq.shuo.model.Comments;
 import com.bq.shuo.model.Notify;
 import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserConfig;
@@ -106,6 +107,15 @@ public class Push {
                     parameter = new Parameter("notifyService","update").setModel(notify);
                     provider.execute(parameter);
                 }*/
+
+                parameter = new Parameter("commentsService","queryById").setId(commentsId);
+                Comments comments = (Comments) provider.execute(parameter).getModel();
+                if (StringUtils.isNotBlank(comments.getBeReplyId()) && !StringUtils.equals(sendUserId,comments.getBeReplyId())) {
+                    setUserRemindNumber(comments.getBeReplyId(), PushType.NOTIFY_COMMENTS_NUM, +1);
+                    Notify notify = new Notify(sendUserId, comments.getBeReplyId(), subjectId, commentsId, StringUtils.isNotBlank(content) ? content : pushContent, type);
+                    parameter = new Parameter("notifyService", "update").setModel(notify);
+                    provider.execute(parameter);
+                }
 
 
                 if (StringUtils.isNotBlank(recevieUserId) && !StringUtils.equals(sendUserId,recevieUserId)) {

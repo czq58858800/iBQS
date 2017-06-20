@@ -17,5 +17,5 @@ import org.springframework.stereotype.Service;
 @Service
 @CacheConfig(cacheNames = Constants.CACHE_SHUO_NAMESPACE+"layer")
 public class LayerService extends BaseService<Layer> {
-	
+
 }

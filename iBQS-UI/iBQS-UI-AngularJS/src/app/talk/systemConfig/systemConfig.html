@@ -40,7 +40,7 @@
 				<table class="table table-striped b-t b-light text-center">
 					<thead>
 					<tr>
-						<th>KEY<th>
+						<th>KEY</th>
 						<th>VALUE</th>
 						<th>备注</th>
 						<th>创建时间</th>
@@ -59,12 +59,8 @@
 							<span ng-show="item.enable=='true'" class="text-success">启用</span>
 						</td>
 						<td class="v-middle">
-							<a ui-sref="main.shuo.material.hot.update({id: item.id})" class="btn btn-sm btn-default">
+							<a ui-sref="main.talk.system.config.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
-							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,1)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-ban m-r-xs text-sm"></i>启用</button>
-							<button type="button" ng-hide="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
-								<i class="fa fa-check m-r-xs text-sm"></i>禁用</button>
 						</td>
 					</tr>
 					</tbody>

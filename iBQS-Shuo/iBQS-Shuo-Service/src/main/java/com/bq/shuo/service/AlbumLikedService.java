@@ -1,12 +1,13 @@
 package com.bq.shuo.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
-import com.bq.shuo.mapper.AlbumLikedMapper;
-import com.bq.shuo.model.*;
 import com.bq.shuo.core.base.BaseService;
+import com.bq.shuo.mapper.AlbumLikedMapper;
+import com.bq.shuo.model.Album;
+import com.bq.shuo.model.AlbumLiked;
+import com.bq.shuo.model.Subject;
+import com.bq.shuo.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -45,9 +46,14 @@ public class AlbumLikedService extends BaseService<AlbumLiked> {
         Page<AlbumLiked> pageInfo = query(params);
         for (AlbumLiked record:pageInfo.getRecords()) {
             record.setAlbum(albumService.queryById(record.getAlbumId()));
-            Subject subject = subjectService.queryById(record.getAlbum().getSubjectId());
-            subject.setUser(userService.queryById(subject.getUserId()));
-            record.setSubject(subject);
+            if (record.getAlbumId() != null) {
+                record.setSubject(subjectService.queryById(record.getAlbum().getSubjectId()));
+                if (record.getSubject() != null) {
+                    User user = userService.queryById(record.getSubject().getUserId());
+                    if (user != null)
+                        record.getSubject().setUser(user);
+                }
+            }
         }
         return pageInfo;
     }

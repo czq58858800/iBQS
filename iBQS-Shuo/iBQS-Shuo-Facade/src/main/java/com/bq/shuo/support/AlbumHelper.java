@@ -37,7 +37,7 @@ public final class AlbumHelper {
             resultMap.put("height", record.getAlbum().getImageHeight());
             resultMap.put("height", record.getAlbum().getImageHeight());
             resultMap.put("createTime", record.getAlbum().getCreateTime().getTime());
-            resultMap.put("enable",record.getSubject().getEnable());
+            resultMap.put("enable",record.getSubject() == null ? false : record.getSubject().getEnable());
             resultMap.put("subject",SubjectHelper.formatBriefResultMap(record.getSubject()));
         }
         return resultMap;

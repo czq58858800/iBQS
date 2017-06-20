@@ -98,7 +98,6 @@ public class CommentsController extends AbstractController<IShuoProvider> {
 
         // 评论推送
         new Push(PushType.COMMENTS,getCurrUser(),subject.getUserId(),subjectId,record.getId(),content);
-
         return setSuccessModelMap(modelMap);
     }
 

@@ -21,4 +21,6 @@ public interface UserWeiboMapper extends BaseMapper<UserWeibo> {
     String queryByOpenId(@Param("openId") String openId, @Param("userId") String userId);
 
     List<String> selectIdPageByFollow(Page<String> idPage, @Param("cm")Map<String, Object> params);
+
+    void deleteAllByUserId(@Param("userId") String userId);
 }

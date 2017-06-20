@@ -6,7 +6,7 @@
 <div class="bg-white bread-crumb">
 	<ul class="breadcrumb b-a m-b-n-xs lter b-b wrapper-md">
 		<li><a ui-sref="main.index"><i class="fa fa-home"></i> 首页</a></li>
-		<li><a ui-sref="main.shuo.material.hot.list">素材热词管理</a></li>
+		<li><a ui-sref="main.talk.system.config.list">App配置管理</a></li>
 		<li class="active" ng-bind="title"></li>
 	</ul>
 </div>
@@ -16,26 +16,26 @@
 	<div class="panel panel-default">
 		<!-- 头部 -->
 		<div class="panel-heading font-bold">{{title}}
-			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.sys.user.list"><i class="text-md fa fa-times text-muted"></i></a>
+			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.talk.system.config.list"><i class="text-md fa fa-times text-muted"></i></a>
 		</div>
 		<!--表单-->
 		<div class="panel-body">
 			<form class="form-horizontal"  name="materialHot_form">
 				<!--关键词-->
 				<div class="form-group">
-					<label class="col-lg-2 col-sm-3 control-label" for="value">
-						<span class="text-danger wrapper-sm">*</span>关键词</label>
+					<label class="col-lg-2 col-sm-3 control-label">
+						<span class="text-danger wrapper-sm">*</span>KEYWORD</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" name="value" id="value" placeholder="请输入关键词..." ng-model="record.value">
-						<span class="help-block m-b-none">关键词</span>
+						<span class="label label-default">{{record.code}}</span>
+						<span class="help-block m-b-none"><pre style="margin-top: 10px;white-space: pre-wrap;word-wrap: break-word;">{{record.remark}}</pre></span>
 					</div>
 				</div>
 				<div class="line line-dashed b-b line-lg pull-in"></div>
-				<!--真实姓名-->
+				<!--VALUE-->
 				<div class="form-group">
-					<label class="col-lg-2 col-sm-3 control-label" for="sort">排序</label>
+					<label class="col-lg-2 col-sm-3 control-label" for="value">VALUE</label>
 					<div class="col-sm-6">
-						<input type="number" class="form-control" name="sort" id="sort" placeholder="排序..." ng-model="record.sort">
+						<input type="text" class="form-control" name="value" id="value" placeholder="VALUE..." ng-model="record.value">
 						<span class="help-block m-b-none"></span>
 					</div>
 				</div>

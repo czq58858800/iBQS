@@ -847,10 +847,10 @@ var app = angular.module('app')
                         }]
                     }
                 })
-                .state('main.shuo.system.config.update', {
+                .state('main.talk.system.config.update', {
                     url: '/update/{id}?params',
                     templateUrl: 'src/app/talk/systemConfig/update.html',
-                    controller: 'advUpdateController',
+                    controller: 'systemConfigUpdateController',
                     resolve: {
                         deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
                             return uiLoad.load('src/app/talk/systemConfig/updateController.js').then(function() {

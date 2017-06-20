@@ -65,4 +65,9 @@ public class NotifyService extends BaseService<Notify> {
             }
         }
     }
+
+    @Override
+    public Notify update(Notify record) {
+        return super.update(record);
+    }
 }

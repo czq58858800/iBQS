@@ -9,7 +9,6 @@ import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Album;
 import com.bq.shuo.model.AlbumLiked;
 import com.bq.shuo.model.Subject;
-import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -94,7 +93,7 @@ public class AlbumController extends AbstractController<IShuoProvider> {
             parameter = new Parameter("subjectService","queryById").setId(album.getSubjectId());
             Subject subject = (Subject) provider.execute(parameter).getModel();
 
-            if (subject.getEnable()) {
+            if (subject != null && subject.getEnable()) {
                 parameter = new Parameter("albumLikedService","updateCancelLiked").setObjects(new Object[]{id,getCurrUser()});
                 provider.execute(parameter);
             }
