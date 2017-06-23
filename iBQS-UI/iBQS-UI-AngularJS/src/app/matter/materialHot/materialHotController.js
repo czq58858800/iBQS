@@ -27,6 +27,7 @@ angular.module('app')
                     $scope.loading = false;
                     if (result.code == 200) {
                         $scope.pageInfo = result.data;
+                        console.dir($scope.pageInfo)
                     } else {
                         $scope.msg = result.msg;
                     }
@@ -44,6 +45,26 @@ angular.module('app')
             $scope.clearSearch = function() {
                 $scope.param.keyword= null;
                 $scope.search();
+            }
+
+            $scope.searchType = function (type) {
+                if (type == null || type == '') {
+                    $scope.param.type = null;
+                } else {
+                    if (type == $scope.param.type) {
+                        $scope.param.type = null;
+                    } else {
+                        $scope.param.type = type;
+                    }
+                }
+                $scope.search();
+            }
+
+            $scope.disableItem = function(id, enable) {
+                $scope.update({
+                    id:id,
+                    enable:enable
+                });
             }
 
             $scope.update = function (param) {

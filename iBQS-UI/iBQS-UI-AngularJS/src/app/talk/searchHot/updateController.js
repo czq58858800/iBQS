@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module('app')
-    .controller('materialHotUpdateController', ['$scope', '$rootScope', '$state', '$timeout', 'toaster',
+    .controller('searchHotUpdateController', ['$scope', '$rootScope', '$state', '$timeout', 'toaster',
         function($scope, $rootScope, $state, $timeout, toaster) {
             var title = "";
 
-            if($state.includes('**.material.hot.update')){
-                title="编辑素材关键词";
+            if($state.includes('**.search.hot.update')){
+                title="编辑搜索关键词";
                 var id = $state.params.id;
                 activate(id);
                 validate(id);
-            }else if($state.includes('**.material.hot.create')){
-                title="添加素材关键词";
+            }else if($state.includes('**.search.hot.create')){
+                title="添加搜索关键词";
                 $scope.record = {};
                 $scope.record.type = 1;
                 $scope.record.enable = 'true';
@@ -65,7 +65,7 @@ angular.module('app')
                     $scope.isDisabled = true;//提交disabled
                     $.ajax({
                         type: 'POST',
-                        url : '/shuo/materialHot/update',
+                        url : '/shuo/searchHot/update',
                         dataType: 'json',
                         contentType:'application/json;charset=UTF-8',
                         data: angular.toJson(m)
@@ -76,7 +76,7 @@ angular.module('app')
                         toaster.clear('*');
                         toaster.pop('success', '', "保存成功");
                         $timeout(function(){
-                            $state.go('main.matter.material.hot.list');
+                            $state.go('main.matter.search.hot.list');
                         },2000);
                     }else{
                         toaster.clear('*');
@@ -92,7 +92,7 @@ angular.module('app')
                 $scope.loading = true;
                 $.ajax({
                     type: 'PUT',
-                    url : '/shuo/materialHot/read/detail',
+                    url : '/shuo/searchHot/read/detail',
                     dataType: 'json',
                     contentType:'application/json;charset=UTF-8',
                     data: angular.toJson({'id': id})

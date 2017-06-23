@@ -741,6 +741,50 @@ var app = angular.module('app')
                             });
                         }]
                     }
+                }) // 搜索热词管理
+                .state('main.talk.search', {
+                    url: '/search',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.talk.search.hot', {
+                    url: '/hot',
+                    template: '<div ui-view class="fade-in-right-big smooth"></div>'
+                })
+                .state('main.talk.search.hot.list', {
+                    url: '/list',
+                    templateUrl: 'src/app/talk/searchHot/searchHot.html',
+                    controller: 'searchHotController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/searchHot/searchHotController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.search.hot.create', {
+                    url: '/create',
+                    templateUrl: 'src/app/talk/searchHot/update.html',
+                    controller: 'searchHotUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/searchHot/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                })
+                .state('main.talk.search.hot.update', {
+                    url: '/update/{id}?params',
+                    templateUrl: 'src/app/talk/searchHot/update.html',
+                    controller: 'searchHotUpdateController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/talk/searchHot/updateController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
                 }) // 字体管理
                 .state('main.talk.session', {
                     url: '/session',

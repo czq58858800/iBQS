@@ -20,7 +20,7 @@
 		<div class="panel panel-default">
 			<!-- 头部 -->
 			<div class="panel-heading clearfix">
-				<a ui-sref="main.matter.material.hot.create" class="btn btn-info pull-right">
+				<a ui-sref="main.talk.search.hot.create" class="btn btn-info pull-right">
 					<i class="icon-user-follow m-r-sm text-md"></i>添加热词</a>
 				<div class="w-lg">
 					<form ng-submit="search()" class="ng-pristine ng-valid">
@@ -34,8 +34,9 @@
 					</form>
 				</div>
 				<a ng-click="searchType()" class="m-l-xs"><span class="label label-{{param.type == '' || param.type == null ? 'success' : 'default'}}">全部</span></a>
-				<a ng-click="searchType(1)" class="m-l-xs"><span class="label label-{{param.type == '1' ? 'success' : 'default'}}">贴纸</span></a>
-				<a ng-click="searchType(2)" class="m-l-xs"><span class="label label-{{param.type == '2' ? 'success' : 'default'}}">素材</span></a>
+				<a ng-click="searchType(1)" class="m-l-xs"><span class="label label-{{param.type == '1' ? 'success' : 'default'}}">表情</span></a>
+				<!--<a ng-click="searchType(2)" class="m-l-xs"><span class="label label-{{param.type == '2' ? 'success' : 'default'}}">用户</span></a>-->
+				<a ng-click="searchType(3)" class="m-l-xs"><span class="label label-{{param.type == '3' ? 'success' : 'default'}}">素材</span></a>
 			</div>
 
 			<!-- 数据表格 -->
@@ -45,7 +46,8 @@
 					<tr>
 						<th>关键词</th>
 						<th>类型</th>
-						<th>排序</th>
+						<th>置顶</th>
+						<th>次数</th>
 						<th>备注</th>
 						<th>创建时间</th>
 						<th>状态</th>
@@ -54,20 +56,24 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td class="v-middle">{{item.value}}</td>
+						<td class="v-middle">{{item.text}}</td>
 						<td class="v-middle">
-							<span class="label label-warning" ng-if="item.type == 0">未分类</span>
-							<span class="label label-danger" ng-if="item.type == 1">贴纸</span>
-							<span class="label label-success" ng-if="item.type == 2">素材</span>
+							<span class="label label-warning" ng-if="item.type == 1">表情</span>
+							<span class="label label-danger" ng-if="item.type == 2">用户</span>
+							<span class="label label-success" ng-if="item.type == 3">素材</span>
 						</td>
-						<td class="v-middle">{{item.sort}}</td>
+						<td class="v-middle">
+							<span ng-hide="item.isTop=='1'" class="text-danger">否</span>
+							<span ng-show="item.isTop=='1'" class="text-success">是</span>
+						</td>
+						<td class="v-middle">{{item.searchNum}}</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">
 							<span ng-hide="item.enable=='true'" class="text-danger">禁用</span>
 							<span ng-show="item.enable=='true'" class="text-success">启用</span>
 						</td>
 						<td class="v-middle">
-							<a ui-sref="main.matter.material.hot.update({id: item.id})" class="btn btn-sm btn-default">
+							<a ui-sref="main.talk.search.hot.update({id: item.id})" class="btn btn-sm btn-default">
 								<i class="fa fa-edit m-r-xs text-sm"></i>查看</a>
 							<button type="button" ng-show="item.enable=='true'"  ng-click="disableItem(item.id,0)" class="btn btn-sm btn-default m-l-xs">
 								<i class="fa fa-ban m-r-xs text-sm"></i>禁用</button>
