@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.bq.core.Constants;
 import com.bq.core.util.CacheUtil;
 import com.bq.core.util.InstanceUtil;
-import com.bq.shuo.core.helper.CounterHelper;
+import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.util.SystemConfigUtil;
+import com.bq.shuo.mapper.MaterialMapper;
 import com.bq.shuo.model.Category;
 import com.bq.shuo.model.Material;
-import com.bq.shuo.core.base.BaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -32,6 +32,9 @@ import java.util.Map;
 public class MaterialService extends BaseService<Material> {
 
     @Autowired
+    private MaterialMapper materialMapper;
+
+    @Autowired
     private CategoryService categoryService;
 
 
@@ -41,6 +44,15 @@ public class MaterialService extends BaseService<Material> {
         record.setEnable(true);
         Wrapper<Material> wrapper = new EntityWrapper<>(record);
         return mapper.selectCount(wrapper);
+    }
+
+
+    public List<Material> selectAllByCategoryId(String categoryId) {
+        return getList(materialMapper.selectAll(categoryId));
+    }
+
+    public int selectCountByCategory(String categoryId) {
+        return materialMapper.selectCountByCategory(categoryId);
     }
 
     @Override

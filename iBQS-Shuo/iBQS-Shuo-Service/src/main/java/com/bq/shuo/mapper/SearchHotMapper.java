@@ -2,6 +2,7 @@ package com.bq.shuo.mapper;
 
 import com.bq.shuo.model.SearchHot;
 import com.bq.shuo.core.base.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.bq.shuo.core.base.BaseMapper;
  */
 public interface SearchHotMapper extends BaseMapper<SearchHot> {
 
+    String selectByKeyword(@Param("keyword") String keyword);
 }

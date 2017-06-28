@@ -3,7 +3,6 @@ package com.bq.shuo.model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
 
 
 /**
@@ -43,4 +42,11 @@ public class MaterialHot extends BaseModel {
 		this.sort = sort;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

@@ -1,6 +1,8 @@
 package com.bq.web.shuo;
 
+import com.bq.core.support.HttpCode;
 import com.bq.shuo.core.base.AbstractController;
+import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Category;
 import com.bq.shuo.provider.IShuoProvider;
 import io.swagger.annotations.Api;
@@ -40,17 +42,22 @@ public class CategoryControler extends AbstractController<IShuoProvider> {
         return super.get(modelMap, param);
     }
 
-    @PostMapping
+    @PostMapping(value = "update")
     @ApiOperation(value = "修改贴纸分类")
     @RequiresPermissions("shuo.material.update")
     public Object update(ModelMap modelMap, @RequestBody Category param) {
         return super.update(modelMap, param);
     }
 
-    @DeleteMapping
+    @PostMapping(value = "delete")
     @ApiOperation(value = "删除贴纸分类")
     @RequiresPermissions("shuo.material.delete")
     public Object delete(ModelMap modelMap, @RequestBody Category param) {
+        Parameter parameter = new Parameter("materialService","selectCountByCategory").setId(param.getId());
+        int materialCount = (int) provider.execute(parameter).getObject();
+        if (materialCount != 0) {
+            return setModelMap(modelMap, HttpCode.NOT_DATA);
+        }
         return super.delete(modelMap, param);
     }
 }

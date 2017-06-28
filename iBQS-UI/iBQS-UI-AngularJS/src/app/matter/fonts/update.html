@@ -6,7 +6,7 @@
 <div class="bg-white bread-crumb">
 	<ul class="breadcrumb b-a m-b-n-xs lter b-b wrapper-md">
 		<li><a ui-sref="main.index"><i class="fa fa-home"></i> 首页</a></li>
-		<li><a ui-sref="main.shuo.material.hot.list">素材热词管理</a></li>
+		<li><a ui-sref="main.matter.fonts.list">字体管理</a></li>
 		<li class="active" ng-bind="title"></li>
 	</ul>
 </div>
@@ -16,30 +16,99 @@
 	<div class="panel panel-default">
 		<!-- 头部 -->
 		<div class="panel-heading font-bold">{{title}}
-			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.sys.user.list"><i class="text-md fa fa-times text-muted"></i></a>
+			<a class="btn btn-sm btn-icon btn-rounded btn-default pull-right m-t-n-xs" ui-sref="main.matter.fonts.list"><i class="text-md fa fa-times text-muted"></i></a>
 		</div>
 		<!--表单-->
 		<div class="panel-body">
 			<form class="form-horizontal"  name="materialHot_form">
-				<!--关键词-->
+				<!--字体名称-->
 				<div class="form-group">
-					<label class="col-lg-2 col-sm-3 control-label" for="value">
-						<span class="text-danger wrapper-sm">*</span>关键词</label>
+					<label class="col-lg-2 col-sm-3 control-label" for="name">
+						<span class="text-danger wrapper-sm">*</span>名称</label>
 					<div class="col-sm-6">
-						<input type="text" class="form-control" name="value" id="value" placeholder="请输入关键词..." ng-model="record.value">
-						<span class="help-block m-b-none">关键词</span>
-					</div>
-				</div>
-				<div class="line line-dashed b-b line-lg pull-in"></div>
-				<!--真实姓名-->
-				<div class="form-group">
-					<label class="col-lg-2 col-sm-3 control-label" for="sort">排序</label>
-					<div class="col-sm-6">
-						<input type="number" class="form-control" name="sort" id="sort" placeholder="排序..." ng-model="record.sort">
+						<input type="text" class="form-control" name="name" id="name" placeholder="请输入字体名称..." ng-model="record.name">
 						<span class="help-block m-b-none"></span>
 					</div>
 				</div>
 				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--字体编号-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="code">
+						<span class="text-danger wrapper-sm">*</span>编号</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="code" id="code" placeholder="请输入字体编号..." ng-model="record.code">
+						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">编号不允许重复</pre></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--字体语言-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">
+						<span class="text-danger wrapper-sm">*</span>语言</label>
+					<div class="col-sm-6">
+						<input ng-hide="1" type="text" class="form-control" name="type" id="type" ng-model="record.lang">
+						<a ng-click="selectLang('cn')" class="m-l-xs"><span class="label label-{{record.lang == 'cn' ? 'success' : 'default'}}">中文</span></a>
+						<a ng-click="selectLang('en')" class="m-l-xs"><span class="label label-{{record.lang == 'en' ? 'success' : 'default'}}">英文</span></a>
+						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">中文字体或者英文字体</pre></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!-- 字体封面 -->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="cover_image">字体封面</label>
+					<div class="col-sm-6">
+						<div class="m-b upload-cover-box">
+							<a href="javascript:void(0);" class="btn btn-default btn-addon">
+								<i class="fa fa-upload"></i>上传图片
+							</a>
+						</div>
+						<input type="file" id="cover_image" ng-hide="1" />
+						<div class="hbox hbox-auto-xs " style="width: 77px">
+							<div class="col">
+								<div class="wrapper-sm b-a bg-white m-r-xs m-b-xs">
+									<div class="" style="height:50px;width:50px;">
+										<div id="small_cover_image">
+											<img ng-src="{{record.cover}}" width="50" height="50" alt= ""/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">封面尺寸要求宽度*高度为50px*50x。图片格式支持gif,jpg,png</pre></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
+				<!-- 字体封面 -->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="font_file">字体封面</label>
+					<div class="col-sm-6">
+						<div class="m-b upload-font-box">
+							<a href="javascript:void(0);" class="btn btn-default btn-addon">
+								<i class="fa fa-upload"></i>上传图片
+							</a>
+						</div>
+						<input type="file" id="font_file" ng-hide="1" />
+						<div id="small_font_file">
+							<a target="_blank" href="{{record.font}}">{{record.name}}</a>
+						</div>
+						<span class="help-block m-b-none"><pre style="white-space: pre-wrap;word-wrap: break-word;">字体格式支持ttf</pre></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
+				<!--状态-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label" for="enable">状态</label>
+					<div class="col-sm-6">
+						<input ng-hide="1" type="text" class="form-control" name="enable" id="enable" ng-model="record.enable">
+						<a ng-click="selectEnable('true')" class="m-l-xs"><span class="label label-{{record.enable == 'true' ? 'success' : 'default'}}">启用</span></a>
+						<a ng-click="selectEnable('false')" class="m-l-xs"><span class="label label-{{record.enable == 'false' ? 'danger' : 'default'}}">禁用</span></a>
+						<span class="help-block m-b-none"></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
 				<!--btn-->
 				<div class="form-group">
 					<div class="col-sm-6 col-sm-offset-2">

@@ -40,8 +40,8 @@
 				<table class="table table-striped b-t b-light text-center">
 					<thead>
 					<tr>
-						<th>关键词</th>
-						<th>排序</th>
+						<th>内容</th>
+						<th>设备</th>
 						<th>备注</th>
 						<th>创建时间</th>
 						<th>状态</th>
@@ -50,8 +50,9 @@
 					</thead>
 					<tbody>
 					<tr ng-repeat="item in pageInfo.records">
-						<td class="v-middle">{{item.value}}</td>
-						<td class="v-middle">{{item.sort}}</td>
+						<td class="v-middle">{{item.subContent}}</td>
+						<td class="v-middle">{{item.device}}</td>
+						<td class="v-middle">{{item.remark}}</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">
 							<span ng-hide="item.enable=='true'" class="text-danger">禁用</span>

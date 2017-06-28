@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.context.ContextLoader;
 import push.PushUtil;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -108,13 +109,16 @@ public class Push {
                     provider.execute(parameter);
                 }*/
 
-                parameter = new Parameter("commentsService","queryById").setId(commentsId);
-                Comments comments = (Comments) provider.execute(parameter).getModel();
-                if (StringUtils.isNotBlank(comments.getBeReplyId()) && !StringUtils.equals(sendUserId,comments.getBeReplyId())) {
-                    setUserRemindNumber(comments.getBeReplyId(), PushType.NOTIFY_COMMENTS_NUM, +1);
-                    Notify notify = new Notify(sendUserId, comments.getBeReplyId(), subjectId, commentsId, StringUtils.isNotBlank(content) ? content : pushContent, type);
-                    parameter = new Parameter("notifyService", "update").setModel(notify);
-                    provider.execute(parameter);
+
+                if (StringUtils.equals(type, PushType.COMMENTS)) {
+                    parameter = new Parameter("commentsService", "queryById").setId(commentsId);
+                    Comments comments = (Comments) provider.execute(parameter).getModel();
+                    if (StringUtils.isNotBlank(comments.getBeReplyId()) && !StringUtils.equals(sendUserId, comments.getBeReplyId())) {
+                        setUserRemindNumber(comments.getBeReplyId(), PushType.NOTIFY_COMMENTS_NUM, +1);
+                        Notify notify = new Notify(sendUserId, comments.getBeReplyId(), subjectId, commentsId, StringUtils.isNotBlank(content) ? content : pushContent, type);
+                        parameter = new Parameter("notifyService", "update").setModel(notify);
+                        provider.execute(parameter);
+                    }
                 }
 
 
@@ -125,6 +129,7 @@ public class Push {
                     } else if (StringUtils.equals(type, PushType.FORWARD)) {
                         setUserRemindNumber(recevieUserId, PushType.NOTIFY_FORWARD_NUM, +1);
                     } else if (StringUtils.equals(type, PushType.LIKED)) {
+                        pushContent = "@"+sendUser.getName()+",赞了你的主题。";
                         setUserRemindNumber(recevieUserId, PushType.NOTIFY_LIKED_NUM, +1);
                     }
 
@@ -148,6 +153,9 @@ public class Push {
      */
     private void pushAt(IShuoProvider provider,User sendUser,User recevieUser,String content) {
         List<String> atUsers = findAtUser(content);
+        HashSet<String> duplRemoval = new HashSet<>(atUsers);
+        atUsers.clear();
+        atUsers.addAll(duplRemoval);
         for (String userName : atUsers) {
             Map<String,Object> params = InstanceUtil.newHashMap();
             params.put("name",userName);

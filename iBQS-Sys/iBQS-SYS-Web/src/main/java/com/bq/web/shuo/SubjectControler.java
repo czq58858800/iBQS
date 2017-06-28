@@ -85,18 +85,13 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.subject.update")
     @PostMapping(value = "/updateHot")
     public Object updateHot(ModelMap modelMap, @RequestBody Subject param) {
-        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        logger.debug("{} execute queryById start...", parameter.getNo());
-        Subject record = (Subject) provider.execute(parameter).getModel();
-        logger.debug("{} execute queryById end.", parameter.getNo());
-        record.setIsHot(param.getIsHot());
         if (param.getIsHot()) {
-            record.setHotTime(new Date());
+            param.setHotTime(new Date());
         } else {
-            record.setHotTime(null);
+            param.setHotTime(null);
         }
 
-        parameter = new Parameter(getService(), "update").setModel(param);
+        Parameter parameter = new Parameter(getService(), "update").setModel(param);
         logger.debug("{} execute update start...", parameter.getNo());
         provider.execute(parameter);
         logger.debug("{} execute update end.", parameter.getNo());

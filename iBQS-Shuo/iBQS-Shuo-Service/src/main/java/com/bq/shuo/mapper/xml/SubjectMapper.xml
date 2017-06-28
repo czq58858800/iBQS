@@ -55,7 +55,7 @@
 				B.liked_num DESC
 			</when>
 			<otherwise>
-				A.update_time DESC
+				A.create_time DESC
 			</otherwise>
 		</choose>
 		,A.id_ DESC
@@ -118,7 +118,7 @@
 				and (A.content_ like CONCAT('%',#{cm.keyword},'%'))
 			</if>
 		</where>
-		ORDER BY update_time DESC
+		ORDER BY create_time DESC
 		<if test="cm.startLimit != null and cm.endLimit != null ">
 			LIMIT ${cm.startLimit},${cm.endLimit}
 		</if>
@@ -150,7 +150,7 @@
 	<select id="selectByKeyword" resultType="java.lang.String">
 		SELECT A.id_ FROM bq_subject A
 		WHERE A.enable_ = 1 AND A.content_ like CONCAT('%',#{cm.keyword},'%') OR A.layer_keyword LIKE CONCAT('%',#{cm.keyword},'%')
-		ORDER BY A.content_,A.layer_keyword,A.update_time
+		ORDER BY A.content_,A.layer_keyword,A.create_time
 		<if test="cm.startLimit != null and cm.startLimit != '' and cm.endLimit != null and cm.endLimit != '' ">
 			LIMIT ${cm.startLimit},${cm.endLimit}
 		</if>

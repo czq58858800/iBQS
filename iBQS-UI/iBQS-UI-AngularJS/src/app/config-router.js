@@ -522,7 +522,7 @@ var app = angular.module('app')
                     }
                 })
                 .state('main.matter.material.update', {
-                    url: '/update/{id}?params',
+                    url: '/view/{id}?params',
                     templateUrl: 'src/app/matter/material/update.html',
                     controller: 'materialUpdateController',
                     resolve: {
@@ -533,7 +533,19 @@ var app = angular.module('app')
                         }]
                     }
                 }) // 表情
-                .state('main.matter.material.update.sticker', {
+                .state('main.matter.material.view', {
+                    url: '/view/{id}?params',
+                    templateUrl: 'src/app/matter/material/view.html',
+                    controller: 'materialViewController',
+                    resolve: {
+                        deps: ['uiLoad', '$ocLazyLoad', function(uiLoad, $ocLazyLoad) {
+                            return uiLoad.load('src/app/matter/material/viewController.js').then(function() {
+                                return $ocLazyLoad.load('toaster');
+                            });
+                        }]
+                    }
+                }) // 表情
+                .state('main.matter.material.view.sticker', {
                     url: '/sticker',
                     views:{
                         "stickerList": {

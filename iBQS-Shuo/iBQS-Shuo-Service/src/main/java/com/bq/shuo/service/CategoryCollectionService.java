@@ -3,14 +3,13 @@ package com.bq.shuo.service;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.Constants;
 import com.bq.core.util.InstanceUtil;
+import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.core.helper.CounterHelper;
 import com.bq.shuo.core.util.SystemConfigUtil;
 import com.bq.shuo.mapper.CategoryCollectionMapper;
 import com.bq.shuo.model.Category;
 import com.bq.shuo.model.CategoryCollection;
-import com.bq.shuo.core.base.BaseService;
 import com.bq.shuo.model.User;
-import com.bq.shuo.model.UserFollowing;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -47,6 +46,7 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
         Page<CategoryCollection> page = super.query(params);
         String userId = (String) params.get("currUserId");
         for (CategoryCollection record:page.getRecords()) {
+
             record.setCategory(categoryService.queryBeanById(record.getCategoryId(),userId));
         }
         return page;

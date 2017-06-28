@@ -22,6 +22,12 @@
 			<if test="cm.ownerId != null and cm.ownerId != ''">
 				AND owner_id = #{cm.ownerId}
 			</if>
+			<if test="cm.tags != null and cm.tags != ''">
+				AND tags_ = #{cm.tags}
+			</if>
+			<if test="cm.isHot != null and cm.isHot != ''">
+				AND is_hot = #{cm.isHot}
+			</if>
 			<if test="cm.name != null and cm.name != ''">
 				AND name_ = #{cm.name}
 			</if>

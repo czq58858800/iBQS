@@ -6,7 +6,7 @@
 <div class="bg-white bread-crumb">
 	<ul class="breadcrumb b-a m-b-n-xs lter b-b wrapper-md">
 		<li><a ui-sref="main.index"><i class="fa fa-home"></i> 首页</a></li>
-		<li><a ui-sref="main.sys.dic.list">字典管理</a></li>
+		<li><a ui-sref="main.matter.material.list">贴纸管理</a></li>
 		<li class="active" ng-bind="title"></li>
 	</ul>
 </div>
@@ -20,29 +20,78 @@
 		</div>
 		<!--表单-->
 		<div class="panel-body">
-			<div class="menu-left">
-				<header>
-					<img width="80%" src="{{record.cover}}">
-					<div>
-						{{record.content}}
+			<form class="form-horizontal"  name="user_form">
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">封面</label>
+					<div class="col-sm-6">
+						<img width="150" height="150" src="{{record.cover || defaultAvatar}}">
 					</div>
-					<div>
-						<span>发布用户:<img width="50px" src="{{record.user.avatar}}">{{record.user.name}}</span><br/>
-						<span>浏览数:{{record.viewNum}}</span><br/>
-						<span>发布时间:{{record.createTime}}</span><br/>
-					</div>
-				</header>
-				<div>
-					<span>喜欢数:<a ui-sref="main.bq.material.update.sticker({materialId: record.id})" class="btn btn-sm btn-default"> {{record.stuffNum}}</a></span>
 				</div>
-				<div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
 
-					<span>热门:{{record.isHot ? '是': '否'}}</span>
+				<!--名称-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">名称</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="name" id="name" placeholder="请输入名称..." ng-model="record.name">
+						<span class="label label-default"></span>
+					</div>
 				</div>
-			</div>
-			<div ng-hide="loading" ui-view="albumList" class="panel panel-default" style="float: left;width: 80%"></div>
-			<div ng-hide="loading" ui-view="commentsList" class="panel panel-default" style="float: left;width: 80%"></div>
-			<div ng-hide="loading" ui-view="likedList" class="panel panel-default" style="float: left;width: 80%"></div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--描述-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">描述</label>
+					<div class="col-sm-6">
+						<textarea type="text" class="form-control" name="summary" id="summary" placeholder="请输入描述..." ng-model="record.summary"></textarea>
+						<span class="help-block m-b-none"></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<!--标签-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">标签</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="tags" id="tags" placeholder="请输入标签名称..." ng-model="record.tags">
+						<span class="help-block m-b-none">
+							<pre style="white-space: pre-wrap;word-wrap: break-word;">多个标签以“,”分割</pre>
+						</span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
+				<!--类型-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">类型</label>
+					<div class="col-sm-6">
+						<input ng-hide="1" type="text" class="form-control" name="isHot" id="type" placeholder="是否类型..." ng-model="record.type">
+						<a ng-click="selectType(0)" class="m-l-xs"><span class="label label-{{record.type == '0' ? 'success' : 'default'}}">未分类</span></a>
+						<a ng-click="selectType(1)" class="m-l-xs"><span class="label label-{{record.type == '1' ? 'success' : 'default'}}">贴纸</span></a>
+						<a ng-click="selectType(2)" class="m-l-xs"><span class="label label-{{record.type == '2' ? 'success' : 'default'}}">素材</span></a>
+						<span class="help-block m-b-none"></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
+				<!--是否热门-->
+				<div class="form-group">
+					<label class="col-lg-2 col-sm-3 control-label">是否热门</label>
+					<div class="col-sm-6">
+						<input ng-hide="1" type="text" class="form-control" name="isHot" id="isHot" placeholder="是否热门..." ng-model="record.isHot">
+						<a ng-click="selectIsHot('true')" class="m-l-xs"><span class="label label-{{record.isHot == 'true' ? 'success' : 'default'}}">是</span></a>
+						<a ng-click="selectIsHot('false')" class="m-l-xs"><span class="label label-{{record.isHot == 'false' ? 'success' : 'default'}}">否</span></a>
+						<span class="help-block m-b-none"><pre ng-if="record.isHot == 'true' && record.hotTime != null" style="white-space: pre-wrap;word-wrap: break-word;">热门时间:{{record.hotTime}}</pre></span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+
+				<!--btn-->
+				<div class="form-group">
+					<div class="col-sm-6 col-sm-offset-2">
+						<button type="reset" class="btn btn-default w-xs">重置</button>
+						<button type="submit" class="btn btn-info w-xs m-l-xl" ng-disabled="isDisabled">保存</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

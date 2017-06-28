@@ -56,8 +56,8 @@
 					<label class="col-lg-2 col-sm-3 control-label" for="enable">状态</label>
 					<div class="col-sm-6">
 						<input ng-hide="1" type="text" class="form-control" name="enable" id="enable" placeholder="类型..." ng-model="record.enable">
-						<a ng-click="selectedEnable('false')" class="m-l-xs"><span class="label label-{{record.enable == 'false' ? 'danger' : 'default'}}">禁用</span></a>
 						<a ng-click="selectedEnable('true')" class="m-l-xs"><span class="label label-{{record.enable == 'true' ? 'success' : 'default'}}">启用</span></a>
+						<a ng-click="selectedEnable('false')" class="m-l-xs"><span class="label label-{{record.enable == 'false' ? 'danger' : 'default'}}">禁用</span></a>
 						<span class="help-block m-b-none"></span>
 					</div>
 				</div>

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +190,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
             // 当前登录用户ID与创建主题的用户ID不一致
             return setModelMap(modelMap,HttpCode.UNAUTHORIZED);
         }
-        parameter = new Parameter(getService(),"delete").setId(id);
+        parameter = new Parameter(getService(),"logicalDlete").setModel(record);
         provider.execute(parameter);
         return setSuccessModelMap(modelMap);
     }
@@ -358,7 +359,14 @@ public class SubjectController extends AbstractController<IShuoProvider> {
         // 发布推送
         new Push(PushType.AT,getCurrUser(),subject.getUserId(),subject.getId(),content);
 
-        return setSuccessModelMap(modelMap);
+        parameter = new Parameter("userService","queryById").setId(getCurrUser());
+        User user = (User) provider.execute(parameter).getModel();
+        user.setLastDynamicTime(new Date());
+
+        parameter = new Parameter("userService","update").setModel(user);
+        provider.execute(parameter);
+
+        return setSuccessModelMap(modelMap, SubjectHelper.formatBriefResultMap(subject));
     }
 
     public Subject upload(JSONArray imageData, Subject record) {

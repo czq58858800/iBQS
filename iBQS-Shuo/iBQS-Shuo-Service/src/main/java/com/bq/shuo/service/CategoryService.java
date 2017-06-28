@@ -86,8 +86,10 @@ public class CategoryService extends BaseService<Category> {
 
     public Category queryBeanById(String categoryId, String currUserId) {
         Category record = queryById(categoryId);
-
-        return getBeanInfo(record,currUserId);
+        if (record != null) {
+            return getBeanInfo(record,currUserId);
+        }
+        return null;
     }
 
     public int selectCountByUserId(String userId) {

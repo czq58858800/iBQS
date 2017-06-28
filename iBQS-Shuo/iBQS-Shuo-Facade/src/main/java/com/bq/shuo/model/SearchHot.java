@@ -3,7 +3,6 @@ package com.bq.shuo.model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import java.io.Serializable;
 
 
 /**
@@ -28,6 +27,8 @@ public class SearchHot extends BaseModel {
 	@TableField("is_top")
 	private Integer isTop;
 
+	@TableField("type_")
+	private Integer type;
 
 	public String getText() {
 		return text;
@@ -53,4 +54,11 @@ public class SearchHot extends BaseModel {
 		this.isTop = isTop;
 	}
 
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 }

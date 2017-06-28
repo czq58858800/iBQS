@@ -40,6 +40,16 @@ angular.module('app')
                 $scope.search();
             }
 
+            $scope.searchType = function (type) {
+                if ($scope.param.type == type)
+                    $scope.param.type = null;
+                if (type == '0')
+                    $scope.param.type = null;
+                else
+                    $scope.param.type = type;
+                $scope.search();
+            }
+
             $scope.clearSearch = function() {
                 $scope.param.keyword= null;
                 $scope.search();
@@ -64,11 +74,57 @@ angular.module('app')
                 });
             }
 
-            $scope.disableItem = function(id, enable) {
-                $scope.update({
-                    id:id,
-                    enable:enable
-                })
+            $scope.disableItem = function(id) {
+                if (confirm('确认要删除？')) {
+                    $scope.loading = true;
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        url: '/shuo/category/delete',
+                        data: angular.toJson({
+                            "id": id
+                        })
+                    }).then(function (result) {
+                        $scope.loading = false;
+                        if (result.code == 200) {
+                            $scope.search();
+                        } else if (result.code == 405) {
+                            $scope.msg = "贴纸不为空不允许删除"
+                        } else {
+                            $scope.msg = result.msg;
+                        }
+                        $scope.$apply();
+                    });
+                }
+            }
+
+            $scope.batchDelete = function(id) {
+                if (confirm('确认要删除？')) {
+                    $scope.loading = true;
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        url: '/shuo/material/batchDelete',
+                        data: angular.toJson({
+                            "id": id
+                        })
+                    }).then(function (result) {
+                        $scope.loading = false;
+                        if (result.code == 200) {
+                            $scope.msg = result.msg;
+                            // $scope.search();
+                        } else {
+                            $scope.msg = result.msg;
+                        }
+                        $scope.$apply();
+                    });
+                }
+            }
+
+            $scope.setPageNum = function () {
+                $scope.search();
             }
             
             $scope.updateHot = function (id,isHot) {
@@ -78,8 +134,8 @@ angular.module('app')
                 })
             }
 
-            $scope.toSticker = function (materialId) {
-                $state.go('main.shuo.material.update.sticker', {materialId: materialId});
+            $scope.toSticker = function (categoryId) {
+                $state.go('main.matter.material.update.sticker', {categoryId: categoryId});
             };
 
             // 翻页

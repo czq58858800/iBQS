@@ -134,8 +134,11 @@ public class SubjectService extends BaseService<Subject> {
 
             // 当前登录用户是否喜欢了该作品
             record.setLiked(subjectLikedService.selectByIsLiked(record.getId(),currUserId));
+
             record.setUser(userService.queryById(record.getUserId()));
-            record.getUser().setFollow(userFollowingService.selectByIsFollow(currUserId,record.getUserId()));
+            if (record.getUser() != null) {
+                record.getUser().setFollow(userFollowingService.selectByIsFollow(currUserId, record.getUserId()));
+            }
         }
     }
 
@@ -384,6 +387,39 @@ public class SubjectService extends BaseService<Subject> {
         }
     }
 
+
+    public void logicalDlete(Subject record) {
+        if (record != null) {
+            record.setEnable(false);
+            executorService.submit(new Runnable() {     //删除文件
+                @Override
+                public void run() {
+                    List<Album> albumList = albumService.querySubjectIdByList(record.getId(),null);
+                    for (Album album:albumList) {
+                        album.setEnable(false);
+                        albumService.update(album);
+                    }
+
+                    // 删除动态
+                    dynamicService.deleteByValId(record.getId(),"1");
+
+                    // 作品喜欢数量
+                    Integer likedNum = selectSubjectCounter(record.getId(),CounterHelper.Subject.LIKED);
+                    // 减去用户作品喜欢数量
+                    userService.setUserCounter(record.getUserId(),CounterHelper.User.WORKS_LIKE,-likedNum);
+                    // 减去用户作品数量
+                    userService.decrUserCounter(record.getUserId(),CounterHelper.User.WORKS);
+
+                    Notify notify = new Notify();
+                    notify.setSubjectId(record.getId());
+                    notifyService.deleteNotify(notify);
+
+                }
+            });
+            update(record);
+        }
+
+    }
     public String selectHashById(String hashCode) {
         String id = subjectMapper.selectHashById(hashCode);
         return id;

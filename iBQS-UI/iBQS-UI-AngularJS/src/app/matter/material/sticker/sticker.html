@@ -1,0 +1,54 @@
+<!-- 加载提醒 -->
+<div ng-show="loading" class="text-center m-t-md text-lg"><i class="fa fa-spin fa-spinner"></i> 数据加载中...</div>
+
+
+
+<a ng-click="batchDelete(record.id)" class="btn btn-sm btn-default"><i class="fa fa-ban m-r-xs text-sm"></i>一键删除所有</a></a>
+
+<div>
+    <span><a ui-sref="main.matter.material.update.sticker({categoryId: record.id})" class="btn btn-sm btn-default active"> 贴纸</a></span>
+</div>
+
+<div>
+
+</div>
+
+<!-- 内容区域 -->
+<div ng-hide="loading" class="wrapper-md ">
+    <!-- 数据显示 -->
+    <div class="wrapper-data">
+        <div class="panel panel-default">
+
+            <!-- 数据表格 -->
+            <div class="table-responsive">
+                <table class="table table-striped b-t b-light text-center">
+                    <thead>
+                    <tr>
+                        <th>贴纸</th>
+                        <th>类型</th>
+                        <th>封面</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in pageInfo.records">
+                        <td class="v-middle"><img width="100px" class="thumb-lg" ng-src="{{item.image || defaultAvatar}}"  alt="{{item.name}}" /></td>
+                        <td class="v-middle">{{item.imageType}}</td>
+                        <td class="v-middle">{{item.isCover}}</td>
+                        <td class="v-middle">
+                            <a ui-sref="main.matter.material.view.update({id: item.id})" class="btn btn-sm btn-default">
+                                <i class="fa fa-edit m-r-xs text-sm"></i>编辑</a>
+                            <button type="button" ng-click="disableItem(item.id)" class="btn btn-sm btn-default m-l-xs">
+                                <i class="fa fa-ban m-r-xs text-sm"></i>删除</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!-- /.table-responsive -->
+
+            <!-- 底部分页 -->
+            <span data-ng-include=" 'src/tpl/pageInfo.html' "></span>
+        </div><!-- /.panel -->
+    </div><!-- /.wrapper-data -->
+
+</div><!-- /.wrapper-md -->

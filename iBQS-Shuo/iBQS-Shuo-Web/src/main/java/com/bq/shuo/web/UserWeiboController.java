@@ -6,26 +6,20 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.config.Resources;
 import com.bq.core.support.Assert;
 import com.bq.core.support.HttpCode;
-import com.bq.core.support.mq.QueueSender;
 import com.bq.core.util.HttpUtil;
 import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.core.util.WeiboHelper;
-import com.bq.shuo.model.User;
 import com.bq.shuo.model.UserThirdparty;
 import com.bq.shuo.model.UserWeibo;
 import com.bq.shuo.model.ext.WeiboInvite;
 import com.bq.shuo.provider.IShuoProvider;
-import com.bq.shuo.support.UserHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -121,7 +115,7 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
             String id = (String) obj;
             parameter = new Parameter(getService(),"queryById").setId(id);
             UserWeibo weiboBean = (UserWeibo) provider.execute(parameter).getModel();
-            if (weiboBean != null && !weiboBean.getIsInvite()) {
+            if (weiboBean != null && weiboBean.getIsInvite()) {
                 resultList.add(weiboBean);
             }
         }
@@ -220,17 +214,19 @@ public class UserWeiboController extends AbstractController<IShuoProvider> {
         executorService.submit(new Runnable() {
             public void run() {
                 StringBuffer content = new StringBuffer();
-                for (UserWeibo invite:record.getInvites()) {
-                    invite.setIsInvite(false);
-                    Parameter parameter = new Parameter(getService(),"update").setModel(invite);
-                    provider.execute(parameter);
-                    content.append("@").append(invite.getName()).append(" ");
-                }
-                content.append("我最近在玩#表情说说#，最火的表情社区！一起来玩吧~下载地址:http://www.biaoqing.com");
-                try {
-                    WeiboHelper.sendWeibo(record.getToken(),content.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (record.getInvites() != null && record.getInvites().size() > 0) {
+                    for (UserWeibo invite : record.getInvites()) {
+                        invite.setIsInvite(false);
+                        Parameter parameter = new Parameter(getService(), "update").setModel(invite);
+                        provider.execute(parameter);
+                        content.append("@").append(invite.getName()).append(" ");
+                    }
+                    content.append("我最近在玩#表情说说#，最火的表情社区！一起来玩吧~下载地址:http://www.biaoqing.com");
+                    try {
+                        WeiboHelper.sendWeibo(record.getToken(), content.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

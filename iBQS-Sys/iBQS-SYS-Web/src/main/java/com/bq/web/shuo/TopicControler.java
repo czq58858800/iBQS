@@ -36,6 +36,9 @@ public class TopicControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.topic.read")
     @PutMapping(value = "/read/list")
     public Object query(ModelMap modelMap, @RequestBody Map<String, Object> param) {
+        Parameter parameter = new Parameter("tagService","queryByAll");
+        List<Tag> tagList = (List<Tag>) provider.execute(parameter).getList();
+        modelMap.put("tags",tagList);
         return super.query(modelMap, param);
     }
 
