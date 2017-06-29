@@ -60,6 +60,9 @@ public class TopicControler extends AbstractController<IShuoProvider> {
     @RequiresPermissions("shuo.topic.update")
     @PostMapping("/update")
     public Object update(ModelMap modelMap, @RequestBody Topics param) {
+        if (param.getTags() == null) {
+            param.setTags(" ");
+        }
         return super.update(modelMap, param);
     }
 

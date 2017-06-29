@@ -2,6 +2,7 @@ package com.bq.web.shuo;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.util.InstanceUtil;
+import com.bq.ext.SubjectExt;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Subject;
@@ -66,11 +67,19 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
         return super.get(modelMap, param);
     }
 
-    @PostMapping
     @ApiOperation(value = "修改表情")
     @RequiresPermissions("shuo.subject.update")
-    public Object update(ModelMap modelMap, @RequestBody Subject param) {
-        return super.update(modelMap, param);
+    @PostMapping(value = "/update")
+    public Object update(ModelMap modelMap, @RequestBody SubjectExt param) {
+        Subject subject = new Subject();
+        subject.setId(param.getId());
+        subject.setIsHot(param.getIsHot());
+        if (subject.getIsHot()) {
+            subject.setHotTime(new Date());
+        } else {
+            subject.setHotTime(null);
+        }
+        return super.update(modelMap, subject);
     }
 
     @ApiOperation(value = "删除表情")
@@ -80,21 +89,4 @@ public class SubjectControler extends AbstractController<IShuoProvider> {
         return super.delete(modelMap, param);
     }
 
-
-    @ApiOperation(value = "推荐热门表情")
-    @RequiresPermissions("shuo.subject.update")
-    @PostMapping(value = "/updateHot")
-    public Object updateHot(ModelMap modelMap, @RequestBody Subject param) {
-        if (param.getIsHot()) {
-            param.setHotTime(new Date());
-        } else {
-            param.setHotTime(null);
-        }
-
-        Parameter parameter = new Parameter(getService(), "update").setModel(param);
-        logger.debug("{} execute update start...", parameter.getNo());
-        provider.execute(parameter);
-        logger.debug("{} execute update end.", parameter.getNo());
-        return setSuccessModelMap(modelMap);
-    }
 }

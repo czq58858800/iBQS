@@ -128,7 +128,7 @@ angular.module('app')
                 var folderPath = now.getFullYear()+zeroize(now.getMonth())+zeroize(now.getDay());
                 var filePath = zeroize(now.getHours())+zeroize(now.getMinutes())+zeroize(now.getSeconds());
                 var newFilePath = "/"+folderPath+"/"+filePath;
-                return prefix+newFilePath+ext;
+                return prefix+newFilePath+"."+ext;
             }
 
             function saveData(){

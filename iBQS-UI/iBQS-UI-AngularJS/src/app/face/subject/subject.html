@@ -67,8 +67,8 @@
 						<td class="v-middle"><a ui-sref="main.face.subject.update.comments({id: item.id})">{{item.commentsNum}}</a></td>
 						<td class="v-middle">{{item.likedNum}}</td>
 						<td class="v-middle">
-							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,1)">否</a></span>
-							<span ng-show="item.isHot=='true'" class="text-danger"><a ng-click="updateHot(item.id,0)">是</a></span>
+							<span ng-hide="item.isHot=='true'" class="text-success"><a ng-click="updateHot(item.id,'true')">否</a></span>
+							<span ng-show="item.isHot=='true'" class="text-danger"><a ng-click="updateHot(item.id,'false')">是</a></span>
 						</td>
 						<td class="v-middle">{{item.createTime}}</td>
 						<td class="v-middle">

@@ -16,6 +16,7 @@
 
     <modules>
         <module>../iBQS-Common</module>
+        <module>../qcloudsms</module>
         <module>../umeng-push</module>
         <module>../rongcloud</module>
         <module>iBQS-SYS-Facade</module>

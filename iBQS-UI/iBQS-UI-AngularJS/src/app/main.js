@@ -96,6 +96,9 @@ angular.module('app')
 			            return null;
 			        } else if(result.code == 303) {
 			        } else if(result.code == 200) {
+			        } else if(result.code == 500) {
+                        toaster.clear('*');
+                        toaster.pop('error', '', result.msg);
 			        } else if(result.code == 405) {
 			        } else if(result) {
 	                    toaster.clear('*');
@@ -112,6 +115,10 @@ angular.module('app')
 	                toaster.clear('*');
 	                toaster.pop('error', '', "未找到请求的资源");
 					break;
+                case (500):
+                    toaster.clear('*');
+                    toaster.pop('error', '', "服务器错误");
+                    break;
 				case (405):
 					$state.go('access.login');
 					break;

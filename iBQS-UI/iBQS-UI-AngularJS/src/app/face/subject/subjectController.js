@@ -83,7 +83,7 @@ angular.module('app')
                     type: 'POST',
                     dataType: 'json',
                     contentType:'application/json;charset=UTF-8',
-                    url : '/shuo/subject/updateHot',
+                    url : '/shuo/subject/update',
                     data: angular.toJson({
                         id:id,
                         isHot:isHot
