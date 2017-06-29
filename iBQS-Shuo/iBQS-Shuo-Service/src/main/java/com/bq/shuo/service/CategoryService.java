@@ -41,9 +41,15 @@ public class CategoryService extends BaseService<Category> {
     @Autowired
     private UserFollowingService userFollowingService;
 
+    /**
+     * 获取分类列表
+     * @param params
+     * @return 分类列表
+     */
     public Page<Category> queryBeans(Map<String, Object> params) {
         Page<Category> pageInfo = query(params);
         for (Category record:pageInfo.getRecords()) {
+            // 分类作者
             User author = userService.queryById(record.getUserId());
 //            if (params.containsKey("myList") && record.getStuffCount() != 0) {
 //                params.clear();
@@ -52,7 +58,9 @@ public class CategoryService extends BaseService<Category> {
 //            }
             if (params.containsKey("currUserId")) {
                 String currUserId = (String) params.get("currUserId");
+                // 当前用户是否收藏了该分类
                 record.setColl(categoryCollectionService.selectByIsCollId(record.getId(),currUserId));
+                // 当前用户是否关注了该分类作者
                 author.setFollow(userFollowingService.selectByIsFollow(currUserId,record.getUserId()));
             }
             record.setAuthor(author);
@@ -83,15 +91,26 @@ public class CategoryService extends BaseService<Category> {
         return pageInfo;
     }
 
-
+    /**
+     * 获取分类详情
+     * @param categoryId 分类ID
+     * @param currUserId 用户ID
+     * @return 分类
+     */
     public Category queryBeanById(String categoryId, String currUserId) {
         Category record = queryById(categoryId);
         if (record != null) {
+            // 分类详情
             return getBeanInfo(record,currUserId);
         }
         return null;
     }
 
+    /**
+     * 获取分类数量
+     * @param userId 用户ID
+     * @return 数量
+     */
     public int selectCountByUserId(String userId) {
         Category record = new Category();
         record.setUserId(userId);
@@ -99,8 +118,14 @@ public class CategoryService extends BaseService<Category> {
         return mapper.selectCount(wrapper);
     }
 
-    public Integer selectCategoryCounter(String subjectId,String field) {
-        String key =  CounterHelper.Category.CATEGORY_COUNTER_KEY+ subjectId;
+    /**
+     * 获取分类数量
+     * @param categoryId 用户ID
+     * @param field 字段:浏览数，收藏数
+     * @return 数量
+     */
+    public Integer selectCategoryCounter(String categoryId,String field) {
+        String key =  CounterHelper.Category.CATEGORY_COUNTER_KEY+ categoryId;
 
         if (CacheUtil.getCache().exists(key)) {
             String counter = (String) CacheUtil.getCache().hget(key,field);
@@ -108,9 +133,9 @@ public class CategoryService extends BaseService<Category> {
         }
         int counter = 0;
         if(StringUtils.equals(CounterHelper.Category.VIEW,field)) {
-            counter = categoryMapper.selectCategoryCounter(subjectId,field);
+            counter = categoryMapper.selectCategoryCounter(categoryId,field);
         } else if(StringUtils.equals(CounterHelper.Category.COLLECTION,field)) {
-            counter = categoryCollectionService.selectCountByCategoryId(subjectId);
+            counter = categoryCollectionService.selectCountByCategoryId(categoryId);
         }
         CacheUtil.getCache().hset(key,field,String.valueOf(counter));
         return counter;

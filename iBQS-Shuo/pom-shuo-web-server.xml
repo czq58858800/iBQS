@@ -14,6 +14,7 @@
 	</parent>
 	<modules>
 		<module>../iBQS-Common</module>
+		<module>../qcloudsms</module>
 		<module>../rongcloud</module>
 		<module>../umeng-push</module>
 		<module>iBQS-Shuo-Common</module>

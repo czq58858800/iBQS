@@ -14,12 +14,11 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface CategoryCollectionMapper extends BaseMapper<CategoryCollection> {
 
-    String selectCollById(@Param("categoryId") String subjectId, @Param("userId") String userId);
+    String selectCollById(@Param("categoryId") String categoryId, @Param("userId") String userId);
 
     int selectCountByUserId(@Param("userId") String userId);
 
     int selectMyCollCountByUserId(@Param("userId") String userId);
 
     int selectCountByCategoryId(@Param("categoryId") String categoryId);
-
 }

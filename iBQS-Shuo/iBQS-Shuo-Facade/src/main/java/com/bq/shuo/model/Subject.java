@@ -3,7 +3,6 @@ package com.bq.shuo.model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.bq.shuo.core.base.BaseModel;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import java.util.List;
@@ -67,6 +66,12 @@ public class Subject extends BaseModel {
      */
 	@TableField("source_")
 	private String source;
+    /**
+     * 客户端地址
+     */
+	@TableField("client_host")
+	private String clientHost;
+
 	@TableField("location_")
 	private String location;
     /**
@@ -245,6 +250,14 @@ public class Subject extends BaseModel {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public String getClientHost() {
+		return clientHost;
+	}
+
+	public void setClientHost(String clientHost) {
+		this.clientHost = clientHost;
 	}
 
 	public String getLocation() {

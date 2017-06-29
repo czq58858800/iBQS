@@ -15,6 +15,7 @@
     </parent>
 
     <modules>
+        <module>../qcloudsms</module>
         <module>../umeng-push</module>
         <module>../rongcloud</module>
         <module>iBQS-Shuo-Common</module>
@@ -62,16 +63,17 @@
             </exclusions>
         </dependency>
 
-        <!--aliyu sdk -->
+        <!-- 腾讯云短信平台 -->
         <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>${aliyun.core}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-sms</artifactId>
-            <version>${aliyun.sms}</version>
+            <groupId>com.bq</groupId>
+            <artifactId>qcloudsms</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 七牛云存储 -->

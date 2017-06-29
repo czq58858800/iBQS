@@ -98,6 +98,16 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         return setSuccessModelMap(modelMap, page);
     }
 
+    @ApiOperation(value = "分类详情")
+    @GetMapping("/category/detail")
+    public Object categoryDetail(HttpServletRequest request, ModelMap modelMap,
+                               @ApiParam(value = "分类ID") @RequestParam(value = "categoryId") String categoryId) {
+        Assert.notNull(categoryId, "CATEGORY_ID");
+        Parameter parameter = new Parameter("categoryService","queryBeanById").setObjects(new Object[]{categoryId,getCurrUser()});
+        Category record = (Category) provider.execute(parameter).getModel();
+        return setSuccessModelMap(modelMap, MaterialHelper.formatCategoryResultMap(record));
+    }
+
 
     @ApiOperation(value = "素材列表")
     @GetMapping("/list")
@@ -113,32 +123,36 @@ public class MaterialController extends AbstractController<IShuoProvider> {
         Parameter parameter = new Parameter("categoryService","queryBeanById").setObjects(new Object[] {categoryId,getCurrUser()});
         Category category = (Category) provider.execute(parameter).getModel();
 
-        parameter = new Parameter("materialService","query").setMap(params);
-        Page page = provider.execute(parameter).getPage();
-        List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
-        for (Object obj:page.getRecords()) {
-            Material record = (Material) obj;
-            Map<String,Object> resultMap = InstanceUtil.newHashMap();
-            resultMap.put("uid",record.getId());
-            resultMap.put("image",record.getImage());
-            resultMap.put("citations",record.getCitations());
-            resultMap.put("type",record.getImageType());
-            resultMap.put("width",record.getImageWidth());
-            resultMap.put("height",record.getImageHeight());
-            resultMap.put("isCover",record.getIsCover());
-            resultList.add(resultMap);
-        }
-        page.setRecords(resultList);
+        if (category.getEnable()) {
 
-        if (category.getViewNum() == null) {
-            category.setViewNum(0);
-        } else {
-            category.setViewNum(category.getViewNum());
-        }
+            parameter = new Parameter("materialService", "query").setMap(params);
+            Page page = provider.execute(parameter).getPage();
+            List<Map<String, Object>> resultList = InstanceUtil.newArrayList();
+            for (Object obj : page.getRecords()) {
+                Material record = (Material) obj;
+                Map<String, Object> resultMap = InstanceUtil.newHashMap();
+                resultMap.put("uid", record.getId());
+                resultMap.put("image", record.getImage());
+                resultMap.put("citations", record.getCitations());
+                resultMap.put("type", record.getImageType());
+                resultMap.put("width", record.getImageWidth());
+                resultMap.put("height", record.getImageHeight());
+                resultMap.put("isCover", record.getIsCover());
+                resultList.add(resultMap);
+            }
+            page.setRecords(resultList);
 
-        provider.execute(new Parameter("categoryService","update").setModel(category));
-        modelMap.put("category",CategoryHelper.formatCategoryResultMap(category));
-        return setSuccessModelMap(modelMap, page);
+            if (category.getViewNum() == null) {
+                category.setViewNum(0);
+            } else {
+                category.setViewNum(category.getViewNum());
+            }
+
+            provider.execute(new Parameter("categoryService", "update").setModel(category));
+            modelMap.put("category", CategoryHelper.formatCategoryResultMap(category));
+            return setSuccessModelMap(modelMap, page);
+        }
+        return setModelMap(modelMap,HttpCode.NOT_DATA);
     }
 
     @ApiOperation(value = "创建素材分类/修改素材分类")
@@ -173,15 +187,13 @@ public class MaterialController extends AbstractController<IShuoProvider> {
                                @ApiParam(required = true, value = "分类收藏ID[id,id,...,id]") @RequestParam(value = "ids") String ids) {
         Assert.notNull(ids, "IDS");
         JSONArray dataArr = JSONArray.parseArray(ids);
-        int maxLikedCount = (int) provider.execute(new Parameter("categoryCollectionService","selectCountByUserId").setId(getCurrUser())).getObject();
 
         for (int i = 0;dataArr.size() > i;i++) {
             String likedId = (String) dataArr.get(i);
             CategoryCollection record = (CategoryCollection) provider.execute(new Parameter("categoryCollectionService","queryById").setId(likedId)).getModel();
-            record.setSortNo(maxLikedCount-i);
+            record.setSortNo(i);
             provider.execute(new Parameter("categoryCollectionService","update").setModel(record));
         }
-
         return setSuccessModelMap(modelMap);
     }
 

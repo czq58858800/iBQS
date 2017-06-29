@@ -15,6 +15,7 @@ import com.bq.shuo.core.util.SendSms;
 import com.bq.shuo.model.User;
 import com.bq.shuo.provider.IShuoProvider;
 import com.bq.shuo.support.UserHelper;
+import com.qcloud.sms.SmsSingleSenderResult;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.storage.BucketManager;
@@ -25,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -143,20 +145,27 @@ public class LoginController extends AbstractController<IShuoProvider> {
             res.put("captcha",captcha);
             res.put("timestamp", System.currentTimeMillis());
 
-            boolean sendStatus = SendSms.sendVerifyCode(account,captcha);
+            SmsSingleSenderResult sendStatus = SendSms.sendVerifyCode(account,captcha);
 
-            if (!sendStatus) {
+            if (sendStatus == null) {
                 return setModelMap(modelMap,HttpCode.UNKNOWN_PHONE);
+            }
+
+            if (sendStatus.result != 0) {
+                modelMap.put("code", sendStatus.result);
+                modelMap.put("msg", sendStatus.errMsg);
+                modelMap.put("timestamp", System.currentTimeMillis());
+                return ResponseEntity.ok(modelMap);
             }
 
             // 序列化验证码信息到Redis
             CacheUtil.getCache().set(Constants.JR_SMS_CAPTCHA+account,res);
             logger.debug(res.toString());
+
+            return setModelMap(modelMap,HttpCode.OK);
         } finally {
             CacheUtil.unlock(lockKey);
         }
-
-        return setSuccessModelMap(modelMap);
     }
 
 
@@ -228,6 +237,26 @@ public class LoginController extends AbstractController<IShuoProvider> {
         // 判断验证码是否一致
         if (!StringUtils.equals(imgCaptcha.trim().toLowerCase(),captcha.trim().toLowerCase())) {
             CacheUtil.getCache().del(Constants.JR_IMG_CAPTCHA+account);
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
+        }
+        return setSuccessModelMap(modelMap);
+    }
+
+    // 校验帐号是否存在
+    @ApiOperation(value = "验证码是否正确")
+    @GetMapping("/check/smsCaptcha")
+    public Object checkSMSCaptcha(ModelMap modelMap,
+                               @ApiParam(required = true, value = "手机号") @RequestParam(value = "account") String account,
+                               @ApiParam(required = true, value = "验证码") @RequestParam(value = "captcha") int captcha) throws UnsupportedEncodingException {
+        // 获取短信验证码
+        JSONObject jCaptcha = (JSONObject) CacheUtil.getCache().get((Constants.JR_SMS_CAPTCHA+account));
+        // 判断短信验证码是否失效
+        if (jCaptcha == null) {
+            return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_FAIL);
+        }
+        int smsCaptcha = jCaptcha.getInteger("captcha");
+        // 判断验证码是否一致
+        if (smsCaptcha != captcha) {
             return setModelMap(modelMap,HttpCode.SMS_CAPTCHA_INCORRECT);
         }
         return setSuccessModelMap(modelMap);

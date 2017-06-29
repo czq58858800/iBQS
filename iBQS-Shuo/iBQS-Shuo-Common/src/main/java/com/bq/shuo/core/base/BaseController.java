@@ -6,18 +6,16 @@ package com.bq.shuo.core.base;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
 import com.bq.core.Constants;
 import com.bq.core.exception.BaseException;
 import com.bq.core.exception.IllegalParameterException;
 import com.bq.core.support.HttpCode;
-import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,7 +57,7 @@ public abstract class BaseController {
 
 	/** 设置响应代码 */
 	protected ResponseEntity<ModelMap> setModelMap(ModelMap modelMap, HttpCode code, Object data, Object... extendData) {
-		Map<String, Object> map = InstanceUtil.newLinkedHashMap();
+		Map<String, Object> map = Maps.newLinkedHashMap();
 		map.putAll(modelMap);
 		modelMap.clear();
 		for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
@@ -73,7 +71,7 @@ public abstract class BaseController {
 				Page<?> page = (Page<?>) data;
 				if (page != null && page.getRecords().size() > 0) {
 
-					Map<String,Object> resultMap = InstanceUtil.newHashMap();
+					Map<String,Object> resultMap = Maps.newHashMap();
 					resultMap.put("total",page.getTotal());
 					resultMap.put("pages",page.getPages());
 					resultMap.put("current",page.getCurrent());

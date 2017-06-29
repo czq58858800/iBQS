@@ -42,11 +42,16 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
     @Autowired
     private UserFollowingService userFollowingService;
 
+    /**
+     * 获取素材收藏列表
+     * @param params 参数
+     * @return 列表
+     */
     public Page<CategoryCollection> queryBeans(Map<String, Object> params) {
         Page<CategoryCollection> page = super.query(params);
         String userId = (String) params.get("currUserId");
         for (CategoryCollection record:page.getRecords()) {
-
+            // 获取分类
             record.setCategory(categoryService.queryBeanById(record.getCategoryId(),userId));
         }
         return page;
@@ -72,6 +77,12 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
         return pageInfo;
     }
 
+    /**
+     * 收藏素材
+     * @param categoryId 分类ID
+     * @param userId 用户ID
+     * @return 是否收藏
+     */
     public boolean updateLiked(String categoryId, String userId) {
         if (StringUtils.isBlank(selectByCollId(categoryId,userId))) {
             Category record = categoryService.queryById(categoryId);
@@ -84,7 +95,7 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
                 // 用户收藏素材分类数+1
                 userService.incrUserCounter(userId,CounterHelper.User.MY_COLL_STUFF);
 
-                int collectionCount = selectCountByCategoryId(categoryId);
+                int collectionCount = selectMyCollCountByUserId(categoryId);
                 int maxCount = SystemConfigUtil.getIntValue(SystemConfigUtil.CATEGORY_COLLECTION_HOT_NUM);
                 if (collectionCount == maxCount) {
                     record.setIsHot(true);
@@ -98,14 +109,20 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
         return false;
     }
 
-    public boolean updateCancelLiked(String subjectId, String userId) {
-        String followId = selectByCollId(subjectId,userId);
+    /**
+     * 取消收藏素材
+     * @param categoryId 分类ID
+     * @param userId 用户ID
+     * @return 是否取消收藏
+     */
+    public boolean updateCancelLiked(String categoryId, String userId) {
+        String followId = selectByCollId(categoryId,userId);
         if (StringUtils.isNotBlank(followId)) {
             delete(followId);
-            Category record = categoryService.queryById(subjectId);
+            Category record = categoryService.queryById(categoryId);
             if (record!=null && record.getEnable()) {
                 // 主题喜欢数-1
-                categoryService.decrCategoryCounter(subjectId,CounterHelper.Category.COLLECTION);
+                categoryService.decrCategoryCounter(categoryId,CounterHelper.Category.COLLECTION);
                 // 作者作品喜欢数-1
                 userService.decrUserCounter(record.getUserId(),CounterHelper.User.STUFF_COLL);
                 // 用户喜欢作品数-1
@@ -116,11 +133,22 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
         return false;
     }
 
-    public String selectByCollId(String albumId, String userId) {
-        return categoryCollectionMapper.selectCollById(albumId,userId);
+    /**
+     * 获取收藏ID
+     * @param categoryId 分类ID
+     * @param userId 用户ID
+     * @return 收藏ID
+     */
+    public String selectByCollId(String categoryId, String userId) {
+        return categoryCollectionMapper.selectCollById(categoryId,userId);
     }
 
-    public Integer selectCountByCategoryId(String categoryId) {
+    /**
+     * 获取素材被收藏数量
+     * @param categoryId 分类ID
+     * @return 数量
+     */
+    public int selectCountByCategoryId(String categoryId) {
         return categoryCollectionMapper.selectCountByCategoryId(categoryId);
     }
 
@@ -132,11 +160,21 @@ public class CategoryCollectionService extends BaseService<CategoryCollection> {
         return false;
     }
 
-    public Integer selectCountByUserId(String userId) {
+    /**
+     * 获取用户收藏数量
+     * @param userId 用户ID
+     * @return 数量
+     */
+    public int selectCountByUserId(String userId) {
         return categoryCollectionMapper.selectCountByUserId(userId);
     }
 
-    public Integer selectMyCollCountByUserId(String userId) {
+    /**
+     * 获取用户收藏数量
+     * @param userId 用户ID
+     * @return 数量
+     */
+    public int selectMyCollCountByUserId(String userId) {
         return categoryCollectionMapper.selectMyCollCountByUserId(userId);
     }
 

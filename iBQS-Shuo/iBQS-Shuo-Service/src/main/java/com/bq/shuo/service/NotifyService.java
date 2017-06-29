@@ -66,6 +66,15 @@ public class NotifyService extends BaseService<Notify> {
         }
     }
 
+    public boolean logicalDlete(Notify record) {
+        if (record != null) {
+            record.setEnable(false);
+            update(record);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Notify update(Notify record) {
         return super.update(record);

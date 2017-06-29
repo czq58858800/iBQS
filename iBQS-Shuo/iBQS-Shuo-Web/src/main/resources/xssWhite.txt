@@ -1,5 +1,6 @@
 upload/imageData
 topic/owner/apply
+topic/update
 subject/add
 material/add
 material/category/create

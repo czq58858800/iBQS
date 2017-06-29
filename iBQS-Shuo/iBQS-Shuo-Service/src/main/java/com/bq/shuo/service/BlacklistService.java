@@ -27,6 +27,7 @@ public class BlacklistService extends BaseService<Blacklist> {
     @Autowired
     private BlacklistMapper blacklistMapper;
 
+    // 融云
     private final static String appKey = PropertiesUtil.getString("rong.access_key");
     private final static String appSecret = PropertiesUtil.getString("rong.secret_key");
 
@@ -35,6 +36,7 @@ public class BlacklistService extends BaseService<Blacklist> {
     public Blacklist update(Blacklist record) {
         RongCloud rongCloud = RongCloud.getInstance(appKey, appSecret);
         try {
+            // 加入黑名单
             CodeSuccessReslut userAddBlacklistResult = rongCloud.user.addBlacklist(record.getUserId(), record.getBlacklistUserId());
             logger.debug("refresh:  {}",userAddBlacklistResult.toString());
         } catch (Exception e) {
@@ -49,6 +51,7 @@ public class BlacklistService extends BaseService<Blacklist> {
         try {
             Blacklist record = super.queryById(id);
             if (record != null) {
+                // 移出黑名单
                 CodeSuccessReslut userRemoveBlacklistResult = rongCloud.user.removeBlacklist(record.getUserId(), record.getBlacklistUserId());
                 logger.debug("refresh:  {}",userRemoveBlacklistResult.toString());
             }
@@ -59,6 +62,12 @@ public class BlacklistService extends BaseService<Blacklist> {
         super.delete(id);
     }
 
+    /**
+     * 判断是否在黑名单
+     * @param userId 用户ID
+     * @param blacklistUserId 查询用户ID
+     * @return 是否在黑名单
+     */
     public boolean selectIsBlacklistByUserId(String userId, String blacklistUserId) {
         if (StringUtils.isNotBlank(selectIdByUserId(userId,blacklistUserId))) {
             return true;
@@ -66,6 +75,12 @@ public class BlacklistService extends BaseService<Blacklist> {
         return false;
     }
 
+    /**
+     * 获取黑名单ID
+     * @param userId 用户ID
+     * @param blacklistUserId 查询用户ID
+     * @return 黑名单ID
+     */
     public String selectIdByUserId(String userId, String blacklistUserId) {
         return blacklistMapper.selectIsBlacklistByUserId(userId,blacklistUserId);
     }

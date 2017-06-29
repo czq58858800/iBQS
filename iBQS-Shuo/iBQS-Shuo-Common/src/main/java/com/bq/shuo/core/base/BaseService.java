@@ -1,6 +1,7 @@
 package com.bq.shuo.core.base;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -66,7 +67,7 @@ public abstract class BaseService<T extends BaseModel> implements ApplicationCon
         if (ids != null) {
             Page<T> page = new Page<T>(ids.getCurrent(), ids.getSize());
             page.setTotal(ids.getTotal());
-            List<T> records = InstanceUtil.newArrayList();
+            List<T> records = Lists.newArrayList();
             for (String id : ids.getRecords()) {
                 records.add(this.queryById(id));
             }
@@ -81,7 +82,7 @@ public abstract class BaseService<T extends BaseModel> implements ApplicationCon
         if (ids != null) {
             Page<Map<String, Object>> page = new Page<Map<String, Object>>(ids.getCurrent(), ids.getSize());
             page.setTotal(ids.getTotal());
-            List<Map<String, Object>> records = InstanceUtil.newArrayList();
+            List<Map<String, Object>> records = Lists.newArrayList();
             for (String id : ids.getRecords()) {
                 records.add(InstanceUtil.transBean2Map(this.queryById(id)));
             }
@@ -96,7 +97,7 @@ public abstract class BaseService<T extends BaseModel> implements ApplicationCon
         if (ids != null) {
             Page<K> page = new Page<K>(ids.getCurrent(), ids.getSize());
             page.setTotal(ids.getTotal());
-            List<K> records = InstanceUtil.newArrayList();
+            List<K> records = Lists.newArrayList();
             for (String id : ids.getRecords()) {
                 T t = this.queryById(id);
                 K k = InstanceUtil.to(t, cls);
@@ -110,7 +111,7 @@ public abstract class BaseService<T extends BaseModel> implements ApplicationCon
 
     /** 根据Id查询(默认类型T) */
     public List<T> getList(List<String> ids) {
-        List<T> list = InstanceUtil.newArrayList();
+        List<T> list = Lists.newArrayList();
         if (ids != null) {
             for (String id : ids) {
                 list.add(this.queryById(id));
@@ -121,7 +122,7 @@ public abstract class BaseService<T extends BaseModel> implements ApplicationCon
 
     /** 根据Id查询(cls返回类型Class) */
     public <K> List<K> getList(List<String> ids, Class<K> cls) {
-        List<K> list = InstanceUtil.newArrayList();
+        List<K> list = Lists.newArrayList();
         if (ids != null) {
             for (String id : ids) {
                 T t = this.queryById(id);
