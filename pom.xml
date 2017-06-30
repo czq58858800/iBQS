@@ -15,6 +15,7 @@
 		<module>iBQS-Shuo</module>
         <module>rongcloud</module>
         <module>umeng-push</module>
+        <module>qcloudsms</module>
     </modules>
 
 	<!-- clean package -P build -f pom-sys-service-server.xml -->
@@ -62,6 +63,9 @@
 		<jsqlparser.version>0.9.5</jsqlparser.version>
 		<springfox.version>2.6.1</springfox.version>
 		<thumbnailator.version>0.4.8</thumbnailator.version>
+
+		<!-- 工具 -->
+		<guava.version>22.0</guava.version>
 
 		<!--阿里云 SDK -->
 		<aliyun.core>3.0.8</aliyun.core>
@@ -288,6 +292,12 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 		</dependency>
 	</dependencies>
 

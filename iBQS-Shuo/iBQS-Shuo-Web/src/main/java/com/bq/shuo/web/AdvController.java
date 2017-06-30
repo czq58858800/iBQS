@@ -2,12 +2,13 @@ package com.bq.shuo.web;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.bq.core.support.Assert;
-import com.bq.core.util.InstanceUtil;
 import com.bq.core.util.WebUtil;
 import com.bq.shuo.core.base.AbstractController;
 import com.bq.shuo.core.base.Parameter;
 import com.bq.shuo.model.Adv;
 import com.bq.shuo.provider.IShuoProvider;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -54,10 +55,10 @@ public class AdvController extends AbstractController<IShuoProvider> {
         Map<String, Object> params = WebUtil.getParameterMap(request);
         Parameter shuoParameter = new Parameter(getService(), "query").setMap(params);
         Page pageInfo = provider.execute(shuoParameter).getPage();
-        List<Map<String,Object>> resultList = InstanceUtil.newArrayList();
+        List<Map<String,Object>> resultList = Lists.newArrayList();
         for (Object obj:pageInfo.getRecords()) {
             Adv record = (Adv) obj;
-            Map<String,Object> resultMap = InstanceUtil.newHashMap();
+            Map<String,Object> resultMap = Maps.newHashMap();
             resultMap.put("uid",record.getId());
             resultMap.put("name",record.getName());
             resultMap.put("url",record.getUrl());

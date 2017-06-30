@@ -136,5 +136,18 @@
             <version>1.1.0</version>
         </dependency>
 
+		<!-- 腾讯云短信平台 -->
+		<dependency>
+			<groupId>com.bq</groupId>
+			<artifactId>qcloudsms</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
     </dependencies>
 </project>

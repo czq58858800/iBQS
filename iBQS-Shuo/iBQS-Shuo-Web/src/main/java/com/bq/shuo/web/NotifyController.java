@@ -70,7 +70,7 @@ public class NotifyController extends AbstractController<IShuoProvider> {
         if (record == null || !StringUtils.equals(record.getReceiveUserId(),getCurrUser())) {
             return setModelMap(modelMap, HttpCode.UNAUTHORIZED,"无法删除别人的消息");
         }
-        parameter = new Parameter("notifyService","delete").setId(id);
+        parameter = new Parameter("notifyService","logicalDlete").setModel(record);
         provider.execute(parameter);
         return  setSuccessModelMap(modelMap);
     }

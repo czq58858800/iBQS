@@ -1,15 +1,10 @@
 package com.bq.shuo.core.util;
 
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.IAcsClient;
-import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.exceptions.ServerException;
-import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.profile.IClientProfile;
-import com.aliyuncs.sms.model.v20160927.SingleSendSmsRequest;
-import com.aliyuncs.sms.model.v20160927.SingleSendSmsResponse;
 import com.bq.core.util.PropertiesUtil;
-import org.apache.commons.lang3.StringUtils;
+import com.qcloud.sms.SmsSingleSender;
+import com.qcloud.sms.SmsSingleSenderResult;
+
+import java.util.ArrayList;
 
 /**
  * SendSms
@@ -19,38 +14,27 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class SendSms {
 
-    private static final String REGION_ID = PropertiesUtil.getString("aliyun.sms.region.id");
-    private static final String ACCESS_KEY = PropertiesUtil.getString("aliyun.access.key");
-    private static final String ACCESS_SECRET = PropertiesUtil.getString("aliyun.access.secret");
-    private static final String ENDPOINT_NAME = PropertiesUtil.getString("aliyun.sms.endpoint.name");
-    private static final String PRODUCT = PropertiesUtil.getString("aliyun.sms.product");
-    private static final String DOMAIN = PropertiesUtil.getString("aliyun.sms.domain");
-    private final static String SIGN_NAME = PropertiesUtil.getString("aliyun.sms.sign.name"); // 签名名称从控制台获取，必须是审核通过的
-    private final static String VERIFY_TPL_CODE = PropertiesUtil.getString("aliyun.sms.verify.tpl.code"); //模板CODE从控制台获取，必须是审核通过的
+    private static final int APP_ID = PropertiesUtil.getInt("qcloud.sms.appid");
+    private static final String APP_KEY = PropertiesUtil.getString("qcloud.sms.appkey");
 
-    public static boolean sendVerifyCode(String phone,int code) {
-        IClientProfile profile = DefaultProfile.getProfile(REGION_ID, ACCESS_KEY, ACCESS_SECRET);
+    public static SmsSingleSenderResult sendVerifyCode(String phone,int code) {
         try {
-            DefaultProfile.addEndpoint(ENDPOINT_NAME, REGION_ID, PRODUCT,  DOMAIN);
-            IAcsClient client = new DefaultAcsClient(profile);
-            SingleSendSmsRequest request = new SingleSendSmsRequest();
-            request.setSignName(SIGN_NAME);
-            request.setTemplateCode(VERIFY_TPL_CODE);
-            StringBuffer paramStr = new StringBuffer();
-            paramStr.append("{'code':'").append(code).append("'}");
-            request.setParamString(paramStr.toString());
-            request.setRecNum(phone);
-            SingleSendSmsResponse httpResponse = client.getAcsResponse(request);
-            if (StringUtils.isNotBlank(httpResponse.getModel())) {
-                return true;
-            }
-        } catch (ServerException e) {
+            int tmplId = 26193;
+
+            //初始化单发
+            SmsSingleSender singleSender = new SmsSingleSender(APP_ID, APP_KEY);
+            SmsSingleSenderResult singleSenderResult;
+
+            //指定模板单发
+            //假设短信模板 id 为 1，模板内容为：测试短信，{1}，{2}，{3}，上学。
+            ArrayList<String> params = new ArrayList<>();
+            params.add(String.valueOf(code));
+            singleSenderResult = singleSender.sendWithParam("86", phone, tmplId, params, "表情说说", "", "");
+            return singleSenderResult;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        catch (ClientException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return null;
     }
 
     public static void main(String[] args) {

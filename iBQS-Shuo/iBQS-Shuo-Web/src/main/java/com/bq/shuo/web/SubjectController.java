@@ -322,6 +322,7 @@ public class SubjectController extends AbstractController<IShuoProvider> {
 
 
         Subject subject = new Subject(getCurrUser(),content,isLocation,location);
+        subject.setClientHost(WebUtil.getHost(request));
         subject.setLayerKeyword(layerKeyword);
         if (lat != null && lng != null) {
             subject.setLat(lat);
