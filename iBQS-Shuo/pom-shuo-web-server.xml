@@ -20,5 +20,5 @@
 		<module>iBQS-Shuo-Facade</module>
 		<module>iBQS-Shuo-Web</module>
 	</modules>
-	<!-- clean package -P build tomcat7:run-war-only -f pom-shuo-service-server.xml -->
+	<!-- clean package -P build tomcat7:run-war-only -f pom-shuo-web-server.xml -->
 </project>
