@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * SearchController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/25 0025
  */
 @RestController

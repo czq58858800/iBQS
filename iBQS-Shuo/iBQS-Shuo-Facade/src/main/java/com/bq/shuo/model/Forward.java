@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_forward")

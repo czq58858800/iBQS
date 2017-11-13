@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 日期操作辅助类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version $Id: DateUtil.java, v 0.1 2014年3月28日 上午8:58:11 Harvey.Wei Exp $
  */
 public final class DateUtil {

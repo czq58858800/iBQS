@@ -24,7 +24,7 @@ import com.bq.core.support.security.SecurityCoder;
 /**
  * RSA安全编码组件
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 1.0
  * @since 1.0
  */

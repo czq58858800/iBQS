@@ -19,7 +19,7 @@ import java.util.Map;
  * 系統配置表  服务实现类
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @Service

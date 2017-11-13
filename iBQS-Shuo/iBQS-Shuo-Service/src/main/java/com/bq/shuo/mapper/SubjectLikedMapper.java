@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 public interface SubjectLikedMapper extends BaseMapper<SubjectLiked> {

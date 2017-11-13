@@ -1,7 +1,7 @@
 package com.bq.core.support.weixin.model;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:09:23
  */
 public class AccessToken {

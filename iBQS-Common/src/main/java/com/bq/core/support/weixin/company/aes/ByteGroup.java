@@ -3,7 +3,7 @@ package com.bq.core.support.weixin.company.aes;
 import java.util.ArrayList;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:20:04
  */
 public class ByteGroup {

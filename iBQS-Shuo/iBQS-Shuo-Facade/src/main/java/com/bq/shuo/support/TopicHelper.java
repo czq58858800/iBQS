@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * TopicHelper
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/21 0021
  */
 public final class TopicHelper {

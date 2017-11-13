@@ -13,7 +13,7 @@ import java.util.List;
  * 分类表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_category")

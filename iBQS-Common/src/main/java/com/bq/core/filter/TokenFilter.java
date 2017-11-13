@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年3月19日 上午10:21:59
  */
 public class TokenFilter implements Filter {

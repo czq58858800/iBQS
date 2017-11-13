@@ -8,7 +8,7 @@ import com.bq.model.SysEmailTemplate;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-01-29
  */
 public interface SysEmailTemplateMapper extends BaseMapper<SysEmailTemplate> {

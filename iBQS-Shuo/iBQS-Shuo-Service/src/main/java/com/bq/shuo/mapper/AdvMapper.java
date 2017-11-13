@@ -8,7 +8,7 @@ import com.bq.shuo.model.Adv;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 public interface AdvMapper extends BaseMapper<Adv> {

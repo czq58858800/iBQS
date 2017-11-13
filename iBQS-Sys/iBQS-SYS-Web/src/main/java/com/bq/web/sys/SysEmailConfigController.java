@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 邮件配置管理控制类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:13:31
  */
 @RestController

@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 /**
  * Redis缓存辅助类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年4月2日 下午4:17:22
  */
 public final class RedisHelper implements CacheManager, ApplicationContextAware {

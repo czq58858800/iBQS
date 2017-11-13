@@ -5,7 +5,7 @@ import org.apache.shiro.authc.HostAuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016/8/23
  */
 public class NoPwdAuthenticationToken implements HostAuthenticationToken, RememberMeAuthenticationToken {

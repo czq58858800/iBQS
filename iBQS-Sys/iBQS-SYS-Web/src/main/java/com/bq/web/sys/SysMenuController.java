@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 菜单管理
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:14:54
  */
 @RestController

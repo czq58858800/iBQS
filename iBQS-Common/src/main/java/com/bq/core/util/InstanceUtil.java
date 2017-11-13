@@ -32,7 +32,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 /**
  * 实例辅助类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2012-07-18
  */
 public final class InstanceUtil {

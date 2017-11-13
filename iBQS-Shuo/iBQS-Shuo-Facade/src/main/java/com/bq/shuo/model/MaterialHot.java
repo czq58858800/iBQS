@@ -10,7 +10,7 @@ import com.bq.shuo.core.base.BaseModel;
  * 
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_material_hot")

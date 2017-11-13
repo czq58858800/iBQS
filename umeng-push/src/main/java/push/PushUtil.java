@@ -12,7 +12,7 @@ import push.ios.IOSUnicast;
 /**
  * PushUtil
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/12/1 0001
  */
 public class PushUtil {

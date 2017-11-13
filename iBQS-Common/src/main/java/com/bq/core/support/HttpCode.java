@@ -5,7 +5,7 @@ import com.bq.core.config.Resources;
 /**
  * Ajax 请求时的自定义查询状态码，主要参考Http状态码，但并不完全对应
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:19:19
  */
 public enum HttpCode {

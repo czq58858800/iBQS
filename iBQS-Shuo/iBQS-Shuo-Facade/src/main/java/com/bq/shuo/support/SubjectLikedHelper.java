@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * SubjectLikedHelper
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/24 0024
  */
 public final class SubjectLikedHelper {

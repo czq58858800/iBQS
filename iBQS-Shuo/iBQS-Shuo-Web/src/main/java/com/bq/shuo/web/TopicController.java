@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * TopicController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/11 0011
  */
 @RestController

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * 会话监听器
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version $Id: SessionListener.java, v 0.1 2014年3月28日 上午9:06:12 Harvey.Wei Exp
  */
 public class SessionListener implements HttpSessionListener {

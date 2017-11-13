@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 微信企业号发送消息
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:15:52
  */
 public class WeiXinCompanySendMsg {

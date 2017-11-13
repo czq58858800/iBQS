@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * DynamicController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/16 0016
  */
 @RestController

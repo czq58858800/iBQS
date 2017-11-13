@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:11:07
  */
 public class WeiXinUserUtils {

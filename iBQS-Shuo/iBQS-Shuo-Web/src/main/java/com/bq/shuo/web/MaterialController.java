@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * MaterialController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/18 0018
  */
 @RestController

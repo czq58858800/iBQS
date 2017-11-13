@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * 邮件配置表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-01-29
  */
 @SuppressWarnings("serial")

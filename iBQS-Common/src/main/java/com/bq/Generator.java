@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 /**
  * 代码生成 注意：不生成service接口 注意：不生成service接口 注意：不生成service接口
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  */
 public class Generator {
 	/**

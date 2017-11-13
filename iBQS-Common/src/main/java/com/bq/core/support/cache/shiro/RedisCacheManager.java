@@ -15,7 +15,7 @@ import org.apache.shiro.cache.CacheManager;
 
 /**
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2017年3月24日 下午8:50:14
  */
 public class RedisCacheManager implements CacheManager {

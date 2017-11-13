@@ -39,7 +39,7 @@ import java.util.Random;
 /**
  * 用户登录
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:11:21
  */
 @RestController

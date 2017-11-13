@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * ReportController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/12/23 0023
  */
 @RestController

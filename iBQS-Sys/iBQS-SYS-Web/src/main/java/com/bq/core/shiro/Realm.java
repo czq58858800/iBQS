@@ -31,7 +31,7 @@ import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 /**
  * 权限检查类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:44:45
  */
 public class Realm extends AuthorizingRealm {

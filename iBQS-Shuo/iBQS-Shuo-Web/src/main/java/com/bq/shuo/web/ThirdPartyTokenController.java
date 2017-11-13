@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * ThirdPartyTokenController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/12/20 0020
  */
 @Controller

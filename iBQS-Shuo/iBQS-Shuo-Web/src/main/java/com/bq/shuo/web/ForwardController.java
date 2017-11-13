@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * ForwardController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/15 0015
  */
 @RestController

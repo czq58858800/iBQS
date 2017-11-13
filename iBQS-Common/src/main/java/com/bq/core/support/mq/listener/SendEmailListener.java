@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * 发送邮件队列
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月14日 上午11:00:53
  */
 public class SendEmailListener implements MessageListener {

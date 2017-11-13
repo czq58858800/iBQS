@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 日志拦截器
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月14日 下午6:18:46
  */
 public class EventInterceptor extends BaseInterceptor {

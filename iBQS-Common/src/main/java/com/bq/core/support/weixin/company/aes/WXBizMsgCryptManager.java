@@ -6,7 +6,7 @@ import java.util.Map;
 import com.bq.core.util.PropertiesUtil;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:22:35
  */
 public class WXBizMsgCryptManager {

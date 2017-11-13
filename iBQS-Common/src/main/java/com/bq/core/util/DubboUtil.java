@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import com.alibaba.dubbo.config.spring.ReferenceBean;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月27日 下午4:23:06
  */
 public class DubboUtil {

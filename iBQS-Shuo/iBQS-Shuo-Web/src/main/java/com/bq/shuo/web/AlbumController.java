@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * 专辑接口
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年4月2日 下午4:20:10
  */
 @RestController

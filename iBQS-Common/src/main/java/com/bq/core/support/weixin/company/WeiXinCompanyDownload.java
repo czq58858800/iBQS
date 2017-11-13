@@ -10,7 +10,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * 根据微信media_id下载工单图片
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:13:06
  */
 public class WeiXinCompanyDownload implements Runnable {

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * 表情管理
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年4月2日 下午4:20:10
  */
 @RestController

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * Redis连接配置
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  */
 public class RedissonConfig {
 	/**

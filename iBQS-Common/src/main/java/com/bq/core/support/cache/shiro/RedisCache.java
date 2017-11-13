@@ -20,7 +20,7 @@ import org.apache.shiro.util.CollectionUtils;
 
 /**
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2017年3月24日 下午8:54:08
  */
 public class RedisCache<K, V> implements Cache<K, V> {

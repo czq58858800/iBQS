@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * UserController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/15 0015
  */
 @RestController

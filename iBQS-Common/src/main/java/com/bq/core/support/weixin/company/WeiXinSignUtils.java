@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:19:09
  */
 public class WeiXinSignUtils {

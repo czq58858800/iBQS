@@ -8,7 +8,7 @@ import com.bq.model.SysEmail;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-01-29
  */
 public interface SysEmailMapper extends BaseMapper<SysEmail> {

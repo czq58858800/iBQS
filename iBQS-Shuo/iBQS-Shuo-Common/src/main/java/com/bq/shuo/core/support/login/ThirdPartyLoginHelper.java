@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * 第三方登录辅助类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:44:45
  */
 public final class ThirdPartyLoginHelper {

@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * MaterialHelper
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/29 0029
  */
 public final class MaterialHelper {

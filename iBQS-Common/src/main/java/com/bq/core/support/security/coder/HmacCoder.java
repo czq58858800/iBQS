@@ -14,7 +14,7 @@ import com.bq.core.support.security.SecurityCoder;
 /**
  * HMAC加密组件
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 1.0
  * @since 1.0
  */

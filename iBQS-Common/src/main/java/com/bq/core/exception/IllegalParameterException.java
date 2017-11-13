@@ -7,7 +7,7 @@ import com.bq.core.support.HttpCode;
 
 /**
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月7日 下午8:46:11
  */
 @SuppressWarnings("serial")

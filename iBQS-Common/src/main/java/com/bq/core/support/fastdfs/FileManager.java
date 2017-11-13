@@ -20,7 +20,7 @@ import com.csource.fastdht.KeyInfo;
 import com.alibaba.fastjson.JSON;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月27日 上午9:51:06
  */
 @SuppressWarnings("serial")

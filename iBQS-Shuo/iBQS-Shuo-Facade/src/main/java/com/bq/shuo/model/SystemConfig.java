@@ -9,7 +9,7 @@ import com.bq.shuo.core.base.BaseModel;
  * 系统配置表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_system_config")

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * SendSms
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/15 0015
  */
 public class SendSms {

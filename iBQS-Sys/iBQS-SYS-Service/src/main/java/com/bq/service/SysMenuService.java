@@ -16,7 +16,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:19:19
  */
 @Service

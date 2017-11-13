@@ -8,7 +8,7 @@ import com.bq.shuo.model.SystemConfig;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 public interface SystemConfigMapper extends BaseMapper<SystemConfig> {

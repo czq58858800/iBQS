@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 用户管理控制器
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:12:12
  */
 @RestController

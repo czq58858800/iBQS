@@ -1,7 +1,7 @@
 package com.bq.core.support.weixin.company.aes;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:19:56
  */
 @SuppressWarnings("serial")

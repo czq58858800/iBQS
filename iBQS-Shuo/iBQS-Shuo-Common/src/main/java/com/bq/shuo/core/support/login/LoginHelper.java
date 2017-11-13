@@ -10,7 +10,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:44:45
  */
 public final class LoginHelper {

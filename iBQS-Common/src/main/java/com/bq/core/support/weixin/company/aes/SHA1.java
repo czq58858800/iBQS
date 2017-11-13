@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017年2月3日 下午5:20:29
  */
 public class SHA1 {

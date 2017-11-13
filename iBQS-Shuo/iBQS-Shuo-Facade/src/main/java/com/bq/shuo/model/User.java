@@ -13,7 +13,7 @@ import java.util.Date;
  * 用户表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_user")

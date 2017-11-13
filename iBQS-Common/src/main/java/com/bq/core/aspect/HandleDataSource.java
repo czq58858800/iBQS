@@ -1,7 +1,7 @@
 package com.bq.core.aspect;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:18:04
  */
 public class HandleDataSource {

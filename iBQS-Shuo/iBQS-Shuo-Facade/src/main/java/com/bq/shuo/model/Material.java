@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 素材表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_material")

@@ -4,7 +4,7 @@ import com.bq.model.SysUnit;
 import com.bq.core.base.BaseMapper;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  *
  */
 public interface SysUnitMapper extends BaseMapper<SysUnit> {

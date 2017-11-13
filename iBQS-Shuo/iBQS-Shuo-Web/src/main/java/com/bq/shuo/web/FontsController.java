@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * CommonMaterialController
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/12/16 0016
  */
 @RestController

@@ -8,7 +8,7 @@ import com.bq.core.base.BaseMapper;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-01-29
  */
 public interface SysNewsMapper extends BaseMapper<SysNews> {

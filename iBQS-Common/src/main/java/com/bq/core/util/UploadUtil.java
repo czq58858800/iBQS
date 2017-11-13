@@ -33,7 +33,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 /**
  * 上传辅助类 与Spring.multipartResolver冲突
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  */
 public final class UploadUtil {
 	private UploadUtil() {

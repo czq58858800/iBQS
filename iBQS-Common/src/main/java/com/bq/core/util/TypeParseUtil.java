@@ -16,7 +16,7 @@ import com.bq.core.support.DataType;
 /**
  * 类型转换辅助工具类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2011-11-08
  */
 public final class TypeParseUtil {

@@ -7,7 +7,7 @@ package com.bq.shuo.core.support.login;
 import com.bq.shuo.core.base.BaseModel;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:26:23
  */
 @SuppressWarnings("serial")

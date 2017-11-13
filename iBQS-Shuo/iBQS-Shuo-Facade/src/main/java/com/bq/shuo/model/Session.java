@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 会话管理
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_session")

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.plugins.Page;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年7月1日 上午11:34:59
  */
 public class SchedulerService implements ApplicationContextAware {

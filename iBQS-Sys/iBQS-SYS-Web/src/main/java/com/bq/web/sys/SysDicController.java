@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 字典管理
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:14:34
  */
 @RestController

@@ -11,7 +11,7 @@ import java.util.Map;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 public interface NotifyMapper extends BaseMapper<Notify> {

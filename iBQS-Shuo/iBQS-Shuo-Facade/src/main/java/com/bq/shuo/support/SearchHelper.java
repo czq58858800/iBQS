@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * SearchHelper
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/11/2 0002
  */
 public final class SearchHelper {

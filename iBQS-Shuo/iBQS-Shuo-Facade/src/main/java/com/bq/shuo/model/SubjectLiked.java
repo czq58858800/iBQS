@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 主题关注表
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @TableName("bq_subject_liked")

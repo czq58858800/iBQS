@@ -8,7 +8,7 @@ import com.bq.model.SysNotice;
  * Mapper接口
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-01-29
  */
 public interface SysNoticeMapper extends BaseMapper<SysNotice> {

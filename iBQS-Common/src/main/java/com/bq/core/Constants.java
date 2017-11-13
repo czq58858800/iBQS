@@ -7,7 +7,7 @@ import com.bq.core.util.InstanceUtil;
 /**
  * 常量表
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version $Id: Constants.java, v 0.1 2014-2-28 上午11:18:28 Harvey.Wei Exp $
  */
 public interface Constants {
@@ -35,9 +35,9 @@ public interface Constants {
     /** 非法请求次数 */
     public static final String MALICIOUS_REQUEST_TIMES = "MALICIOUS_REQUEST_TIMES";
     /** 缓存命名空间 */
-    public static final String CACHE_NAMESPACE = "iBQS:";
+    public static final String CACHE_NAMESPACE = "Gxw:";
     /** 缓存命名空间 */
-    public static final String CACHE_SHUO_NAMESPACE = "SHUO:";
+    public static final String CACHE_SHUO_NAMESPACE = "USER:";
     /** 在线用户数量 */
     public static final String ALLUSER_NUMBER = "SYSTEM:" + CACHE_NAMESPACE + "ALLUSER_NUMBER";
     /** TOKEN */

@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
  * SysUser实体类
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016-08-27 22:39:42
  */
 @TableName("sys_user")

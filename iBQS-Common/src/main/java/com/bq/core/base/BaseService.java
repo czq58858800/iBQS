@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.plugins.Page;
  * 业务逻辑层基类<br/>
  * 继承基类后必须配置CacheConfig(cacheNames="")
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:19:19
  */
 public abstract class BaseService<T extends BaseModel> implements ApplicationContextAware {

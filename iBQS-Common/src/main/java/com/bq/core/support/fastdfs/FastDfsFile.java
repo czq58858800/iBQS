@@ -3,7 +3,7 @@ package com.bq.core.support.fastdfs;
 import com.csource.common.NameValuePair;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月27日 上午9:36:30
  */
 public class FastDfsFile {

@@ -11,7 +11,7 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * 
  * @version 2016年6月3日 下午2:30:14
  * 

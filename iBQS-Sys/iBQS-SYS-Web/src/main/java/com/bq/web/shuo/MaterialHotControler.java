@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 素材热词管理
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年4月2日 下午4:20:10
  */
 @RestController

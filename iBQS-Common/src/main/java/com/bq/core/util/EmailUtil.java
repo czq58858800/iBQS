@@ -6,7 +6,7 @@ import com.bq.core.support.email.EmailSender;
 /**
  * 发送邮件辅助类
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version $Id: MailUtil.java, v 0.1 2014年12月4日 下午8:22:43 Harvey.Wei Exp $
  */
 public final class EmailUtil {

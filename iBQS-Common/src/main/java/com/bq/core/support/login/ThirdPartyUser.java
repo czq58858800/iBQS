@@ -7,7 +7,7 @@ import com.bq.core.base.BaseModel;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月20日 下午3:26:23
  */
 @SuppressWarnings("serial")

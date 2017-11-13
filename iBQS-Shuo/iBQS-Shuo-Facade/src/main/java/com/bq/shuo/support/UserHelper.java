@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * UserHelper
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @date 2016/10/15 0015
  */
 public final class UserHelper {

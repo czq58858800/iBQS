@@ -7,7 +7,7 @@ import org.quartz.PersistJobDataAfterExecution;
 /**
  * 阻塞调度
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月27日 下午4:30:46
  */
 @PersistJobDataAfterExecution

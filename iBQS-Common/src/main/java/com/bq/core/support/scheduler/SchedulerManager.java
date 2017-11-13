@@ -29,7 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * 默认的定时任务管理器
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年5月27日 上午10:28:26
  */
 public class SchedulerManager implements InitializingBean {

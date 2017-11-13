@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016/8/23
  */
 public class AuthRealm extends AuthorizingRealm {

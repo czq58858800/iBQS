@@ -10,7 +10,7 @@ import java.util.UUID;
 import javax.activation.MimetypesFileTypeMap;
 
 /**
- * @author Harvey.Wei
+ * @author chern.zq
  * @version 2016年6月27日 上午9:50:51
  */
 @SuppressWarnings("serial")

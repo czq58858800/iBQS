@@ -7,7 +7,7 @@ import com.bq.core.base.BaseModel;
 /**
  * 计划任务信息
  * 
- * @author Harvey.Wei
+ * @author chern.zq
  * @version $Id: ScheduleJob.java, v 0.1 2015-1-19 下午7:35:44 Harvey.Wei Exp $
  */
 @SuppressWarnings("serial")

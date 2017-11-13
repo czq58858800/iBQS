@@ -17,7 +17,7 @@ import java.util.List;
  *   专辑 服务实现类
  * </p>
  *
- * @author Harvey.Wei
+ * @author chern.zq
  * @since 2017-04-13
  */
 @Service
